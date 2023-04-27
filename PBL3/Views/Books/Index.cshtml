@@ -1,0 +1,41 @@
+﻿@model IEnumerable<PBL3.Models.Entities.Book>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StateRent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdTitleNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StateRent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdTitleNavigation.IdTitle)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdBook">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdBook">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdBook">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

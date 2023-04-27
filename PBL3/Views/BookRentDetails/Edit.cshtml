@@ -1,0 +1,50 @@
+﻿@model PBL3.Models.Entities.BookRentDetail
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>BookRentDetail</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="IdBookRental" />
+            <input type="hidden" asp-for="IdBook" />
+            <div class="form-group">
+                <label asp-for="StateReturn" class="control-label"></label>
+                <input asp-for="StateReturn" class="form-control" />
+                <span asp-validation-for="StateReturn" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StateApprove" class="control-label"></label>
+                <input asp-for="StateApprove" class="form-control" />
+                <span asp-validation-for="StateApprove" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StateTake" class="control-label"></label>
+                <input asp-for="StateTake" class="form-control" />
+                <span asp-validation-for="StateTake" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReturnDate" class="control-label"></label>
+                <input asp-for="ReturnDate" class="form-control" />
+                <span asp-validation-for="ReturnDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

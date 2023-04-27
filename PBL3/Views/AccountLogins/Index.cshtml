@@ -1,0 +1,47 @@
+﻿@model IEnumerable<PBL3.Models.Entities.AccountLogin>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PassHashCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Permission)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AccNameNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PassHashCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Permission)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccNameNavigation.AccName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.AccName">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.AccName">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.AccName">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

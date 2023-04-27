@@ -1,0 +1,44 @@
+﻿@model PBL3.Models.Entities.Republish
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Republish</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="NameRepublisher" class="control-label"></label>
+                <input asp-for="NameRepublisher" class="form-control" />
+                <span asp-validation-for="NameRepublisher" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumOfRep" class="control-label"></label>
+                <input asp-for="NumOfRep" class="form-control" />
+                <span asp-validation-for="NumOfRep" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TimeOfRep" class="control-label"></label>
+                <input asp-for="TimeOfRep" class="form-control" />
+                <span asp-validation-for="TimeOfRep" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,48 @@
+﻿@model PBL3.Models.Entities.Title
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Title</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NameBook)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NameBook)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NameWriter)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NameWriter)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ReleaseDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ReleaseDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NameBookshelf)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NameBookshelf)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IdRepublishNavigation)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IdRepublishNavigation.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.IdTitle">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
