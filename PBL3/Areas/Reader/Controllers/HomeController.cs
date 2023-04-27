@@ -3,6 +3,7 @@ using PBL3.Models.Entities;
 
 namespace PBL3.Areas.Reader.Controllers
 {
+    [Area("Reader")]
     public class HomeController : Controller
     {
         //Action Index nhận tham số Id => query kiểm tra role
@@ -12,8 +13,10 @@ namespace PBL3.Areas.Reader.Controllers
         //View Index cho độc giả: Xem thông tin cá nhân, chọn sửa
         //View Index cho thủ thư: Xem một list các độc giả, nhấn để xem chi tiết
         //id trích từ URL, redirect từ login
-        public IActionResult Index()
+        public IActionResult Index(string? id = null)
         {
+            ViewBag.Role = "Reader";
+            
             return View();
         }
 
@@ -52,6 +55,20 @@ namespace PBL3.Areas.Reader.Controllers
         }
         [HttpPost]
         public IActionResult Create([Bind("parameters")] AccountLogin newAcc)
+        {
+            return RedirectToAction("Index", "Home", "URL(developing)");
+        }
+
+        //Delete: chỉ để cho admin sử dụng
+        //Delete bất cứ tài khoản nào
+        //view chỉ cho phép xem thông tin tài khoản cần xoá
+        public IActionResult Delete(string id) 
+        {
+            return View();
+        }
+        [HttpPost]
+        //Xoá AccountLogin cần xoá luôn Account tương ứng
+        public IActionResult Delete([Bind("parameters")] AccountLogin delAcc)
         {
             return RedirectToAction("Index", "Home", "URL(developing)");
         }

@@ -48,6 +48,22 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcTm90aWZpY2F0aW9uXFZpZXdzXF9WaWV3U3RhcnQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[E:/ITProject/dotNET/PBL3Final/PBL3/Areas/Reader/Views/Home/ChangePassword.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUmVhZGVyXFZpZXdzXEhvbWVcQ2hhbmdlUGFzc3dvcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/ITProject/dotNET/PBL3Final/PBL3/Areas/Reader/Views/Home/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUmVhZGVyXFZpZXdzXEhvbWVcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/ITProject/dotNET/PBL3Final/PBL3/Areas/Reader/Views/Home/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUmVhZGVyXFZpZXdzXEhvbWVcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/ITProject/dotNET/PBL3Final/PBL3/Areas/Reader/Views/Home/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUmVhZGVyXFZpZXdzXEhvbWVcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [E:/ITProject/dotNET/PBL3Final/PBL3/Areas/Reader/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUmVhZGVyXFZpZXdzXEhvbWVcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
