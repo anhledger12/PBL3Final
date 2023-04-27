@@ -10582,11 +10582,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\ITProject\\dotNET\\PBL3_tosanoob_branch\\PBL3\\PBL3.csproj",
+      "projectUniqueName": "E:\\ITProject\\dotNET\\PBL3Final\\PBL3\\PBL3.csproj",
       "projectName": "PBL3",
-      "projectPath": "E:\\ITProject\\dotNET\\PBL3_tosanoob_branch\\PBL3\\PBL3.csproj",
+      "projectPath": "E:\\ITProject\\dotNET\\PBL3Final\\PBL3\\PBL3.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "E:\\ITProject\\dotNET\\PBL3_tosanoob_branch\\PBL3\\obj\\",
+      "outputPath": "E:\\ITProject\\dotNET\\PBL3Final\\PBL3\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
