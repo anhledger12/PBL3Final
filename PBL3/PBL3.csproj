@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Admin\**" />
+    <Content Remove="Views\Admin\**" />
+    <EmbeddedResource Remove="Views\Admin\**" />
+    <None Remove="Views\Admin\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,25 +28,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\" />
     <Folder Include="Areas\Library\Controllers\" />
     <Folder Include="Areas\Library\Data\" />
     <Folder Include="Areas\Library\Models\" />
-    <Folder Include="Areas\Library\Views\" />
     <Folder Include="Areas\Notification\Controllers\" />
     <Folder Include="Areas\Notification\Data\" />
     <Folder Include="Areas\Notification\Models\" />
-    <Folder Include="Areas\Notification\Views\" />
-    <Folder Include="Areas\Reader\Controllers\" />
     <Folder Include="Areas\Reader\Data\" />
     <Folder Include="Areas\Reader\Models\" />
-    <Folder Include="Areas\Reader\Views\" />
     <Folder Include="Areas\Rental\Controllers\" />
     <Folder Include="Areas\Rental\Data\" />
     <Folder Include="Areas\Rental\Models\" />
-    <Folder Include="Areas\Rental\Views\" />
     <Folder Include="Models\Entities\" />
-    <Folder Include="Views\Admin\" />
   </ItemGroup>
 
 </Project>
