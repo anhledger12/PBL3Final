@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace PBL3.Models.Entities;
 
-public partial class LibraryManagementContext : DbContext
+public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
 {
     public LibraryManagementContext()
     {
+
     }
 
     public LibraryManagementContext(DbContextOptions<LibraryManagementContext> options)
         : base(options)
     {
+        Console.WriteLine("he was here");
     }
 
     public virtual DbSet<Account> Accounts { get; set; }
@@ -35,11 +38,13 @@ public partial class LibraryManagementContext : DbContext
 
     public virtual DbSet<Title> Titles { get; set; }
 
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Name=LibraryManagement");
+        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-FO8QLMB;Initial Catalog=LibraryManagement;Integrated Security=True;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Account>(entity =>
         {
             entity.HasKey(e => e.AccName).HasName("PK__Account__092245520483F489");
@@ -49,10 +54,10 @@ public partial class LibraryManagementContext : DbContext
             entity.Property(e => e.AccName)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.Cccd)
+            entity.Property(e => e.Mssv)
                 .HasMaxLength(20)
                 .IsUnicode(false)
-                .HasColumnName("CCCD");
+                .HasColumnName("MSSV");
             entity.Property(e => e.DateOfBirth).HasColumnType("date");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
@@ -153,7 +158,7 @@ public partial class LibraryManagementContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.TimeCreate).HasColumnType("date");
-
+            entity.Property(e => e.StateSend).HasDefaultValueSql("((0))");
             entity.HasOne(d => d.AccApproveNavigation).WithMany(p => p.BookRentalAccApproveNavigations)
                 .HasForeignKey(d => d.AccApprove)
                 .HasConstraintName("FK__BookRenta__AccAp__412EB0B6");

@@ -12,6 +12,8 @@ public partial class BookRental
     public string? AccSending { get; set; }
 
     public DateTime? TimeCreate { get; set; }
+    
+    public bool ? StateSend { get; set; }   
 
     public virtual Account? AccApproveNavigation { get; set; }
 

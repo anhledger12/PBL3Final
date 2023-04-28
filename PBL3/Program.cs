@@ -1,11 +1,25 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using PBL3.Data;
+using PBL3.Models;
 using PBL3.Models.Entities;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<LibraryManagementContext>();
-
+builder.Services.AddDbContext<LibraryManagementContext>
+    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("Account")));
+builder.Services.AddIdentity<UserIdentity, IdentityRole>(opts =>
+{
+    opts.User.RequireUniqueEmail= true;
+    opts.Password.RequiredLength = 5;
+    opts.Password.RequireNonAlphanumeric = false;
+    opts.Password.RequireLowercase = false;
+    opts.Password.RequireUppercase = false;
+    opts.Password.RequireDigit = false;
+}).AddEntityFrameworkStores<LibraryManagementContext>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -22,6 +36,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseAuthentication(); ;
 
 app.MapControllerRoute(
     name: "areas",
@@ -30,5 +45,8 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+await Seed.SeedRoleAndAdmin(app);
+// Hàm seed vai trò và tk admin
+
 
 app.Run();
