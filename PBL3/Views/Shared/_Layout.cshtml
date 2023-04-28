@@ -12,7 +12,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PBL3</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">UNILIB</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -26,6 +26,21 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+
+                    @if(!User.Identity.IsAuthenticated){                        
+                        <form class = "form-inline my-2 my-lg-0" style="padding-right: 25px;">
+                            <a class="btn btn-outline-primary" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                            <a class="btn btn-outline-secondary" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                        </form>
+                    }
+                    else
+                    {
+                        <form class = "form-inline my-2 my-lg-0" style="padding-right: 25px;">
+                            <a class="btn btn-outline-primary">Xin chào, @User.Identity.Name</a>
+                            <a class="btn btn-outline-secondary" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
+                        </form>
+                    }
+
                 </div>
             </div>
         </nav>

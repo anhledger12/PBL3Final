@@ -15,7 +15,7 @@ public partial class Account
 
     public string? Email { get; set; }
 
-    public string? Cccd { get; set; }
+    public string? Mssv { get; set; }
 
     public virtual AccountLogin? AccountLogin { get; set; }
 
