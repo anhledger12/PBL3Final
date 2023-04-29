@@ -40,7 +40,7 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
 
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-FO8QLMB;Initial Catalog=LibraryManagement;Integrated Security=True;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=LAPTOP-K0DRUKC8;Initial Catalog=LibraryManagement;Integrated Security=True;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
