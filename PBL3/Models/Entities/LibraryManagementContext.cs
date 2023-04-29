@@ -15,8 +15,8 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
     public LibraryManagementContext(DbContextOptions<LibraryManagementContext> options)
         : base(options)
     {
-        Console.WriteLine("he was here");
-    }
+
+    }   
 
     public virtual DbSet<Account> Accounts { get; set; }
 
