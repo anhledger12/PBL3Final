@@ -101,7 +101,6 @@ namespace PBL3.Controllers
 				}
 				return View(result);
 			}
-
             return Redirect("/");
         }
 		public async Task<IActionResult> Logout()

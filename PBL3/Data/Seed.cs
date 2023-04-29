@@ -18,7 +18,8 @@ namespace PBL3.Data
                     await RoleManager.CreateAsync(new IdentityRole(Roles.Admin));
                 if (!await RoleManager.RoleExistsAsync(Roles.User))
                     await RoleManager.CreateAsync(new IdentityRole(Roles.User));
-
+                if(!await RoleManager.RoleExistsAsync(Roles.Admin))
+                    await RoleManager.CreateAsync(new IdentityRole(Roles.Staff));
                 //Seed tài khoản admin luôn
                 var UM = service.ServiceProvider.GetRequiredService<UserManager<UserIdentity>>();
                 var db = service.ServiceProvider.GetService<LibraryManagementContext>();
@@ -41,6 +42,27 @@ namespace PBL3.Data
 
                     };
                     db.Accounts.Add(DetailAdmin);
+                    db.SaveChanges();
+                }
+
+                var result2 = await UM.FindByNameAsync("staff1");
+                if (result2 == null)
+                {
+                    var NewStaff = new UserIdentity()
+                    {
+                        UserName = "staff1",
+                        Email = "staff1@gmail.com"
+                    };
+                    await UM.CreateAsync(NewStaff, "123456");
+                    await UM.AddToRoleAsync(NewStaff, Roles.Staff);
+                    //thêm vào tài khoản một thông tin về admin nữa
+                    Account DetailStaff = new Account()
+                    {
+                        AccName = "staff1",
+                        Email = "staff1@gmail.com"
+
+                    };
+                    db.Accounts.Add(DetailStaff);
                     db.SaveChanges();
                 }
 
