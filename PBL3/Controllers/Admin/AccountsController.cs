@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PBL3.Models.Entities;
 
-namespace PBL3.Controllers
+namespace PBL3.Controllers.Admin
 {
     public class AccountsController : Controller
     {
@@ -21,9 +21,9 @@ namespace PBL3.Controllers
         // GET: Accounts
         public async Task<IActionResult> Index()
         {
-              return _context.Accounts != null ? 
-                          View(await _context.Accounts.ToListAsync()) :
-                          Problem("Entity set 'LibraryManagementContext.Accounts'  is null.");
+            return _context.Accounts != null ?
+                        View(await _context.Accounts.ToListAsync()) :
+                        Problem("Entity set 'LibraryManagementContext.Accounts'  is null.");
         }
 
         // GET: Accounts/Details/5
@@ -149,14 +149,14 @@ namespace PBL3.Controllers
             {
                 _context.Accounts.Remove(account);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool AccountExists(string id)
         {
-          return (_context.Accounts?.Any(e => e.AccName == id)).GetValueOrDefault();
+            return (_context.Accounts?.Any(e => e.AccName == id)).GetValueOrDefault();
         }
     }
 }

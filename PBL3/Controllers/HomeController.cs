@@ -9,15 +9,16 @@ namespace PBL3.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private LibraryManagementContext context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, LibraryManagementContext context)
         {
             _logger = logger;
+            this.context = context;
         }
 
         public async Task<IActionResult> Index(string name)
         {
-            LibraryManagementContext context = new LibraryManagementContext();
             if (context.Titles == null)
             {
                 return Problem("Không có table Titles");

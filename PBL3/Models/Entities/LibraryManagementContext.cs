@@ -7,11 +7,6 @@ namespace PBL3.Models.Entities;
 
 public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
 {
-    public LibraryManagementContext()
-    {
-
-    }
-
     public LibraryManagementContext(DbContextOptions<LibraryManagementContext> options)
         : base(options)
     {
@@ -38,9 +33,6 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
 
     public virtual DbSet<Title> Titles { get; set; }
 
-    
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=LAPTOP-K0DRUKC8;Initial Catalog=LibraryManagement;Integrated Security=True;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
