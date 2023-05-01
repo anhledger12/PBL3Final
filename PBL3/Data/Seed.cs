@@ -18,7 +18,7 @@ namespace PBL3.Data
                     await RoleManager.CreateAsync(new IdentityRole(UserRole.Admin));
                 if (!await RoleManager.RoleExistsAsync(UserRole.User))
                     await RoleManager.CreateAsync(new IdentityRole(UserRole.User));
-                if(!await RoleManager.RoleExistsAsync(UserRole.Admin))
+                if(!await RoleManager.RoleExistsAsync(UserRole.Staff))
                     await RoleManager.CreateAsync(new IdentityRole(UserRole.Staff));
                 //Seed tài khoản admin luôn
                 var UM = service.ServiceProvider.GetRequiredService<UserManager<UserIdentity>>();
