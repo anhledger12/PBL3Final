@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PBL3.Models.Entities;
 
-namespace PBL3.Controllers.Authorized
+namespace PBL3.Controllers
 {
     public class BooksController : Controller
     {

@@ -9,6 +9,22 @@ using PBL3.Models.Entities;
 
 namespace PBL3.Controllers.Anonymous
 {
+    /*
+     * Cần chỉnh lại hầu hết tính năng:
+     * Thêm sách thì có kèm số lượng
+     * Gần như view thêm sách này phải code lại vì việc thêm sách của mình sẽ là thêm một đầu sách với số lượng cụ thể
+     * 
+     * Tạo đầu sách: Thêm một sách với mã sách, số lượng, tên sách và các thông tin liên quan khác
+     *  Khi tạo một đầu sách như vậy, thì số lượng đi kèm sẽ tạo thêm một số lượng sách như v
+     * 
+     * Sửa đầu sách: sửa thông tin, có bao gồm sửa số lượng, nhưng mà tạm thời chỉ cho phép sửa số lượng sách tăng thêm
+     *   (Vậy xóa sách xử lý như thế nào ?)
+     * 
+     * Xem : đơn giản r, nhưng thêm vào những action khác các thuộc tính bảo mật
+     * 
+     * Xóa đầu sách: Xóa tất cả những cuốn sách có đầu sách như thế, tuy nhiên thì cần xem xét lại việc có nên đảm bảo
+     * tất cả các sách đã được thu hồi hết không
+     */
     public class TitlesController : Controller
     {
         private readonly LibraryManagementContext _context;

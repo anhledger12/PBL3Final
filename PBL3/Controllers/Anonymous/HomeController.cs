@@ -34,6 +34,7 @@ namespace PBL3.Controllers.Anonymous
             }
             return View(await title.ToListAsync());
         }
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();

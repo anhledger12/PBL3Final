@@ -9,6 +9,10 @@ using PBL3.Models.Entities;
 
 namespace PBL3.Controllers.Anonymus
 {
+    /*
+     * thiếu tính năng view detail, thiếu nút edit, thiếu đổi mật khẩu
+     * 
+     */
     public class AccountController : Controller
     {
         private UserManager<UserIdentity> userManager;
@@ -112,6 +116,7 @@ namespace PBL3.Controllers.Anonymus
         [Authorize()]
         public async Task<IActionResult> Detail(string id)
         {
+            // Phần giao diện detail chưa làm gì, cũng như nút edit
             if (id != User.Identity.Name)
             {
                 return Redirect("/");
@@ -124,5 +129,7 @@ namespace PBL3.Controllers.Anonymus
             }
             return View(model.FirstOrDefault());
         }
+
+
     }
 }

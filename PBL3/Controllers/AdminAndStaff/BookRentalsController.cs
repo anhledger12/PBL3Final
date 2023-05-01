@@ -2,17 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using PBL3.Data;
 using PBL3.Models.Entities;
 
-namespace PBL3.Controllers
+namespace PBL3.Controllers.AdminAndStaff
 {
+    [Authorize(Roles = UserRole.AdminOrStaff)]
     public class BookRentalsController : Controller
     {
         private readonly LibraryManagementContext _context;
 
+        /*
+         * Nơi Xét duyệt đơn mượn cho độc giả  
+         * 
+         */
         public BookRentalsController(LibraryManagementContext context)
         {
             _context = context;
@@ -160,14 +167,14 @@ namespace PBL3.Controllers
             {
                 _context.BookRentals.Remove(bookRental);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BookRentalExists(int id)
         {
-          return (_context.BookRentals?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.BookRentals?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
