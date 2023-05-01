@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PBL3.Models.Entities;
 
-namespace PBL3.Controllers
+namespace PBL3.Controllers.All
 {
     public class NotificatesController : Controller
     {
@@ -154,14 +154,14 @@ namespace PBL3.Controllers
             {
                 _context.Notificates.Remove(notificate);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool NotificateExists(int id)
         {
-          return (_context.Notificates?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Notificates?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

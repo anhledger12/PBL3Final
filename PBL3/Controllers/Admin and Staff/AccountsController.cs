@@ -2,97 +2,97 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using PBL3.Data;
 using PBL3.Models.Entities;
 
-namespace PBL3.Controllers
+namespace PBL3.Controllers.Admin
 {
-    public class BooksController : Controller
+    [Authorize(Roles = Roles.AdminOrStaff)]
+    public class AccountsController : Controller
     {
         private readonly LibraryManagementContext _context;
 
-        public BooksController(LibraryManagementContext context)
+        public AccountsController(LibraryManagementContext context)
         {
             _context = context;
         }
 
-        // GET: Books
+        // GET: Accounts
         public async Task<IActionResult> Index()
         {
-            var libraryManagementContext = _context.Books.Include(b => b.IdTitleNavigation);
-            return View(await libraryManagementContext.ToListAsync());
+            return _context.Accounts != null ?
+                        View(await _context.Accounts.ToListAsync()) :
+                        Problem("Entity set 'LibraryManagementContext.Accounts'  is null.");
         }
 
-        // GET: Books/Details/5
+        // GET: Accounts/Details/5
         public async Task<IActionResult> Details(string id)
         {
-            if (id == null || _context.Books == null)
+            if (id == null || _context.Accounts == null)
             {
                 return NotFound();
             }
 
-            var book = await _context.Books
-                .Include(b => b.IdTitleNavigation)
-                .FirstOrDefaultAsync(m => m.IdBook == id);
-            if (book == null)
+            var account = await _context.Accounts
+                .FirstOrDefaultAsync(m => m.AccName == id);
+            if (account == null)
             {
                 return NotFound();
             }
 
-            return View(book);
+            return View(account);
         }
 
-        // GET: Books/Create
+        // GET: Accounts/Create
         public IActionResult Create()
         {
-            ViewData["IdTitle"] = new SelectList(_context.Titles, "IdTitle", "IdTitle");
             return View();
         }
 
-        // POST: Books/Create
+        // POST: Accounts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdBook,IdTitle,StateRent")] Book book)
+        public async Task<IActionResult> Create([Bind("AccName,FullName,DateOfBirth,Phone,Email,Cccd")] Account account)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(book);
+                _context.Add(account);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdTitle"] = new SelectList(_context.Titles, "IdTitle", "IdTitle", book.IdTitle);
-            return View(book);
+            return View(account);
         }
 
-        // GET: Books/Edit/5
+        // GET: Accounts/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null || _context.Books == null)
+            if (id == null || _context.Accounts == null)
             {
                 return NotFound();
             }
 
-            var book = await _context.Books.FindAsync(id);
-            if (book == null)
+            var account = await _context.Accounts.FindAsync(id);
+            if (account == null)
             {
                 return NotFound();
             }
-            ViewData["IdTitle"] = new SelectList(_context.Titles, "IdTitle", "IdTitle", book.IdTitle);
-            return View(book);
+            return View(account);
         }
 
-        // POST: Books/Edit/5
+        // POST: Accounts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("IdBook,IdTitle,StateRent")] Book book)
+        public async Task<IActionResult> Edit(string id, [Bind("AccName,FullName,DateOfBirth,Phone,Email,Cccd")] Account account)
         {
-            if (id != book.IdBook)
+            if (id != account.AccName)
             {
                 return NotFound();
             }
@@ -101,12 +101,12 @@ namespace PBL3.Controllers
             {
                 try
                 {
-                    _context.Update(book);
+                    _context.Update(account);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookExists(book.IdBook))
+                    if (!AccountExists(account.AccName))
                     {
                         return NotFound();
                     }
@@ -117,51 +117,49 @@ namespace PBL3.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdTitle"] = new SelectList(_context.Titles, "IdTitle", "IdTitle", book.IdTitle);
-            return View(book);
+            return View(account);
         }
 
-        // GET: Books/Delete/5
+        // GET: Accounts/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
-            if (id == null || _context.Books == null)
+            if (id == null || _context.Accounts == null)
             {
                 return NotFound();
             }
 
-            var book = await _context.Books
-                .Include(b => b.IdTitleNavigation)
-                .FirstOrDefaultAsync(m => m.IdBook == id);
-            if (book == null)
+            var account = await _context.Accounts
+                .FirstOrDefaultAsync(m => m.AccName == id);
+            if (account == null)
             {
                 return NotFound();
             }
 
-            return View(book);
+            return View(account);
         }
 
-        // POST: Books/Delete/5
+        // POST: Accounts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            if (_context.Books == null)
+            if (_context.Accounts == null)
             {
-                return Problem("Entity set 'LibraryManagementContext.Books'  is null.");
+                return Problem("Entity set 'LibraryManagementContext.Accounts'  is null.");
             }
-            var book = await _context.Books.FindAsync(id);
-            if (book != null)
+            var account = await _context.Accounts.FindAsync(id);
+            if (account != null)
             {
-                _context.Books.Remove(book);
+                _context.Accounts.Remove(account);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BookExists(string id)
+        private bool AccountExists(string id)
         {
-          return (_context.Books?.Any(e => e.IdBook == id)).GetValueOrDefault();
+            return (_context.Accounts?.Any(e => e.AccName == id)).GetValueOrDefault();
         }
     }
 }
