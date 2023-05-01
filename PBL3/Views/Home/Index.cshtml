@@ -50,59 +50,10 @@
 <p>
     <a asp-controller = "Home" asp-action="Create">Create New</a>
 </p>
-<form asp-controller="Home" asp-action="Index" method = "get">
+
+<form asp-controller="Search" asp-action="Index" method = "get">
     <p>
         Title: <input type="text" name="name" />
         <input type="submit" value="Filter" />
     </p>
 </form>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NameBook)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NameWriter)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReleaseDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NameBookshelf)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdRepublishNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NameBook)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NameWriter)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ReleaseDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NameBookshelf)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IdRepublishNavigation.Id)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.IdTitle">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.IdTitle">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.IdTitle">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
