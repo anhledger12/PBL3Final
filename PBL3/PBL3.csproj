@@ -30,7 +30,6 @@
 
   <ItemGroup>
     <Folder Include="Data\Services\" />
-    <Folder Include="Models\Entities\" />
   </ItemGroup>
 
 </Project>

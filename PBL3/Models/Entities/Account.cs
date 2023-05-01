@@ -26,4 +26,6 @@ public partial class Account
     public virtual ICollection<BookRental> BookRentalAccSendingNavigations { get; set; } = new List<BookRental>();
 
     public virtual ICollection<Notificate> Notificates { get; set; } = new List<Notificate>();
+    //new line
+    public virtual ICollection<Cart> Carts { get; set; } = new HashSet<Cart>();
 }

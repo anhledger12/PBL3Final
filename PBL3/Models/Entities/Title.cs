@@ -22,4 +22,6 @@ public partial class Title
     public virtual Republish? IdRepublishNavigation { get; set; }
 
     public virtual ICollection<Hashtag> IdHashtags { get; set; } = new List<Hashtag>();
+    //new line
+    public virtual ICollection<Cart> Carts { get; set; } = new HashSet<Cart>();
 }
