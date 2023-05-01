@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PBL3.Data;
 using PBL3.Models;
 using PBL3.Models.Entities;
 using System.Diagnostics;
@@ -33,7 +34,6 @@ namespace PBL3.Controllers.Anonymous
             }
             return View(await title.ToListAsync());
         }
-        [Authorize]
         public IActionResult Privacy()
         {
             return View();
