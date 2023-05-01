@@ -37,8 +37,7 @@ namespace PBL3.Controllers.Anonymus
                 if (user != null)
                 {
                     await signInManager.SignOutAsync();
-                    Microsoft.AspNetCore.Identity.SignInResult result =
-                     await signInManager.
+                    var result = await signInManager.
                      PasswordSignInAsync(user, details.Password, false, false);
                     if (result.Succeeded)
                     {
@@ -110,10 +109,9 @@ namespace PBL3.Controllers.Anonymus
             await signInManager.SignOutAsync();
             return Redirect("/");
         }
-
+        [Authorize()]
         public async Task<IActionResult> Detail(string id)
         {
-            if (User.IsInRole("Admin")) { Console.WriteLine("please"); }
             if (id != User.Identity.Name)
             {
                 return Redirect("/");

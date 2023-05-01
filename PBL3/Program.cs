@@ -7,7 +7,7 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//Add Service
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<LibraryManagementContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("Account")));
@@ -20,6 +20,9 @@ builder.Services.AddIdentity<UserIdentity, IdentityRole>(opts =>
     opts.Password.RequireUppercase = false;
     opts.Password.RequireDigit = false;
 }).AddEntityFrameworkStores<LibraryManagementContext>();
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

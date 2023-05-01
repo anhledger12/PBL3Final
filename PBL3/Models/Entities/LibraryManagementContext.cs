@@ -33,6 +33,7 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
 
     public virtual DbSet<Title> Titles { get; set; }
 
+    public virtual DbSet<NewsFeed> NewsFeeds { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -201,6 +202,11 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
             entity.HasOne(d => d.AccReceiveNavigation).WithMany(p => p.Notificates)
                 .HasForeignKey(d => d.AccReceive)
                 .HasConstraintName("FK__Notificat__AccRe__3B75D760");
+        });
+        modelBuilder.Entity<NewsFeed>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__NewsFeed__4214EC077P06361B");
+            entity.ToTable("NewsFeed");
         });
 
         modelBuilder.Entity<Republish>(entity =>

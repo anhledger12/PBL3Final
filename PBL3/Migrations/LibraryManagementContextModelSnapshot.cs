@@ -370,6 +370,23 @@ namespace PBL3.Migrations
                     b.ToTable("Hashtag", (string)null);
                 });
 
+            modelBuilder.Entity("PBL3.Models.Entities.NewsFeed", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__NewsFeed__4214EC077P06361B");
+
+                    b.ToTable("NewsFeed", (string)null);
+                });
+
             modelBuilder.Entity("PBL3.Models.Entities.Notificate", b =>
                 {
                     b.Property<int>("Id")

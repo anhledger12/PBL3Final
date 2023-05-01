@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PBL3.Models.Entities;
 
-namespace PBL3.Controllers
+namespace PBL3.Controllers.AdminAndStaff
 {
     public class ActionLogsController : Controller
     {
@@ -154,14 +154,14 @@ namespace PBL3.Controllers
             {
                 _context.ActionLogs.Remove(actionLog);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ActionLogExists(int id)
         {
-          return (_context.ActionLogs?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.ActionLogs?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

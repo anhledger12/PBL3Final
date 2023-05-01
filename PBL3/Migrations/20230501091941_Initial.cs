@@ -80,6 +80,19 @@ namespace PBL3.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "NewsFeed",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__NewsFeed__4214EC077P06361B", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Republish",
                 columns: table => new
                 {
@@ -481,6 +494,9 @@ namespace PBL3.Migrations
 
             migrationBuilder.DropTable(
                 name: "Hashtag_title");
+
+            migrationBuilder.DropTable(
+                name: "NewsFeed");
 
             migrationBuilder.DropTable(
                 name: "Notificate");

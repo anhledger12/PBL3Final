@@ -7,7 +7,6 @@ namespace PBL3.Controllers.Admin_and_Staff
     [Authorize(Roles =UserRole.Admin)]
     public class NewsfeedController : Controller
     {
-        // Quản lý bản tin 
         public IActionResult Index()
         {
             return View();
