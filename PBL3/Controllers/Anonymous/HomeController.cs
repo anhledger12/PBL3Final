@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PBL3.Models;
 using PBL3.Models.Entities;
 using System.Diagnostics;
 
-namespace PBL3.Controllers
+namespace PBL3.Controllers.Anonymous
 {
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -16,7 +18,7 @@ namespace PBL3.Controllers
             _logger = logger;
             this.context = context;
         }
-
+        
         public async Task<IActionResult> Index(string name)
         {
             if (context.Titles == null)
@@ -25,13 +27,13 @@ namespace PBL3.Controllers
             }
             var title = from m in context.Titles
                         select m;
-            if (!String.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name))
             {
                 title = title.Where(m => m.NameBook!.Contains(name));
             }
             return View(await title.ToListAsync());
         }
-
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();

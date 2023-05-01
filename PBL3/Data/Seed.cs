@@ -14,12 +14,12 @@ namespace PBL3.Data
             {
                 // Tạo ra hai role trong cơ sở dữ liệu, table AspNetRole
                 var RoleManager = service.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                if (!await RoleManager.RoleExistsAsync(Roles.Admin))
-                    await RoleManager.CreateAsync(new IdentityRole(Roles.Admin));
-                if (!await RoleManager.RoleExistsAsync(Roles.User))
-                    await RoleManager.CreateAsync(new IdentityRole(Roles.User));
-                if(!await RoleManager.RoleExistsAsync(Roles.Admin))
-                    await RoleManager.CreateAsync(new IdentityRole(Roles.Staff));
+                if (!await RoleManager.RoleExistsAsync(UserRole.Admin))
+                    await RoleManager.CreateAsync(new IdentityRole(UserRole.Admin));
+                if (!await RoleManager.RoleExistsAsync(UserRole.User))
+                    await RoleManager.CreateAsync(new IdentityRole(UserRole.User));
+                if(!await RoleManager.RoleExistsAsync(UserRole.Admin))
+                    await RoleManager.CreateAsync(new IdentityRole(UserRole.Staff));
                 //Seed tài khoản admin luôn
                 var UM = service.ServiceProvider.GetRequiredService<UserManager<UserIdentity>>();
                 var db = service.ServiceProvider.GetService<LibraryManagementContext>();
@@ -33,7 +33,7 @@ namespace PBL3.Data
                         Email = "sontranviet21@gmail.com"            
                     };
                     await UM.CreateAsync(NewAdmin, "123456");
-                    await UM.AddToRoleAsync(NewAdmin, Roles.Admin);
+                    await UM.AddToRoleAsync(NewAdmin, UserRole.Admin);
                     //thêm vào tài khoản một thông tin về admin nữa
                     Account DetailAdmin = new Account()
                     {
@@ -54,7 +54,7 @@ namespace PBL3.Data
                         Email = "staff1@gmail.com"
                     };
                     await UM.CreateAsync(NewStaff, "123456");
-                    await UM.AddToRoleAsync(NewStaff, Roles.Staff);
+                    await UM.AddToRoleAsync(NewStaff, UserRole.Staff);
                     //thêm vào tài khoản một thông tin về admin nữa
                     Account DetailStaff = new Account()
                     {

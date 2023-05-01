@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.LibraryModel;
 using PBL3.Data;
@@ -27,6 +28,7 @@ namespace PBL3.Controllers.Anonymus
             return View();
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginVM details, string ReturnUrl = "/")
         {
             if (ModelState.IsValid)
@@ -83,7 +85,7 @@ namespace PBL3.Controllers.Anonymus
             if (IsNewUser.Succeeded)
             {
                 // them User account login role
-                await userManager.AddToRoleAsync(newUser, Roles.User);
+                await userManager.AddToRoleAsync(newUser, UserRole.User);
                 // them User vao thong tin acount chinh
                 var Account = new Account()
                 {
@@ -107,6 +109,22 @@ namespace PBL3.Controllers.Anonymus
         {
             await signInManager.SignOutAsync();
             return Redirect("/");
+        }
+
+        public async Task<IActionResult> Detail(string id)
+        {
+            if (User.IsInRole("Admin")) { Console.WriteLine("please"); }
+            if (id != User.Identity.Name)
+            {
+                return Redirect("/");
+            }
+            var model = libraryManagementContext.Accounts.Where(p => p.AccName == id);
+     
+            if (model != null)
+            {
+                return View(model.FirstOrDefault());
+            }
+            return View(model.FirstOrDefault());
         }
     }
 }

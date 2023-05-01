@@ -4,7 +4,7 @@ using PBL3.Data;
 
 namespace PBL3.Controllers.Admin_and_Staff
 {
-    [Authorize(Roles =Roles.Admin)]
+    [Authorize(Roles =UserRole.Admin)]
     public class NewsfeedController : Controller
     {
         // Quản lý bản tin 

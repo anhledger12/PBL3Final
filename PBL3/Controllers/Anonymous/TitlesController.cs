@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PBL3.Models.Entities;
 
-namespace PBL3.Controllers
+namespace PBL3.Controllers.Anonymous
 {
     public class TitlesController : Controller
     {
@@ -154,14 +154,14 @@ namespace PBL3.Controllers
             {
                 _context.Titles.Remove(title);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TitleExists(string id)
         {
-          return (_context.Titles?.Any(e => e.IdTitle == id)).GetValueOrDefault();
+            return (_context.Titles?.Any(e => e.IdTitle == id)).GetValueOrDefault();
         }
     }
 }

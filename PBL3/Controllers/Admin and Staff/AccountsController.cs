@@ -11,7 +11,7 @@ using PBL3.Models.Entities;
 
 namespace PBL3.Controllers.Admin
 {
-    [Authorize(Roles = Roles.AdminOrStaff)]
+    [Authorize(Roles = UserRole.AdminOrStaff)]
     public class AccountsController : Controller
     {
         private readonly LibraryManagementContext _context;
