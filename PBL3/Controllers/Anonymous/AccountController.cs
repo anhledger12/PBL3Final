@@ -168,6 +168,7 @@ namespace PBL3.Controllers.Anonymus
                     else
                     {
                         ModelState.AddModelError("", "Mật khẩu cũ không chính xác, hãy nhập lại");
+                        return View();
                     }
                 }
                 else return View("NotFound");
