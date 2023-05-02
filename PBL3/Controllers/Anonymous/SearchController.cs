@@ -18,10 +18,10 @@ namespace PBL3.Controllers.Anonymous
             {
                 Accounts = _context.Accounts
                                 .Select(x => x)
-                                .Where(x => x.AccName == name).ToList(),
+                                .Where(x => x.AccName.Contains(name)).ToList(),
                 Titles = _context.Titles
                             .Select(x => x)
-                            .Where(x => x.NameBook == name).ToList(),
+                            .Where(x => x.NameBook.Contains(name)).ToList(),
                 
                 BookRentals = _context.BookRentals.ToList()
             };
