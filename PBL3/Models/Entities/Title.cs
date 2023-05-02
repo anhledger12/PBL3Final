@@ -14,9 +14,9 @@ public partial class Title
     public string? NameWriter { get; set; }
 
     public string? NameBookshelf { get; set; }
-
+    //thuộc tính mới: Năm xuất bản
     public int? ReleaseYear { get; set; }
-
+    //thuộc tính mới: Nhà xuất bản
     public string? Publisher { get; set; }
     //do not use this attribute
     public DateTime? ReleaseDate { get; set; }
