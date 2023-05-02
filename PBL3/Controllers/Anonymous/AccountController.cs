@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NuGet.LibraryModel;
 using PBL3.Data;
 using PBL3.Data.ViewModel;
@@ -10,7 +11,7 @@ using PBL3.Models.Entities;
 namespace PBL3.Controllers.Anonymus
 {
     /*
-     * thiếu tính năng view detail, thiếu nút edit, thiếu đổi mật khẩu
+     *thiếu nút edit, thiếu đổi mật khẩu
      * 
      */
     public class AccountController : Controller
@@ -119,11 +120,13 @@ namespace PBL3.Controllers.Anonymus
         [Authorize]
         public async Task<IActionResult> Detail(string id)
         {
-            if (id != User.Identity.Name)
+            if (!UserOrAdmin(id))// khác người dùng và k phải admin
             {
                 return View("NotFound");
             }
             var model = libraryManagementContext.Accounts.Where(p => p.AccName == id);
+
+            ViewBag.id = id;
 
             if (model != null)
             {
@@ -139,30 +142,103 @@ namespace PBL3.Controllers.Anonymus
                 return View("NotFound");
             }
             // vậy là có quyền
+            ViewBag.id = id;
             return View();
         }
+
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordVM model, string id)
+        public async Task<IActionResult> ChangePassword(ChangePasswordVM model,string id)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-            var currentUser = await userManager.FindByNameAsync(id);
-            if (currentUser != null)
-            {
-
-            }
-            else return View("NotFound");
+            
             if (id != User.Identity.Name && !User.IsInRole(UserRole.Admin))// nếu k phải admin cx k phải chủ nhân cái view này
             {
                 return View("NotFound");
             }
+            var currentUser = await userManager.FindByNameAsync(id);
+            if (!User.IsInRole(UserRole.Admin))// là người thường
+            {
+                if (currentUser != null)
+                {
+                    // check mật khẩu cũ
+                    var res = await userManager.ChangePasswordAsync((UserIdentity)currentUser, model.OldPassword, model.NewPassword);
+                    if (res.Succeeded)
+                    {
+                        return View("ChangePasswordSuccess");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Mật khẩu cũ không chính xác, hãy nhập lại");
+                        return View();
+                    }
+                }
+                else return View("NotFound");
+            }
+            // qua hết, đổi mk kiểu admin
+            var token = await userManager.GeneratePasswordResetTokenAsync((UserIdentity)currentUser);
+            var final = await userManager.ResetPasswordAsync(currentUser, token, model.NewPassword);
+            if (!final.Succeeded)
+            {
+                foreach(var er in final.Errors)
+                {
+                    ModelState.AddModelError("", er.Description);
+                }
+                return View(model);
+            }
 
-            return View();
+            return View("ChangePasswordSuccess");
         }
 
+        [Authorize]
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (!UserOrAdmin(id))
+            {
+                return View("NotFound");
+            }
+            var model = libraryManagementContext.Accounts.Where(p => p.AccName == id);
+
+            ViewBag.id = id;
+
+            if (model != null)
+            {
+                return View(model.FirstOrDefault());
+            }
+            return View("NotFound");
+        }
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Account model, string id)
+        {
+            if (id != User.Identity.Name )
+            {
+                return View("NotFound");
+            }
+            if (!ModelState.IsValid)
+            {
+                return await Edit(id);
+            }
+            libraryManagementContext.Accounts.Update(model);
+            await libraryManagementContext.SaveChangesAsync();
+            return Redirect("/Account/Detail/"+id);
+        }
+
+        #region Additional method
+
+        bool UserOrAdmin(string id)
+        {
+            if (id != User.Identity.Name && !User.IsInRole(UserRole.Admin))// khác người dùng và k phải admin
+            {
+                return false;
+            }
+            return true;
+        }
+        #endregion
     }
 }

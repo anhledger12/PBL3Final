@@ -19,7 +19,8 @@ builder.Services.AddIdentity<UserIdentity, IdentityRole>(opts =>
     opts.Password.RequireLowercase = false;
     opts.Password.RequireUppercase = false;
     opts.Password.RequireDigit = false;
-}).AddEntityFrameworkStores<LibraryManagementContext>();
+}).AddEntityFrameworkStores<LibraryManagementContext>().
+AddTokenProvider<DataProtectorTokenProvider<UserIdentity>>(TokenOptions.DefaultProvider);
 
 
 

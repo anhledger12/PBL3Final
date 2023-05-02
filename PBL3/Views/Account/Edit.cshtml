@@ -1,0 +1,94 @@
+﻿@model PBL3.Models.Entities.Account
+
+<form asp-action="Edit">
+<div class="container py-5">
+<div class="flex-column">
+    <div class="col-lg-12">
+        <div class="card-body text-center">
+        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+            class="rounded-circle img-fluid" style="width: 200px;">
+        <h5 class="my-3">@Model.FullName</h5>
+        </div>
+    </div>
+    <div asp-validation-summary="ModelOnly" class = "text-danger"></div>
+    <div class="col-lg-12">
+    <div class="card mb-4">
+            <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                <p class="mb-0">Tên tài khoản</p>
+                </div>
+                <div class="col-sm-9">
+                <input asp-for="AccName" class = "form-control"readonly>        
+                </div>
+            </div>
+            <hr>
+             <div class="row">
+                <div class="col-sm-3">
+                <p class="mb-0">Tên đầy đủ</p>
+                </div>
+                <div class="col-sm-9">
+                <input asp-for="FullName" class = "form-control" >
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-3">
+                <p class="mb-0">Email</p>
+                </div>
+                <div class="col-sm-9">
+                <input asp-for="Email" class = "form-control" readonly>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-3">
+                <p class="mb-0">Số điện thoại</p>
+                </div>
+                <div class="col-sm-9">
+                <input asp-for="Phone" class = "form-control" >
+                <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-3">
+                <p class="mb-0">Ngày sinh</p>
+                </div>
+                <div class="col-sm-9">
+                    @if (Model.DateOfBirth == null)
+                    {
+                        <input asp-for="DateOfBirth" type="date" class= "form-control" value="2003-01-01">
+                    }
+                    else
+                    {
+                        <input asp-for="DateOfBirth" type="date" class= "form-control" value="@(((DateTime)Model.DateOfBirth).ToString("yyyy-MM-dd"))">       
+                    }
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-3">
+                <p class="mb-0">Mã số sinh viên</p>
+                </div>
+                <div class="col-sm-9">
+                @if(User.IsInRole("Admin")){
+                    <input asp-for="Mssv" class = "form-control" >
+                }
+                else
+                {   
+                    <input asp-for="Mssv" class = "form-control" readonly >
+                }
+                 </div>
+            </div>
+            </div>
+    </div>
+    </div>
+</div>
+</div>
+
+<div class="d-flex justify-content-center">
+    <button type="submit" class = "btn btn-outline-success">Lưu thay đôi</button>
+    <a class="btn btn-outline-primary ms-5" asp-action="Detail" asp-route-id = "@ViewBag.id">Đổi mật khẩu</a>
+</div>
+</form>

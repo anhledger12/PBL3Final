@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace PBL3.Models.Entities;
 
@@ -11,6 +12,7 @@ public partial class Account
 
     public DateTime? DateOfBirth { get; set; }
 
+    [DataType(DataType.PhoneNumber, ErrorMessage = "Sai định dạng số điện thoại")]
     public string? Phone { get; set; }
 
     public string? Email { get; set; }
