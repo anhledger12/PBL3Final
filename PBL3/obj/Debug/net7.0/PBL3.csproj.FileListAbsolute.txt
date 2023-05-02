@@ -277,3 +277,4 @@ E:\ITProject\dotNET\PBL3Final\PBL3\obj\Debug\net7.0\refint\PBL3.dll
 E:\ITProject\dotNET\PBL3Final\PBL3\obj\Debug\net7.0\PBL3.pdb
 E:\ITProject\dotNET\PBL3Final\PBL3\obj\Debug\net7.0\PBL3.genruntimeconfig.cache
 E:\ITProject\dotNET\PBL3Final\PBL3\obj\Debug\net7.0\ref\PBL3.dll
+E:\ITProject\dotNET\PBL3Final\PBL3\bin\Debug\net7.0\appsettings.json

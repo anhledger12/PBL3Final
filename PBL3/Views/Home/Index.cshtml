@@ -48,7 +48,7 @@
 <p>
     @if (!User.IsInRole("User"))
     {
-        <a asp-controller="Title" asp-action="Create">Tạo đầu sách mới</a>
+        <a asp-controller="Titles" asp-action="Create">Tạo đầu sách mới</a>
     }
 </p>
 <form asp-controller="Home" asp-action="Index" method = "get">
@@ -98,11 +98,11 @@
                     @Html.DisplayFor(modelItem => item.NameBookshelf)
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.IdTitle">Details</a> |
+                    <a asp-controller="Titles" asp-action="Details" asp-route-id="@item.IdTitle">Details</a> |
                     @if (!User.IsInRole("User"))
                     {
-                        <a asp-action="Edit" asp-route-id="@item.IdTitle">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.IdTitle"> Delete </a>
+                        <a asp-controller="Titles" asp-action="Edit" asp-route-id="@item.IdTitle">Edit</a>
+                        <a asp-controller="Titles" asp-action="Delete" asp-route-id="@item.IdTitle"> Delete </a>
                     }
                 </td>
             </tr>
