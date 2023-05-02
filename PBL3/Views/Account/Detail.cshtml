@@ -15,6 +15,15 @@
         <div class="card-body">
         <div class="row">
             <div class="col-sm-3">
+            <p class="mb-0">Tên tài khoản</p>
+            </div>
+            <div class="col-sm-9">
+            <p class="text-muted mb-0">@Model.AccName</p>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-sm-3">
             <p class="mb-0">Tên đầy đủ</p>
             </div>
             <div class="col-sm-9">
@@ -45,10 +54,10 @@
             <p class="mb-0">Ngày sinh</p>
             </div>
             <div class="col-sm-9">
-                            @if (Model.DateOfBirth != null)
-                            {
-                             <p class="text-muted mb-0">@(((DateTime)Model.DateOfBirth).ToString("dd/MM/yyyy"))</p>
-                            }
+            @if (Model.DateOfBirth != null)
+            {
+                <p class="text-muted mb-0">@(((DateTime)Model.DateOfBirth).ToString("dd/MM/yyyy"))</p>
+            }
             </div>
         </div>
         <hr>
@@ -67,6 +76,6 @@
 </div>
 
 <div class="d-flex justify-content-center">
-    <a class="btn btn-primary" asp-action="Edit">Chỉnh sửa thông tin</a>
-    <a class="btn btn-outline-primary ms-5" asp-action="ChangePassword" asp-route-id = "@User.Identity.Name">Đổi mật khẩu</a>
+    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@ViewBag.id">Chỉnh sửa thông tin</a>
+    <a class="btn btn-outline-primary ms-5" asp-action="ChangePassword" asp-route-id = "@ViewBag.id">Đổi mật khẩu</a>
 </div>

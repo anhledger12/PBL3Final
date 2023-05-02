@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NuGet.LibraryModel;
 using PBL3.Data;
 using PBL3.Data.ViewModel;
@@ -119,11 +120,13 @@ namespace PBL3.Controllers.Anonymus
         [Authorize]
         public async Task<IActionResult> Detail(string id)
         {
-            if (id != User.Identity.Name)
+            if (!UserOrAdmin(id))// khác người dùng và k phải admin
             {
                 return View("NotFound");
             }
             var model = libraryManagementContext.Accounts.Where(p => p.AccName == id);
+
+            ViewBag.id = id;
 
             if (model != null)
             {
@@ -142,8 +145,11 @@ namespace PBL3.Controllers.Anonymus
             ViewBag.id = id;
             return View();
         }
+
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> ChangePassword(string id,ChangePasswordVM model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordVM model,string id)
         {
             if (!ModelState.IsValid)
             {
@@ -188,5 +194,51 @@ namespace PBL3.Controllers.Anonymus
             return View("ChangePasswordSuccess");
         }
 
+        [Authorize]
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (!UserOrAdmin(id))
+            {
+                return View("NotFound");
+            }
+            var model = libraryManagementContext.Accounts.Where(p => p.AccName == id);
+
+            ViewBag.id = id;
+
+            if (model != null)
+            {
+                return View(model.FirstOrDefault());
+            }
+            return View("NotFound");
+        }
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Account model, string id)
+        {
+            if (id != User.Identity.Name )
+            {
+                return View("NotFound");
+            }
+            if (!ModelState.IsValid)
+            {
+                return await Edit(id);
+            }
+            libraryManagementContext.Accounts.Update(model);
+            await libraryManagementContext.SaveChangesAsync();
+            return Redirect("/Account/Detail/"+id);
+        }
+
+        #region Additional method
+
+        bool UserOrAdmin(string id)
+        {
+            if (id != User.Identity.Name && !User.IsInRole(UserRole.Admin))// khác người dùng và k phải admin
+            {
+                return false;
+            }
+            return true;
+        }
+        #endregion
     }
 }
