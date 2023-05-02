@@ -26,6 +26,7 @@ namespace PBL3.Controllers.Anonymus
             signInManager = signinMgr;
             libraryManagementContext = lb;
         }
+        // allow anonymous
         public IActionResult Login(string ReturnUrl = "/")
         {
             ViewBag.ReturnUrl = ReturnUrl;
@@ -96,7 +97,8 @@ namespace PBL3.Controllers.Anonymus
                     Email = result.Email
                 };
                 libraryManagementContext.Accounts.Add(Account);
-                libraryManagementContext.SaveChanges();
+                await libraryManagementContext.SaveChangesAsync();
+                //Những thông tin khác hiện tại coi như trống
             }
             else
             {
@@ -108,18 +110,19 @@ namespace PBL3.Controllers.Anonymus
             }
             return Redirect("/");
         }
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();
             return Redirect("/");
         }
-        [Authorize()]
+        [Authorize]
         public async Task<IActionResult> Detail(string id)
         {
             // Phần giao diện detail chưa làm gì, cũng như nút edit
             if (id != User.Identity.Name)
             {
-                return Redirect("/");
+                return View("NotFound");
             }
             var model = libraryManagementContext.Accounts.Where(p => p.AccName == id);
      
@@ -127,9 +130,8 @@ namespace PBL3.Controllers.Anonymus
             {
                 return View(model.FirstOrDefault());
             }
-            return View(model.FirstOrDefault());
+            return View("NotFound");
         }
-
 
     }
 }
