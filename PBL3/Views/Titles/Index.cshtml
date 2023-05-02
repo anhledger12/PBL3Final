@@ -7,7 +7,10 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @if (!User.IsInRole("User"))
+    {
+        <a asp-action="Create">Tạo đầu sách mới</a>
+    }
 </p>
 <table class="table">
     <thead>
@@ -19,13 +22,13 @@
                 @Html.DisplayNameFor(model => model.NameWriter)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ReleaseDate)
+                @Html.DisplayNameFor(model => model.ReleaseYear)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Publisher)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.NameBookshelf)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdRepublishNavigation)
             </th>
             <th></th>
         </tr>
@@ -40,18 +43,21 @@
                 @Html.DisplayFor(modelItem => item.NameWriter)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ReleaseDate)
+                @Html.DisplayFor(modelItem => item.ReleaseYear)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Publisher)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.NameBookshelf)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IdRepublishNavigation.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdTitle">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.IdTitle">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdTitle">Delete</a>
+                    @if (!User.IsInRole("User"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.IdTitle">Edit</a> 
+                        <a asp-action = "Delete" asp-route-id="@item.IdTitle"> Delete </a>
+                    }
             </td>
         </tr>
 }

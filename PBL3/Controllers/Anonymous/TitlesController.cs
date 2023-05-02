@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PBL3.Models.Entities;
+using PBL3.Models;
+using PBL3.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PBL3.Controllers.Anonymous
 {
@@ -17,8 +20,13 @@ namespace PBL3.Controllers.Anonymous
      * Tạo đầu sách: Thêm một sách với mã sách, số lượng, tên sách và các thông tin liên quan khác
      *  Khi tạo một đầu sách như vậy, thì số lượng đi kèm sẽ tạo thêm một số lượng sách như v
      * 
+     * Thêm sách và tạo đầu sách tích hợp vào action Create, done, pending test ///////////////////
+     * 
      * Sửa đầu sách: sửa thông tin, có bao gồm sửa số lượng, nhưng mà tạm thời chỉ cho phép sửa số lượng sách tăng thêm
      *   (Vậy xóa sách xử lý như thế nào ?)
+     *   //Sửa số lượng sách theo hướng tăng thêm => đưa vào Create
+     *   Ở đây chỉ sửa các thông tin cơ bản
+     * Chưa handle exception khi sửa thông tin title gây trùng
      * 
      * Xem : đơn giản r, nhưng thêm vào những action khác các thuộc tính bảo mật
      * 
@@ -56,14 +64,14 @@ namespace PBL3.Controllers.Anonymous
             {
                 return NotFound();
             }
-
+            
             return View(title);
         }
 
         // GET: Titles/Create
+        [Authorize(Roles = UserRole.AdminOrStaff)]
         public IActionResult Create()
         {
-            ViewData["IdRepublish"] = new SelectList(_context.Republishes, "Id", "Id");
             return View();
         }
 
@@ -72,19 +80,72 @@ namespace PBL3.Controllers.Anonymous
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdTitle,IdRepublish,NameBook,NameWriter,ReleaseDate,NameBookshelf")] Title title)
+        [Authorize(Roles = UserRole.AdminOrStaff)]
+        public async Task<IActionResult> Create([Bind("NameBook,NameWriter,ReleaseYear,Publisher,NameBookshelf,Amount")] InputTitle inputTitle)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(title);
+                Title title = await _context.Titles.Where(p => 
+                p.NameBook == inputTitle.NameBook &&
+                p.NameWriter == inputTitle.NameWriter &&
+                p.ReleaseYear == inputTitle.ReleaseYear &&
+                p.Publisher == inputTitle.Publisher).FirstOrDefaultAsync();
+                
+                if (title == null)
+                {
+                    string newID = GetAbbreviation(inputTitle.NameBook) + "_"
+                        + GetAbbreviation(inputTitle.Publisher) + inputTitle.ReleaseYear.ToString() + "_"
+                        + GetRandomKey(4);
+
+                    title = new Title
+                    {
+                        IdTitle = newID,
+                        NameBook = inputTitle.NameBook,
+                        ReleaseYear = inputTitle.ReleaseYear,
+                        Publisher = inputTitle.Publisher,
+                        NameWriter = inputTitle.NameWriter,
+                        NameBookshelf = inputTitle.NameBookshelf
+                    };
+
+                    await _context.AddAsync(title);
+
+                }
+
+                //lấy max ID của sách, thêm vào số lượng từ ID+1
+                string maxBookId = _context.Books.Where(p => p.IdTitle == title.IdTitle)
+                    .Select(p => p.IdBook).FirstOrDefault();
+                string addId;
+                if (maxBookId == null)
+                {
+                    //start from zero, 4 digits
+                    addId = "0000";
+                }
+                else
+                {
+                    addId = IDIncrement(maxBookId);
+                }
+                List<Book> addList = new List<Book>();
+                for (int i = 0; i < inputTitle.Amount; i++)
+                {
+                    addList.Add(new Book
+                    {
+                        IdBook = addId,
+                        IdTitle = title.IdTitle,
+                        StateRent = false
+                    });
+
+                    addId = IDIncrement(addId);
+                }
+                await _context.AddRangeAsync(addList);
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdRepublish"] = new SelectList(_context.Republishes, "Id", "Id", title.IdRepublish);
-            return View(title);
+            return View(inputTitle);
         }
 
         // GET: Titles/Edit/5
+        [Authorize(Roles = UserRole.AdminOrStaff)]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null || _context.Titles == null)
@@ -97,7 +158,6 @@ namespace PBL3.Controllers.Anonymous
             {
                 return NotFound();
             }
-            ViewData["IdRepublish"] = new SelectList(_context.Republishes, "Id", "Id", title.IdRepublish);
             return View(title);
         }
 
@@ -106,7 +166,8 @@ namespace PBL3.Controllers.Anonymous
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("IdTitle,IdRepublish,NameBook,NameWriter,ReleaseDate,NameBookshelf")] Title title)
+        [Authorize(Roles = UserRole.AdminOrStaff)]
+        public async Task<IActionResult> Edit(string id, [Bind("IdTitle,NameBook,NameWriter,ReleaseYear,Publisher,NameBookshelf")] Title title)
         {
             if (id != title.IdTitle)
             {
@@ -115,6 +176,18 @@ namespace PBL3.Controllers.Anonymous
 
             if (ModelState.IsValid)
             {
+                Title query = await _context.Titles.Where(p =>
+                p.NameBook == title.NameBook &&
+                p.NameWriter == title.NameWriter &&
+                p.ReleaseYear == title.ReleaseYear &&
+                p.Publisher == title.Publisher).FirstOrDefaultAsync(); 
+
+                if (query != null)
+                {
+                    //exception: tìm thấy bản ghi trùng trong dữ liệu
+                    ModelState.AddModelError("", "Thông tin đầu sách sau khi đổi bị trùng với đầu sách khác. Vui lòng thử lại.");
+                    return View(query);
+                }
                 try
                 {
                     _context.Update(title);
@@ -133,11 +206,11 @@ namespace PBL3.Controllers.Anonymous
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdRepublish"] = new SelectList(_context.Republishes, "Id", "Id", title.IdRepublish);
             return View(title);
         }
 
         // GET: Titles/Delete/5
+        [Authorize(Roles = UserRole.AdminOrStaff)]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null || _context.Titles == null)
@@ -159,6 +232,7 @@ namespace PBL3.Controllers.Anonymous
         // POST: Titles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = UserRole.AdminOrStaff)]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             if (_context.Titles == null)
@@ -178,6 +252,35 @@ namespace PBL3.Controllers.Anonymous
         private bool TitleExists(string id)
         {
             return (_context.Titles?.Any(e => e.IdTitle == id)).GetValueOrDefault();
+        }
+
+        private string GetAbbreviation(string text)
+        {
+            string abrr = string.Empty;
+            string[] words = text.Split(' ',StringSplitOptions.TrimEntries|StringSplitOptions.RemoveEmptyEntries);
+            foreach (string word in words)
+            {
+                abrr += word[0];
+            }
+            return abrr;
+        }
+
+        private string GetRandomKey(int digits)
+        {
+            Random random = new Random();
+            string r = string.Empty;    
+            for (int i = 0; i < digits; i++)
+            {
+                r += random.Next(0, 10).ToString();
+            }
+            return r;
+        }
+
+        private string IDIncrement(string id)
+        {
+            int length = id.Length;
+            string digit = "D" + length.ToString();
+            return (Convert.ToInt16(id) + 1).ToString(digit);
         }
     }
 }

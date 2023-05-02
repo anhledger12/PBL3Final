@@ -7,7 +7,7 @@ public partial class Book
 {
     public string IdBook { get; set; } = null!;
 
-    public string? IdTitle { get; set; }
+    public string IdTitle { get; set; }
 
     public bool? StateRent { get; set; }
 

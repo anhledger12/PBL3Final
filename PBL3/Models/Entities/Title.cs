@@ -13,9 +13,13 @@ public partial class Title
 
     public string? NameWriter { get; set; }
 
-    public DateTime? ReleaseDate { get; set; }
-
     public string? NameBookshelf { get; set; }
+
+    public int? ReleaseYear { get; set; }
+
+    public string? Publisher { get; set; }
+    //do not use this attribute
+    public DateTime? ReleaseDate { get; set; }
 
     public virtual ICollection<Book> Books { get; set; } = new List<Book>();
 
