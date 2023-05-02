@@ -57,3 +57,47 @@ body {
 .dropdown:hover .dropbtn {
     background-color: #3e8e41;
 }
+
+
+.parent-div {
+    position: relative; /* set the parent div to relative position */
+}
+
+.Search {
+    position: absolute; /* set the form element to absolute position */
+    top: 65%; /* set the top offset to 50% of the parent div height */
+    left:60%; /* set the left offset to 50% of the parent div width */
+    transform: translate(-50%, -50%); /* use transform to center the form */
+    transition: all 1s ease;
+}
+
+/* Optional styles to adjust the width of the form element */
+.Search {
+    width: 80%;
+    max-width: 600px;
+}
+
+p > input[type = text] {
+    padding-left: 30px;
+    width: 30%;
+    transition: all 1s ease;
+    border-radius: 6px;
+    direction: ltr;
+}
+
+p > input[type = text]:focus{
+    width: 50%;
+}
+
+p > input[type = text]:hover{
+    width: 50%;
+}
+
+.btn-style {
+    position: absolute;
+    color: black;
+    left: 6px;
+    background-color: transparent;
+    border-radius: 6px;
+    border: none;
+}
