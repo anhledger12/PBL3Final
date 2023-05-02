@@ -5,80 +5,67 @@
     ViewData["Title"] = "Search Page";
 }
 
-@model IEnumerable<PBL3.Models.Entities.Title>
+@model PBL3.Models.SearchViewModel;
 
-<div class="text-center">
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container-fluid">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">PBL3</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="AccountLogins" asp-action="Index">Title</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Search" asp-action="Index">Accounts</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="ActionLogs" asp-action="Index">Rentals</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</div>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NameBook)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NameWriter)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReleaseDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NameBookshelf)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdRepublishNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-                <tr>
-                    <td>
-                    @Html.DisplayFor(modelItem => item.NameBook)
-                    </td>
-                    <td>
-                    @Html.DisplayFor(modelItem => item.NameWriter)
-                    </td>
-                    <td>
-                    @Html.DisplayFor(modelItem => item.ReleaseDate)
-                    </td>
-                    <td>
-                    @Html.DisplayFor(modelItem => item.NameBookshelf)
-                    </td>
-                    <td>
-                    @Html.DisplayFor(modelItem => item.IdRepublishNavigation.Id)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.IdTitle">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.IdTitle">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.IdTitle">Delete</a>
-                    </td>
-                </tr>
-        }
-    </tbody>
-</table>
-
-
+<ul class="nav nav-pills">  
+  <li class="nav-item ">  
+    <a class="nav-link active rounded-0" id ="Titles" data-toggle="pill" href="#home" onclick = "Enable1()">Titles</a>  
+  </li>  
+  <li class="nav-item">  
+    <a class="nav-link rounded-0" id = "AccNames" data-toggle="pill" href="#menu1" onclick = "Enable2()">AccNames</a>  
+  </li>   
+</ul>  
+<div class="tab-content">  
+    <div class="tab-pane container active p-0" id="home">  
+        <h5 class="text-uppercase p-2 text-center">List of Books</h5>  
+        <table class="table table-bordered table-striped">  
+            <thead class="thead-dark text-dark">  
+                <tr>  
+                    <th>Id</th>  
+                    <th>Tên đầu sách</th>  
+                    <th>Tên tác giả</th>  
+                    <th>Kệ sách</th>  
+                    <th>Năm xuất bản</th>  
+                </tr>  
+            </thead>  
+            <tbody>  
+                @foreach (var title in Model.Titles)
+                {  
+                        <tr>  
+                            <td>@title.IdTitle</td>  
+                            <td>@title.NameBook</td>  
+                            <td>@title.NameWriter</td>  
+                            <td>@title.NameBookshelf</td>  
+                            <td>@title.ReleaseYear</td>   
+                        </tr>  
+                }  
+            </tbody>  
+        </table>  
+    </div>
+    <div class="tab-pane container fade p-0" id="menu1">  
+        <h5 class="text-uppercase p-2 text-center">List of Accounts</h5>  
+        <table class="table table-bordered table-striped">  
+            <thead class="thead-dark text-dark">  
+                <tr>  
+                    <th>Mã số sinh viên</th>  
+                    <th>Tên tài khoản</th>  
+                    <th>Số điện thoại</th>
+                    <th>Email</th> 
+                    <th>Ngày sinh</th> 
+                </tr>  
+            </thead>  
+            <tbody>  
+                @foreach (var Account in Model.Accounts)
+                {  
+                        <tr>  
+                            <td>@Account.Mssv</td>  
+                            <td>@Account.AccName</td>  
+                            <td>@Account.Phone</td> 
+                            <td>@Account.Email</td>
+                            <td>@Account.DateOfBirth</td> 
+                        </tr>  
+                }  
+            </tbody>  
+        </table>  
+    </div>  
+</div>  

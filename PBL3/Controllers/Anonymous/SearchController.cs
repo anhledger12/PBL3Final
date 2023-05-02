@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PBL3.Models.Entities;
+using PBL3.Models;
 
 namespace PBL3.Controllers.Anonymous
 {
@@ -11,19 +12,20 @@ namespace PBL3.Controllers.Anonymous
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string name, string TypeSearch = "Title")
+        public IActionResult Index(string name)
         {
-            if (_context.Titles == null)
+            var tables = new SearchViewModel
             {
-                return Problem("Không có table Titles");
-            }
-            var title = from m in _context.Titles
-                        select m;
-            if (!string.IsNullOrEmpty(name))
-            {
-                title = title.Where(m => m.NameBook!.Contains(name));
-            }
-            return View(title.ToList());
+                Accounts = _context.Accounts
+                                .Select(x => x)
+                                .Where(x => x.AccName == name).ToList(),
+                Titles = _context.Titles
+                            .Select(x => x)
+                            .Where(x => x.NameBook == name).ToList(),
+                
+                BookRentals = _context.BookRentals.ToList()
+            };
+            return View(tables);
         }
         //public async Task<IActionResult> AccSearch(string name);
     }
