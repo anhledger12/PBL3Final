@@ -9,6 +9,8 @@ public partial class Book
 
     public string IdTitle { get; set; }
 
+    public string SubId { get;set; }
+
     public bool? StateRent { get; set; }
 
     public virtual ICollection<BookRentDetail> BookRentDetails { get; set; } = new List<BookRentDetail>();

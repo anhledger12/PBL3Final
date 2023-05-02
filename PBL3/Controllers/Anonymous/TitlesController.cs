@@ -113,12 +113,12 @@ namespace PBL3.Controllers.Anonymous
 
                 //lấy max ID của sách, thêm vào số lượng từ ID+1
                 string maxBookId = _context.Books.Where(p => p.IdTitle == title.IdTitle)
-                    .OrderByDescending(p => p.IdBook).Select(p => p.IdBook).FirstOrDefault();
+                    .OrderByDescending(p => p.SubId).Select(p => p.SubId).FirstOrDefault();
                 string addId;
                 if (maxBookId == null)
                 {
-                    //start from zero, 4 digits
-                    addId = "0000";
+                    //start from 0001, 4 digits
+                    addId = "0001";
                 }
                 else
                 {
@@ -129,11 +129,11 @@ namespace PBL3.Controllers.Anonymous
                 {
                     addList.Add(new Book
                     {
-                        IdBook = addId,
+                        IdBook = title.IdTitle + "." + addId,
                         IdTitle = title.IdTitle,
+                        SubId = addId,
                         StateRent = false
                     });
-
                     addId = IDIncrement(addId);
                 }
                 await _context.AddRangeAsync(addList);
@@ -239,10 +239,32 @@ namespace PBL3.Controllers.Anonymous
             {
                 return Problem("Entity set 'LibraryManagementContext.Titles'  is null.");
             }
-            var title = await _context.Titles.FindAsync(id);
+            Title title = await _context.Titles.FindAsync(id);
             if (title != null)
             {
-                _context.Titles.Remove(title);
+                bool ableToDelete = true;
+                
+                List<Book> booksOfTitle = _context.Books.Where(p => p.IdTitle == id).ToList();
+                foreach (Book book in booksOfTitle)
+                {
+                    if (book.StateRent == true)
+                    {
+                        ableToDelete = false;
+                        break;
+                    }
+                }
+                if (!ableToDelete)
+                {
+                    ModelState.AddModelError("", "Các sách của đầu sách này chưa được thu hồi hết, " +
+                        "cần thu hồi toàn bộ trước khi xoá.");
+                    return View(title);
+                }
+                else
+                {
+                    _context.RemoveRange(booksOfTitle);
+#warning Có thể sẽ conflict với bảng BookRentDetail. Cần cân nhắc bỏ constraint Foreign_Key của IdBook trong BookRentDetail, hoặc xoá luôn các record BookRentDetail/BookRental có liên quan tới sách
+                    _context.Titles.Remove(title);
+                }
             }
 
             await _context.SaveChangesAsync();

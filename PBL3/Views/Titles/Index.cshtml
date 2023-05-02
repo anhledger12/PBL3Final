@@ -52,12 +52,12 @@
                 @Html.DisplayFor(modelItem => item.NameBookshelf)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.IdTitle">Details</a> |
+                <a asp-action="Details" asp-route-id="@item.IdTitle">Details</a> 
+
                     @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
-                    {
+                    {                        
                         <a asp-action="Edit" asp-route-id="@item.IdTitle">Edit</a> 
-                        <p>|</p>
-                        <a asp-action = "Delete" asp-route-id="@item.IdTitle"> Delete </a>
+                        <a asp-action="Delete" asp-route-id="@item.IdTitle">Delete</a>
                     }
             </td>
         </tr>
