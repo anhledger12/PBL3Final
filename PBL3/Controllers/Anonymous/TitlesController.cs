@@ -113,7 +113,7 @@ namespace PBL3.Controllers.Anonymous
 
                 //lấy max ID của sách, thêm vào số lượng từ ID+1
                 string maxBookId = _context.Books.Where(p => p.IdTitle == title.IdTitle)
-                    .Select(p => p.IdBook).FirstOrDefault();
+                    .OrderByDescending(p => p.IdBook).Select(p => p.IdBook).FirstOrDefault();
                 string addId;
                 if (maxBookId == null)
                 {

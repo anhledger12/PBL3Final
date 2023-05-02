@@ -7,7 +7,7 @@
 <h1>Index</h1>
 
 <p>
-    @if (!User.IsInRole("User"))
+    @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
     {
         <a asp-action="Create">Tạo đầu sách mới</a>
     }
@@ -53,7 +53,7 @@
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.IdTitle">Details</a> |
-                    @if (!User.IsInRole("User"))
+                    @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
                     {
                         <a asp-action="Edit" asp-route-id="@item.IdTitle">Edit</a> 
                         <p>|</p>

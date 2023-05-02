@@ -99,7 +99,7 @@
                 </td>
                 <td>
                     <a asp-controller="Titles" asp-action="Details" asp-route-id="@item.IdTitle">Details</a> |
-                    @if (!User.IsInRole("User"))
+                    @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
                     {
                         <a asp-controller="Titles" asp-action="Edit" asp-route-id="@item.IdTitle">Edit</a>
                         <a asp-controller="Titles" asp-action="Delete" asp-route-id="@item.IdTitle"> Delete </a>
