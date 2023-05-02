@@ -79,8 +79,8 @@ namespace PBL3.Controllers.Admin
                 };
                 if (f != null)
                 {
-                    usermanager.CreateAsync(f, "123456");
-                    usermanager.AddToRoleAsync(f, UserRole.User);
+                    await usermanager.CreateAsync(f, "123456");
+                    await usermanager.AddToRoleAsync(f, UserRole.User);
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -174,7 +174,7 @@ namespace PBL3.Controllers.Admin
             var user = await usermanager.FindByNameAsync(id);
             if (user != null)
             {
-                usermanager.DeleteAsync(user);
+                await usermanager.DeleteAsync(user);
 
             }
             return RedirectToAction(nameof(Index));

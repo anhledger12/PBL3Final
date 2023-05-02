@@ -67,6 +67,6 @@
 </div>
 
 <div class="d-flex justify-content-center">
-    <button type="button" class="btn btn-primary">Chỉnh sửa</button>
-    <button type="button" class="btn btn-outline-primary ms-5">Đổi mật khẩu</button>
+    <a class="btn btn-primary" asp-action="Edit">Chỉnh sửa thông tin</a>
+    <a class="btn btn-outline-primary ms-5" asp-action="ChangePassword" asp-route-id = "@User.Identity.Name">Đổi mật khẩu</a>
 </div>

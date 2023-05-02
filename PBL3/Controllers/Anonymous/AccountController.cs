@@ -10,7 +10,7 @@ using PBL3.Models.Entities;
 namespace PBL3.Controllers.Anonymus
 {
     /*
-     * thiếu tính năng view detail, thiếu nút edit, thiếu đổi mật khẩu
+     *thiếu nút edit, thiếu đổi mật khẩu
      * 
      */
     public class AccountController : Controller
@@ -139,29 +139,52 @@ namespace PBL3.Controllers.Anonymus
                 return View("NotFound");
             }
             // vậy là có quyền
+            ViewBag.id = id;
             return View();
         }
-        [Authorize]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordVM model, string id)
+        public async Task<IActionResult> ChangePassword(string id,ChangePasswordVM model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-            var currentUser = await userManager.FindByNameAsync(id);
-            if (currentUser != null)
-            {
-
-            }
-            else return View("NotFound");
+            
             if (id != User.Identity.Name && !User.IsInRole(UserRole.Admin))// nếu k phải admin cx k phải chủ nhân cái view này
             {
                 return View("NotFound");
             }
+            var currentUser = await userManager.FindByNameAsync(id);
+            if (!User.IsInRole(UserRole.Admin))// là người thường
+            {
+                if (currentUser != null)
+                {
+                    // check mật khẩu cũ
+                    var res = await userManager.ChangePasswordAsync((UserIdentity)currentUser, model.OldPassword, model.NewPassword);
+                    if (res.Succeeded)
+                    {
+                        return View("ChangePasswordSuccess");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Mật khẩu cũ không chính xác, hãy nhập lại");
+                    }
+                }
+                else return View("NotFound");
+            }
+            // qua hết, đổi mk kiểu admin
+            var token = await userManager.GeneratePasswordResetTokenAsync((UserIdentity)currentUser);
+            var final = await userManager.ResetPasswordAsync(currentUser, token, model.NewPassword);
+            if (!final.Succeeded)
+            {
+                foreach(var er in final.Errors)
+                {
+                    ModelState.AddModelError("", er.Description);
+                }
+                return View(model);
+            }
 
-            return View();
+            return View("ChangePasswordSuccess");
         }
 
     }
