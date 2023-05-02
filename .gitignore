@@ -4,3 +4,7 @@
 
 /.vs/PBL3Final/v17
 /.vs/PBL3Final/FileContentIndex
+/.vs
+/obj
+/bin
+/appsetting.json
