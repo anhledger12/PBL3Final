@@ -39,7 +39,7 @@
                         <form class = "form-inline my-2 my-lg-0" style="padding-right: 25px;">
                             @*<a class="btn btn-outline-primary" asp-controller = "Account">Xin chào, @User.Identity.Name </a>*@
                                 <div class="dropdown">
-                                    <button class="btn btn-outline-primary" asp-controller="Account" asp-action="Detail">Xin chào, @User.Identity.Name</button>
+                                        <button class="btn btn-outline-primary" asp-controller="Account" asp-action="Detail" asp-route-id = "@User.Identity.Name">Xin chào, @User.Identity.Name</button>
                                     <div class="dropdown-content">
                                         <a asp-controller="Account" asp-action="Detail" asp-route-id = "@User.Identity.Name">Tài khoản</a>
                                         <a asp-controller="#"> Đơn mượn</a>
