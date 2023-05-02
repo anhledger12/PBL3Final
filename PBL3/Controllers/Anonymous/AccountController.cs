@@ -119,18 +119,49 @@ namespace PBL3.Controllers.Anonymus
         [Authorize]
         public async Task<IActionResult> Detail(string id)
         {
-            // Phần giao diện detail chưa làm gì, cũng như nút edit
             if (id != User.Identity.Name)
             {
                 return View("NotFound");
             }
             var model = libraryManagementContext.Accounts.Where(p => p.AccName == id);
-     
+
             if (model != null)
             {
                 return View(model.FirstOrDefault());
             }
             return View("NotFound");
+        }
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(string id)
+        {
+            if (id != User.Identity.Name && !User.IsInRole(UserRole.Admin))// nếu k phải admin cx k phải chủ nhân cái view này
+            {
+                return View("NotFound");
+            }
+            // vậy là có quyền
+            return View();
+        }
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordVM model, string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var currentUser = await userManager.FindByNameAsync(id);
+            if (currentUser != null)
+            {
+
+            }
+            else return View("NotFound");
+            if (id != User.Identity.Name && !User.IsInRole(UserRole.Admin))// nếu k phải admin cx k phải chủ nhân cái view này
+            {
+                return View("NotFound");
+            }
+
+            return View();
         }
 
     }
