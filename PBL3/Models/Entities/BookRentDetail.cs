@@ -11,8 +11,6 @@ public partial class BookRentDetail
 
     public bool? StateReturn { get; set; }
 
-    public bool? StateApprove { get; set; }
-
     public bool? StateTake { get; set; }
 
     public DateTime? ReturnDate { get; set; }
