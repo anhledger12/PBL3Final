@@ -29,8 +29,6 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
 
     public virtual DbSet<Notificate> Notificates { get; set; }
 
-    public virtual DbSet<Republish> Republishes { get; set; }
-
     public virtual DbSet<Title> Titles { get; set; }
 
     public virtual DbSet<NewsFeed> NewsFeeds { get; set; }
@@ -123,7 +121,6 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.ReturnDate).HasColumnType("datetime");
-            entity.Property(e => e.StateApprove).HasDefaultValueSql("((0))");
             entity.Property(e => e.StateReturn).HasDefaultValueSql("((0))");
             entity.Property(e => e.StateTake).HasDefaultValueSql("((0))");
 
@@ -152,6 +149,7 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
                 .IsUnicode(false);
             entity.Property(e => e.TimeCreate).HasColumnType("date");
             entity.Property(e => e.StateSend).HasDefaultValueSql("((0))");
+            entity.Property(e => e.StateApprove).HasDefaultValueSql("((0))");
             entity.HasOne(d => d.AccApproveNavigation).WithMany(p => p.BookRentalAccApproveNavigations)
                 .HasForeignKey(d => d.AccApprove)
                 .HasConstraintName("FK__BookRenta__AccAp__412EB0B6");
@@ -209,15 +207,6 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
             entity.ToTable("NewsFeed");
         });
 
-        modelBuilder.Entity<Republish>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Republis__3214EC076ADD85DF");
-
-            entity.ToTable("Republish");
-
-            entity.Property(e => e.TimeOfRep).HasColumnType("datetime");
-        });
-
         modelBuilder.Entity<Title>(entity =>
         {
             entity.HasKey(e => e.IdTitle).HasName("PK__Title__2123011DEE7FEB85");
@@ -227,11 +216,6 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
             entity.Property(e => e.IdTitle)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.ReleaseDate).HasColumnType("date");
-
-            entity.HasOne(d => d.IdRepublishNavigation).WithMany(p => p.Titles)
-                .HasForeignKey(d => d.IdRepublish)
-                .HasConstraintName("FK__Title__IdRepubli__48CFD27E");
         });
 
         OnModelCreatingPartial(modelBuilder);
