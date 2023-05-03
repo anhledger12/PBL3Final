@@ -36,7 +36,14 @@
                             <td>@title.NameBook</td>  
                             <td>@title.NameWriter</td>  
                             <td>@title.NameBookshelf</td>  
-                            <td>@title.ReleaseYear</td>   
+                            <td>@title.ReleaseYear</td>
+                            <td>
+                                @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
+                                {                     
+                                    <a asp-controller = "Titles" asp-action="Edit" asp-route-id="@title.IdTitle">Edit</a>
+                                    <a asp-controller = "Titles" asp-action="Delete" asp-route-id="@title.IdTitle">Delete</a>
+                                }
+                            </td>
                         </tr>  
                 }  
             </tbody>  

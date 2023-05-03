@@ -12,7 +12,7 @@ namespace PBL3.Controllers.Anonymous
             _context = context;
         }
 
-        public IActionResult Index(string name)
+        public IActionResult Index(string name = "")
         {
             var tables = new SearchViewModel
             {
