@@ -128,7 +128,7 @@ namespace PBL3.Controllers.Anonymus
 
             ViewBag.id = id;
 
-            if (model != null)
+            if (model != null && model.Count()!=0)
             {
                 return View(model.FirstOrDefault());
             }
