@@ -15,3 +15,31 @@ function Enable2() {
     $("#Titles").removeClass("active");
     $("#AccNames").addClass("active");
 }
+
+function On1() {
+    $("#Pending-Table").removeClass("fade").addClass("active");
+    $("#WaitingTake-Table").removeClass("active").addClass("fade");
+    $("#WaitingReturn-Table").removeClass("active").addClass("fade");
+    $("#Pending").addClass("active");
+    $("#WaitingTake").removeClass("active");
+    $("#WaitingReturn").removeClass("active");
+}
+
+function On2() {
+    $("#Pending-Table").removeClass("active").addClass("fade");
+    $("#WaitingTake-Table").removeClass("fade").addClass("active");
+    $("#WaitingReturn-Table").removeClass("active").addClass("fade");
+    $("#Pending").removeClass("active");
+    $("#WaitingTake").addClass("active");
+    $("#WaitingReturn").removeClass("active");
+}
+
+function On3() {
+    $("#Pending-Table").removeClass("active").addClass("fade");
+    $("#WaitingTake-Table").removeClass("active").addClass("fade");
+    $("#WaitingReturn-Table").removeClass("fade").addClass("active");
+    $("#Pending").removeClass("active");
+    $("#WaitingTake").removeClass("active");
+    $("#WaitingReturn").addClass("active");
+
+}

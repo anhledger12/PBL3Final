@@ -7,19 +7,19 @@
 
 <ul class="nav nav-pills">
     <li class="nav-item ">
-        <a class="nav-link active rounded-0" id="Pending" data-toggle="pill" href="#home" onclick="On1()">Chờ phê duyệt</a>
+        <a class="nav-link active rounded-0" id="Pending" data-toggle="pill" href="#Pending-Table" onclick="On1()">Chờ phê duyệt</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link rounded-0" id="WaitingTake" data-toggle="pill" href="#tab1" onclick="On2()">Đang chờ lấy</a>
+        <a class="nav-link rounded-0" id="WaitingTake" data-toggle="pill" href="#WaitingTake-Table" onclick="On2()">Đang chờ lấy</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link rounded-0" id="WaitingReturn" data-toggle="pill" href="#tab2" onclick="On3()">Đang diễn ra</a>
+        <a class="nav-link rounded-0" id="WaitingReturn" data-toggle="pill" href="#WaitingReturn-Table" onclick="On3()">Đang diễn ra</a>
     </li>
 </ul>
 
 <div class="tab-content">
 
-    <div class="tab-pane container active p-0" id="Pending">
+    <div class="tab-pane container active p-0" id="Pending-Table">
         <h5 class="text-uppercase p-2 text-center">Danh sách chờ duyệt</h5>
         <table class="table">
             <thead>
@@ -46,7 +46,7 @@
         </table>
     </div>
 
-    <div class="tab-pane container fade p-0" id="WaitingTake">
+    <div class="tab-pane container fade p-0" id="WaitingTake-Table">
         <h5 class="text-uppercase p-2 text-center">Danh sách chờ lấy đơn</h5>
         <table class="table">
             <thead>
@@ -73,7 +73,7 @@
         </table>
     </div>
 
-    <div class="tab-pane container fade p-0" id="WaitingReturn">
+    <div class="tab-pane container fade p-0" id="WaitingReturn-Table">
         <h5 class="text-uppercase p-2 text-center">Danh sách đơn đang diễn ra</h5>
         <table class="table">
             <thead>
