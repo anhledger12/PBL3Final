@@ -45,7 +45,7 @@ namespace PBL3.Controllers.Anonymous
         // GET: Titles
         public async Task<IActionResult> Index()
         {
-            var libraryManagementContext = _context.Titles.Include(t => t.IdRepublishNavigation);
+            var libraryManagementContext = _context.Titles.Select(t => t);
             return View(await libraryManagementContext.ToListAsync());
         }
 
@@ -58,7 +58,7 @@ namespace PBL3.Controllers.Anonymous
             }
 
             var title = await _context.Titles
-                .Include(t => t.IdRepublishNavigation)
+                .Select(t => t)
                 .FirstOrDefaultAsync(m => m.IdTitle == id);
             if (title == null)
             {
@@ -219,7 +219,7 @@ namespace PBL3.Controllers.Anonymous
             }
 
             var title = await _context.Titles
-                .Include(t => t.IdRepublishNavigation)
+                .Select(t => t)
                 .FirstOrDefaultAsync(m => m.IdTitle == id);
             if (title == null)
             {

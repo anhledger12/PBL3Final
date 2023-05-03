@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using PBL3.Data;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -22,12 +23,44 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between parent-div">
                     <ul class="navbar-nav flex-grow-1">
+
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
                         </li>
+
+                        <!-- đoạn này là if else mấy cái taskbar của người dùng và thủ thư-->
+                        @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="Index">QL độc giả</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Titles" asp-action="Index">QL sách</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Notificates" asp-action="">Thông báo</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Search" asp-action="Index" >Tra cứu</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Notificates" asp-action="Index">Thông báo</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="RentBook" asp-action="Index">Mượn sách</a>
+                            </li>
+                        }
+
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+
+
+
                     </ul>
                     <form class = "Search" asp-controller="Search" asp-action="Index" method = "get">
                         <p>
