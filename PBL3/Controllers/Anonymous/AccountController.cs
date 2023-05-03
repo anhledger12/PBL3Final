@@ -109,7 +109,7 @@ namespace PBL3.Controllers.Anonymus
                 }
                 return View(result);
             }
-            return Redirect("/");
+            return View("RegisterSuccess");
         }
         [Authorize]
         public async Task<IActionResult> Logout()
