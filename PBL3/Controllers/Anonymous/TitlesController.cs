@@ -57,15 +57,67 @@ namespace PBL3.Controllers.Anonymous
                 return NotFound();
             }
 
-            var title = await _context.Titles
-                .Select(t => t)
-                .FirstOrDefaultAsync(m => m.IdTitle == id);
+            Title title = await _context.Titles
+                .Where(t => t.IdTitle == id)
+                .FirstOrDefaultAsync();
             if (title == null)
             {
                 return NotFound();
             }
             
             return View(title);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = UserRole.All)]
+        public async Task<IActionResult> AddToRental(string idTitle)
+        {
+            string accName = User.Identity.Name;
+            //lấy đơn mượn tạm -> tempBookRental
+            BookRental tempBookRental = await _context.BookRentals.Where(p => p.AccSending == accName
+            && p.StateSend == false).FirstOrDefaultAsync();
+            if (tempBookRental == null)
+            {
+                await _context.BookRentals.AddAsync(new BookRental
+                {
+                    StateSend = false,
+                    AccApprove = null,
+                    AccSending = accName,
+                    StateApprove = false,
+                    TimeCreate = DateTime.Now
+                });
+                tempBookRental = await _context.BookRentals.Where(p => p.AccSending == accName
+                && p.StateSend == false).FirstOrDefaultAsync();
+            }
+
+            BookRentDetail query = _context.BookRentDetails.Where(p => p.IdBookRental == tempBookRental.Id
+            && p.IdBook.Contains(idTitle)).FirstOrDefault();
+            
+            if (query!=null)
+            {
+                //báo lỗi, không thể thêm sách trùng
+                ViewData["AlertType"] = "alert-warning";
+                ViewData["AlertMessage"] = "Trong đơn mượn tạm đã có sách này, không thể thêm.";
+            }
+            else
+            {
+                string tempBookId = await _context.Books.Where(p => p.IdTitle == idTitle &&
+                p.StateRent == false).Select(p => p.IdBook).FirstOrDefaultAsync();
+                _context.BookRentDetails.Add(new BookRentDetail
+                {
+                    IdBookRental = tempBookRental.Id,
+                    IdBook = tempBookId,
+                    StateReturn = false,
+                    StateTake = false,
+                    ReturnDate = null
+                });
+                //báo thêm thành công
+                ViewData["AlertType"] = "alert-success";
+                ViewData["AlertMessage"] = "Thêm sách vào đơn mượn tạm thành công.";
+            }
+            Title title = _context.Titles.Where(p => p.IdTitle == idTitle).FirstOrDefault();
+            return View("Details",title);
         }
 
         // GET: Titles/Create

@@ -3,8 +3,24 @@
 @{
     ViewData["Title"] = "Details";
 }
+@section scripts{
+    <script>
+        $(function () {
+            $('#AlertBox').removeClass('hide');
+            $('#AlertBox').delay(2000).slideUp(500);
+        });
+
+    </script>
+}
 
 <h1>Thông tin chi tiết đầu sách</h1>
+
+@if (ViewData["AlertMessage"] != null)
+{
+    <div id="AlertBox" class="alert @ViewData["AlertType"] hide" role="alert">
+        @ViewData["AlertMessage"]
+    </div>
+}
 
 <div>
     <hr />
@@ -45,6 +61,9 @@
     @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
     {
         <a asp-action="Edit" asp-route-id="@Model?.IdTitle">Edit</a>
+    } else
+    {
+        <a asp-action="AddToRental" asp-route-id="@Model?.IdTitle">Thêm vào đơn mượn</a>
     }
     <a asp-action="Index">Back to List</a>
 </div>
