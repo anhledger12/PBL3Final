@@ -153,7 +153,7 @@ namespace PBL3.Controllers.Anonymus
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return await ChangePassword(id);
             }
             
             if (id != User.Identity.Name && !User.IsInRole(UserRole.Admin))// nếu k phải admin cx k phải chủ nhân cái view này
@@ -174,7 +174,7 @@ namespace PBL3.Controllers.Anonymus
                     else
                     {
                         ModelState.AddModelError("", "Mật khẩu cũ không chính xác, hãy nhập lại");
-                        return View();
+                        return await ChangePassword(id);
                     }
                 }
                 else return View("NotFound");
