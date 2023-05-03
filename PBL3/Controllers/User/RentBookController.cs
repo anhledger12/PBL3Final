@@ -29,17 +29,19 @@ namespace PBL3.Controllers.User
             string AccName = User.Identity.Name;
             try
             {
-                var Cart = (from Titles in _context.Titles
-                            where (from Book in _context.Books
-                                   join RentDetail in _context.BookRentDetails on Book.IdBook equals RentDetail.IdBook
-                                   join BookRental in _context.BookRentals on RentDetail.IdBookRental equals BookRental.Id
-                                   where Book.IdTitle == Titles.IdTitle && BookRental.AccSending == AccName
-                                   select Book).Any()
-                            select new Title
-                            {
-                                IdTitle = Titles.IdTitle,
-                                NameBook = Titles.NameBook
-                            }).ToList();
+                var Cart = _context.Titles
+                                    .Where(Titles => _context.Books
+                                    .Any(Book => _context.BookRentDetails
+                                        .Any(RentDetail => _context.BookRentals
+                                            .Any(BookRental => BookRental.Id == RentDetail.IdBookRental &&
+                                                               RentDetail.IdBook == Book.IdBook &&
+                                                               Book.IdTitle == Titles.IdTitle &&
+                                                               BookRental.AccSending == AccName))))
+                                     .Select(Titles => new Title
+                                     {
+                                         IdTitle = Titles.IdTitle,
+                                         NameBook = Titles.NameBook
+                                     }).ToList();
                 if (Cart == null)
                 {
                     return View("/Views/BookRentals/ViewCart.cshtml", "Không có đơn nào chưa gửi");
@@ -50,6 +52,30 @@ namespace PBL3.Controllers.User
             {
                 return NotFound();
             }
+        }
+        [HttpGet]
+        public IActionResult Delete(string id)
+        {
+            string AccName = User.Identity.Name;
+            BookRentDetail s = (from brd in _context.BookRentDetails
+                                join br in _context.BookRentals on brd.IdBookRental equals br.Id
+                                join b in _context.Books on brd.IdBook equals b.IdBook
+                                where b.IdTitle == id && br.StateSend == false && br.AccSending == AccName
+                                select new BookRentDetail
+                                {
+                                    IdBookRental = brd.IdBookRental,
+                                    IdBook = brd.IdBook,
+                                    StateReturn = brd.StateReturn,
+                                    StateTake = brd.StateTake,
+                                    ReturnDate = brd.ReturnDate
+                                }).FirstOrDefault();
+            if (s == null)
+            {
+                return NotFound();
+            }
+            _context.BookRentDetails.Remove(s);
+            _context.SaveChanges();
+            return RedirectToAction("ViewCart");
         }
     }
 }
