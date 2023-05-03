@@ -38,6 +38,7 @@
                             <td>@title.NameBookshelf</td>  
                             <td>@title.ReleaseYear</td>
                             <td>
+                                <a asp-controller="Titles" asp-action="Details" asp-route-id="@title.IdTitle">Detail</a>
                                 @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
                                 {                     
                                     <a asp-controller = "Titles" asp-action="Edit" asp-route-id="@title.IdTitle">Edit</a>

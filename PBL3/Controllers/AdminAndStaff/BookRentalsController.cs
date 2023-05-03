@@ -28,8 +28,54 @@ namespace PBL3.Controllers.AdminAndStaff
         // GET: BookRentals
         public async Task<IActionResult> Index()
         {
-            var libraryManagementContext = _context.BookRentals.Include(b => b.AccApproveNavigation).Include(b => b.AccSendingNavigation);
-            return View(await libraryManagementContext.ToListAsync());
+            //ViewBag gồm 1 danh sách đơn đang mượn, 1 danh sách đơn chờ duyệt
+            //Duyệt hoặc không duyệt nằm trong detail
+            List<BookRental> pending = _context.BookRentals.Where(p => p.StateSend == true
+            && p.StateApprove == false).OrderBy(p => p.TimeCreate).ToList();
+            ViewBag.Pending = pending;
+
+            List<BookRental> waitingTake = _context.BookRentals.
+                Where(p => p.StateApprove == true)
+                .Join(
+                _context.BookRentDetails.Where(p =>
+                p.StateTake == false)
+                ,
+                bookRental => bookRental.Id,
+                bookRentDetail => bookRentDetail.IdBookRental,
+                (bookRental, bookRentDetail) => new BookRental
+                {
+                    Id = bookRental.Id,
+                    AccSending = bookRental.AccSending,
+                    AccApprove = bookRental.AccApprove,
+                    TimeCreate = bookRental.TimeCreate,
+                    StateSend = true,
+                    StateApprove = true
+                }).ToList();
+
+            ViewBag.WaitingTake = waitingTake;
+
+            List<BookRental> waitingReturn = _context.BookRentals
+                .Where(p => p.StateApprove == true)
+                .Join(
+                _context.BookRentDetails.Where(p =>
+                p.StateTake == true &&
+                p.StateReturn == false)
+                ,
+                bookRental => bookRental.Id,
+                bookRentDetail => bookRentDetail.IdBookRental,
+                (bookRental, bookRentDetail) => new BookRental
+                {
+                    Id = bookRental.Id,
+                    AccSending = bookRental.AccSending,
+                    AccApprove = bookRental.AccApprove,
+                    TimeCreate = bookRental.TimeCreate,
+                    StateSend = true,
+                    StateApprove = true
+                }).ToList();
+            
+            ViewBag.WaitingReturn = waitingReturn;
+
+            return View();
         }
 
         // GET: BookRentals/Details/5

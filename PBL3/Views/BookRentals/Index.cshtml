@@ -1,47 +1,73 @@
-﻿@model IEnumerable<PBL3.Models.Entities.BookRental>
-
+﻿@using PBL3.Models.Entities
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Danh sách các đơn mượn của hệ thống</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TimeCreate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AccApproveNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AccSendingNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TimeCreate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AccApproveNavigation.AccName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AccSendingNavigation.AccName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<ul class="nav nav-pills">
+    <li class="nav-item ">
+        <a class="nav-link active rounded-0" id="Pending" data-toggle="pill" href="#home" onclick="Enable1()">Chờ phê duyệt</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link rounded-0" id="WaitingReturn" data-toggle="pill" href="#menu1" onclick="Enable2()">Đang diễn ra</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+
+    <div class="tab-pane container active p-0" id="home">
+        <h5 class="text-uppercase p-2 text-center">Danh sách chờ duyệt</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Mã đơn mượn</th>
+                    <th>Người gửi</th>
+                    <th>Thời gian gửi</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (BookRental bookRental in ViewBag.Pending)
+                {
+                    <tr>
+                        <td>@bookRental.Id</td>
+                        <td>@bookRental.AccSending</td>
+                        <td>@bookRental.TimeCreate</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@bookRental.Id">Chi tiết</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tab-pane container fade p-0" id="menu1">
+        <h5 class="text-uppercase p-2 text-center">Danh sách đơn đang diễn ra</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Mã đơn mượn</th>
+                    <th>Người gửi</th>
+                    <th>Người phê duyệt</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (BookRental bookRental in ViewBag.WaitingReturn)
+                {
+                    <tr>
+                        <td>@bookRental.Id</td>
+                        <td>@bookRental.AccSending</td>
+                        <td>@bookRental.AccApprove</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@bookRental.Id">Chi tiết</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
