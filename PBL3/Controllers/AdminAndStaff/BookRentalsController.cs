@@ -31,49 +31,31 @@ namespace PBL3.Controllers.AdminAndStaff
         {
             //ViewBag gồm 1 danh sách đơn đang mượn, 1 danh sách đơn chờ duyệt, 1 danh sách đơn chờ lấy
             //Duyệt hoặc không duyệt nằm trong detail
+            
+            //chờ duyệt: tất cả đơn có statesend = true & stateapprove = false
             List<BookRental> pending = await _context.BookRentals.Where(p => p.StateSend == true
             && p.StateApprove == false).OrderBy(p => p.TimeCreate).ToListAsync();
             ViewBag.Pending = pending;
-
+            
+            //chờ lấy: tất cả đơn có stateapprove = true & không có bất cứ detail nào có statetake = true
             List<BookRental> waitingTake = await _context.BookRentals.
-                Where(p => p.StateApprove == true)
-                .Join(
-                _context.BookRentDetails.Where(p =>
-                p.StateTake == false)
-                ,
-                bookRental => bookRental.Id,
-                bookRentDetail => bookRentDetail.IdBookRental,
-                (bookRental, bookRentDetail) => new BookRental
-                {
-                    Id = bookRental.Id,
-                    AccSending = bookRental.AccSending,
-                    AccApprove = bookRental.AccApprove,
-                    TimeCreate = bookRental.TimeCreate,
-                    StateSend = true,
-                    StateApprove = true
-                }).ToListAsync();
-
+                Where(p => p.StateApprove == true && 
+                _context.BookRentDetails
+                .Where(b => b.IdBookRental == p.Id &&
+                b.StateTake == true).Any() == false)
+                .ToListAsync();
             ViewBag.WaitingTake = waitingTake;
 
-            List<BookRental> waitingReturn = await _context.BookRentals
-                .Where(p => p.StateApprove == true)
-                .Join(
-                _context.BookRentDetails.Where(p =>
-                p.StateTake == true &&
-                p.StateReturn == false)
-                ,
-                bookRental => bookRental.Id,
-                bookRentDetail => bookRentDetail.IdBookRental,
-                (bookRental, bookRentDetail) => new BookRental
-                {
-                    Id = bookRental.Id,
-                    AccSending = bookRental.AccSending,
-                    AccApprove = bookRental.AccApprove,
-                    TimeCreate = bookRental.TimeCreate,
-                    StateSend = true,
-                    StateApprove = true
-                }).ToListAsync();
-            
+            //chờ trả: tất cả đơn có stateapprove = true, 
+            //có tất cả detail có statetake = true và state return = false
+            List<BookRental> waitingReturn = await _context.BookRentals.
+                Where(p => p.StateApprove == true &&
+                _context.BookRentDetails
+                .Where(b => b.IdBookRental == p.Id)
+                .All(b => b.StateReturn == false &&
+                b.StateTake == true) == false)
+                .ToListAsync();
+
             ViewBag.WaitingReturn = waitingReturn;
 
             return View();
@@ -81,42 +63,11 @@ namespace PBL3.Controllers.AdminAndStaff
 
         // GET: BookRentals/Details/5
         
-        public async Task<IActionResult> DetailsPending(int? id)
+        public async Task<IActionResult> Pending(BookRental bookRental, List<string> listIdBook)
         {
-            return View();
-        }
-
-        public async Task<IActionResult> DetailsWaitingTake(int? id)
-        {
-            return View();
-        }
-
-        public async Task<IActionResult> DetailsWaitingReturn(int? id)
-        {
-            return View();
-        }
-        public async Task<IActionResult> Details(int? id, int type = 1)
-        {
-            if (id == null || _context.BookRentals == null)
-            {
-                return NotFound();
-            }
-
-            BookRental? bookRental = await _context.BookRentals
-                .Where(p => p.Id == id)
-                .FirstOrDefaultAsync();    
-            if (bookRental == null)
-            {
-                return NotFound();
-            }
-            List<string> query = await _context.BookRentDetails
-                .Where(p => p.IdBookRental == id)
-                .Select(p => p.IdBook)
-                .ToListAsync();
-
             List<ViewTitle> details = new List<ViewTitle>();
-            
-            foreach (string b in query)
+
+            foreach (string b in listIdBook)
             {
                 Title? title = _context.Titles
                     .Where(p => b.Contains(p.IdTitle))
@@ -138,24 +89,69 @@ namespace PBL3.Controllers.AdminAndStaff
                     AmountLeft = amount
                 });
             }
+            ViewBag.Status = "Pending";
             ViewBag.BookRent = bookRental;
             ViewBag.Details = details;
+            return View("Details");
+        }
+
+        public async Task<IActionResult> WaitingTake(BookRental bookRental, List<string> listIdBook)
+        {
+            List<ViewTitle> details = new List<ViewTitle>();
+
+            foreach (string b in listIdBook)
+            {
+                Title? title = _context.Titles
+                    .Where(p => b.Contains(p.IdTitle))
+                    .FirstOrDefault();
+                if (title == null)
+                {
+                    return NotFound();
+                }
+                
+            }
+            ViewBag.Status = "Pending";
+            ViewBag.BookRent = bookRental;
+            ViewBag.Details = details;
+            return View("Details");
+        }
+
+        public async Task<IActionResult> WaitingReturn(BookRental bookRental, List<string> listIdBook)
+        {
+            return View("Details");
+        }
+        public async Task<IActionResult> Details(int? id, int type = 1)
+        {
+            if (id == null || _context.BookRentals == null)
+            {
+                return NotFound();
+            }
+
+            BookRental? bookRental = await _context.BookRentals
+                .Where(p => p.Id == id)
+                .FirstOrDefaultAsync();    
+            if (bookRental == null)
+            {
+                return NotFound();
+            }
+            List<string> listIdBook = await _context.BookRentDetails
+                .Where(p => p.IdBookRental == id)
+                .Select(p => p.IdBook)
+                .ToListAsync();
+            
             switch (type)
             {
                 case 1:
                     {
-                        ViewBag.Status = "Pending";
-                        break;
+                        return await Pending(bookRental, listIdBook);
                     }
                 case 2:
                     {
-                        ViewBag.Status = "WaitingTake";
-                        break;
+                        return await WaitingTake(bookRental, listIdBook);
                     }
                 case 3:
                     {
-                        ViewBag.Status = "WaitingReturn";
-                        break;
+                        return await WaitingReturn(bookRental, listIdBook);
                     }
             }
             return View();
