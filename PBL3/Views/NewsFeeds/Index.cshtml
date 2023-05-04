@@ -22,14 +22,14 @@
 @foreach (var item in Model) {
         <tr>
             <div class = "row">
-                <div class = "col-md-10">
+                <div class = "col-md-11">
                 @Html.DisplayFor(modelItem => item.Content)
                 </div>
-                <div class = "col-md-2 float-right">
-                <button asp-action="Edit" asp-route-id="@item.Id">Edit</button> |
-                <button asp-action="Details" asp-route-id="@item.Id">Details</button> |
+                <div class = "col-md-1 float-right">
+                <a class="btn btn-link" asp-action="Edit" asp-route-id="@item.Id">Edit</a> <br>
+                <a class="btn btn-link" asp-action="Details" asp-route-id="@item.Id">Details</a>
                 <form asp-action="Delete" asp-route-id="@item.Id" method="post">
-                    <button type="submit">Delete</button>
+                        <button type="submit" class="btn btn-link">Delete</button>
                 </form>
                 </div>
             </div>
@@ -39,3 +39,63 @@
     </tbody>
 </table>
 <!--Page-->
+<p>Bạn đang ở trang @ViewBag.CurrentPage</p>
+<div >
+    @if (ViewBag.PageCount <= 5)
+    {
+        if (ViewBag.CurrentPage != 1)// Nếu như trang đầu
+        {
+            <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage-1)">Prev</a>
+        }
+        for(int i =1; i<=ViewBag.PageCount; i++)
+        {
+            <a asp-action="Index" asp-route-page="@i">@i</a>
+        }
+        if (ViewBag.CurrentPage != ViewBag.PageCount)//Nếu như trang cuối
+        {
+                <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage+1)">Next</a>
+        }
+    }
+    else
+    {
+        if (ViewBag.CurrentPage != 1)// Nếu như kp trang đầu
+        {
+            <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage-1)">Prev</a>
+        }
+        <a asp-action="Index" asp-route-page="1">1</a>
+
+        if (ViewBag.CurrentPage == 1 || ViewBag.CurrentPage == ViewBag.PageCount)
+        {
+            <a asp-action="Index" asp-route-page="2">2</a>
+            <a>...</a>
+            <a asp-action="Index" asp-route-page="@(ViewBag.PageCount-1)">@(ViewBag.PageCount-1)</a>
+        }
+        else if (ViewBag.CurrentPage == 2)
+        {
+            <a asp-action="Index" asp-route-page="2">2</a>
+            <a asp-action="Index" asp-route-page="3">3</a>
+            <a>...</a>
+            <a asp-action="Index" asp-route-page="@(ViewBag.PageCount-1)">@(ViewBag.PageCount - 1)</a>
+        }
+        else if (ViewBag.CurrentPage == ViewBag.PageCount - 1){
+            <a asp-action="Index" asp-route-page="2">2</a>
+            <a>...</a>
+            <a asp-action="Index" asp-route-page="@(ViewBag.PageCount-2)">@(ViewBag.PageCount - 2)</a>
+            <a asp-action="Index" asp-route-page="@(ViewBag.PageCount-1)">@(ViewBag.PageCount - 1)</a>
+        }
+        else
+        {
+            <a>...</a>
+            <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage-1)">@(ViewBag.CurrentPage - 1)</a>
+            <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage-1)">@(ViewBag.CurrentPage)</a>
+            <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage-1)">@(ViewBag.CurrentPage + 1)</a>
+            <a>...</a>
+        }
+        <a asp-action="Index" asp-route-page="@ViewBag.PageCount">@ViewBag.PageCount</a>
+        if (ViewBag.CurrentPage != ViewBag.PageCount)//Nếu như kp trang cuối
+        {
+            <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage+1)">Next</a>
+        }
+    }
+
+</div>
