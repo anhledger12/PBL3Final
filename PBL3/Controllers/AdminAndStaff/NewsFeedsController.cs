@@ -12,18 +12,16 @@ namespace PBL3.Controllers.AdminAndStaff
     public class NewsFeedsController : Controller
     {
         private readonly LibraryManagementContext _context;
-
         public NewsFeedsController(LibraryManagementContext context)
         {
             _context = context;
         }
         public async Task<IActionResult> Index(int page=1)
         {
-            // code lại phân trang
-            // Một trang view 10 record
-            ViewBag.PageNumber = _context.NewsFeeds.Count() / 10;
+            // code phân trang
+            ViewBag.PageCount = (_context.NewsFeeds.Count()+4) / 5;
             ViewBag.CurrentPage = page;
-            var res = await _context.NewsFeeds.Skip(page * 10 - 10).Take(10).ToListAsync();
+            var res = await _context.NewsFeeds.Skip(page * 5 - 5).Take(5).ToListAsync();
             return View(res);
         }
         public async Task<IActionResult> Details(int? id)
