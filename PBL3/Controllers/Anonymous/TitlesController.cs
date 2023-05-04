@@ -68,10 +68,9 @@ namespace PBL3.Controllers.Anonymous
             return View(title);
         }
 
-        [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = UserRole.All)]
-        public async Task<IActionResult> AddToRental(string idTitle)
+        public async Task<IActionResult> AddToRental(string id)
         {
             string accName = User.Identity.Name;
             //lấy đơn mượn tạm -> tempBookRental
@@ -92,7 +91,7 @@ namespace PBL3.Controllers.Anonymous
             }
 
             BookRentDetail query = _context.BookRentDetails.Where(p => p.IdBookRental == tempBookRental.Id
-            && p.IdBook.Contains(idTitle)).FirstOrDefault();
+            && p.IdBook.Contains(id)).FirstOrDefault();
             
             if (query!=null)
             {
@@ -102,7 +101,7 @@ namespace PBL3.Controllers.Anonymous
             }
             else
             {
-                string tempBookId = await _context.Books.Where(p => p.IdTitle == idTitle &&
+                string tempBookId = await _context.Books.Where(p => p.IdTitle == id &&
                 p.StateRent == false).Select(p => p.IdBook).FirstOrDefaultAsync();
                 _context.BookRentDetails.Add(new BookRentDetail
                 {
@@ -116,7 +115,7 @@ namespace PBL3.Controllers.Anonymous
                 ViewData["AlertType"] = "alert-success";
                 ViewData["AlertMessage"] = "Thêm sách vào đơn mượn tạm thành công.";
             }
-            Title title = _context.Titles.Where(p => p.IdTitle == idTitle).FirstOrDefault();
+            Title title = _context.Titles.Where(p => p.IdTitle == id).FirstOrDefault();
             return View("Details",title);
         }
 
