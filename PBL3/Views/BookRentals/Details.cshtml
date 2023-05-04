@@ -38,6 +38,13 @@
 @if (ViewBag.Status == "Pending")
 {
     //nút phê duyệt & không phê duyệt
+    <ul class="nav nav-pills align-content-center">
+        <li class="nav-item">
+            <a class="btn btn-primary" asp-action="Approve" asp-route-id="@ViewBag.BookRent.Id">Phê duyệt</a>
+            <a class="btn" asp-action="Refuse" asp-route-id="@ViewBag.BookRent.Id">Từ chối</a>
+        </li>
+    </ul>
+    
     //hiện số lượng còn lại của mỗi đầu sách trong đơn
     //nếu phê duyệt => trả về một thông báo: các sách 
     //có thể mượn và các sách không thể mượn
@@ -45,6 +52,7 @@
 }
 else if (ViewBag.Status == "WaitingTake")
 {
+    <a asp-action="ReaderTake" asp-route-id="@ViewBag.BookRent.Id">Xác nhận lấy đơn</a>
     //nút xác nhận độc giả đến lấy đơn
     //những đơn ở trạng thái này tự động kết thúc sau 3 ngày không lấy
     //thuộc tính CountDown
@@ -53,6 +61,7 @@ else if (ViewBag.Status == "WaitingTake")
 }
 else if (ViewBag.Status == "WaitingReturn")
 {
+    <a asp-action="Delete" asp-route-id="@ViewBag.BookRent.Id"></a>
     //nút xác nhận đóng đơn
     //hiện trạng thái đã trả/chưa trả và hạn trả của các sách trong đơn
     //mỗi dòng nếu chưa trả thì có nút trả

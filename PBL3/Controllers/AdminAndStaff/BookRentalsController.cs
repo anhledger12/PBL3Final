@@ -72,14 +72,12 @@ namespace PBL3.Controllers.AdminAndStaff
                 Title? title = _context.Titles
                     .Where(p => b.Contains(p.IdTitle))
                     .FirstOrDefault();
-                if (title == null)
-                {
-                    return NotFound();
-                }
+                
                 int amount = _context.Books
                     .Where(p => p.IdTitle == title.IdTitle &&
                     p.StateRent == false)
                     .Count();
+
                 details.Add(new ViewTitle
                 {
                     IdTitle = title.IdTitle,
@@ -104,13 +102,17 @@ namespace PBL3.Controllers.AdminAndStaff
                 Title? title = _context.Titles
                     .Where(p => b.Contains(p.IdTitle))
                     .FirstOrDefault();
-                if (title == null)
-                {
-                    return NotFound();
-                }
                 
+                details.Add(new ViewTitle
+                {
+                    IdTitle = title.IdTitle,
+                    NameBook = title.NameBook,
+                    NameWriter = title.NameWriter,
+                    NameBookshelf = title.NameBookshelf,
+                    IdBook = b
+                });
             }
-            ViewBag.Status = "Pending";
+            ViewBag.Status = "WaitingTake";
             ViewBag.BookRent = bookRental;
             ViewBag.Details = details;
             return View("Details");
@@ -118,7 +120,34 @@ namespace PBL3.Controllers.AdminAndStaff
 
         public async Task<IActionResult> WaitingReturn(BookRental bookRental, List<string> listIdBook)
         {
+            List<ViewTitle> details = new List<ViewTitle>();
+
+            foreach (string b in listIdBook)
+            {
+                Title? title = _context.Titles
+                    .Where(p => b.Contains(p.IdTitle))
+                    .FirstOrDefault();
+
+                details.Add(new ViewTitle
+                {
+                    IdTitle = title.IdTitle,
+                    NameBook = title.NameBook,
+                    NameWriter = title.NameWriter,
+                    NameBookshelf = title.NameBookshelf,
+                    IdBook = b,
+                    StateReturn = _context.BookRentDetails
+                        .Where(p => p.IdBookRental == bookRental.Id &&
+                        p.IdBook == b).FirstOrDefault().StateReturn,
+                    ReturnDue = _context.BookRentDetails
+                        .Where(p => p.IdBookRental == bookRental.Id &&
+                        p.IdBook == b).FirstOrDefault().ReturnDate
+                });
+            }
+            ViewBag.Status = "WaitingReturn";
+            ViewBag.BookRent = bookRental;
+            ViewBag.Details = details;
             return View("Details");
+            
         }
         public async Task<IActionResult> Details(int? id, int type = 1)
         {

@@ -1,4 +1,6 @@
-﻿namespace PBL3.Data.ViewModel
+﻿using PBL3.Models.Entities;
+
+namespace PBL3.Data.ViewModel
 {
     public class ViewTitle
     { 
@@ -7,7 +9,9 @@
         public string? NameBook { get; set; }
         public string? NameWriter { get; set; }
         public string? NameBookshelf { get; set; }
-        public int AmountLeft { get; set; }
+        public int? AmountLeft { get; set; }
+        public bool? StateReturn { get; set; }
         public DateTime? ReturnDue { get; set; }
+
     }
 }
