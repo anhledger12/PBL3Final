@@ -54,7 +54,12 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="RentBook" asp-action="Index">Mượn sách</a>
                             </li>
                         }
-
+                        @if (User.IsInRole(UserRole.Admin))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="NewsFeeds" asp-action="Index">QL độc giả</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
