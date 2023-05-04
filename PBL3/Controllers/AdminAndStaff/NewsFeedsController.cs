@@ -17,64 +17,56 @@ namespace PBL3.Controllers.AdminAndStaff
         {
             _context = context;
         }
-
-        // GET: NewsFeeds
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page=1)
         {
-              return _context.NewsFeeds != null ? 
-                          View(await _context.NewsFeeds.ToListAsync()) :
-                          Problem("Entity set 'LibraryManagementContext.NewsFeeds'  is null.");
+            // code lại phân trang
+            // Một trang view 10 record
+            ViewBag.PageNumber = _context.NewsFeeds.Count() / 10;
+            ViewBag.CurrentPage = page;
+            var res = await _context.NewsFeeds.Skip(page * 10 - 10).Take(10).ToListAsync();
+            return View(res);
         }
-
-        // GET: NewsFeeds/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            // detail ổn, chỉ cần sửa lại một chút ở giao diên
             if (id == null || _context.NewsFeeds == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
-
-            var newsFeed = await _context.NewsFeeds
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var newsFeed = await _context.NewsFeeds.FirstOrDefaultAsync(m => m.Id == id);
             if (newsFeed == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
-
             return View(newsFeed);
         }
-
-        // GET: NewsFeeds/Create
         public IActionResult Create()
         {
+            // create cũng cần chỉnh sửa về giao diện
             return View();
         }
 
-        // POST: NewsFeeds/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Content")] NewsFeed newsFeed)
         {
+            // create post thì không cần sửa gì, đơn giản rồi
             if (ModelState.IsValid)
             {
-                //newsFeed.Content = Microsoft.CodeAnalysis.CSharp.SymbolDisplay.FormatLiteral(newsFeed.Content, false);
                 _context.Add(newsFeed);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
             return View(newsFeed);
         }
 
-        // GET: NewsFeeds/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            // Edit cũng giống như create, không cần sửa nhiều, cùng lắm giao diện thôi
             if (id == null || _context.NewsFeeds == null)
             {
                 return NotFound();
             }
-
             var newsFeed = await _context.NewsFeeds.FindAsync(id);
             if (newsFeed == null)
             {
@@ -83,81 +75,36 @@ namespace PBL3.Controllers.AdminAndStaff
             return View(newsFeed);
         }
 
-        // POST: NewsFeeds/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Content")] NewsFeed newsFeed)
+        public async Task<IActionResult> Edit(int id,NewsFeed newsFeed)
         {
-            if (id != newsFeed.Id)
+            // ok
+            var res = _context.NewsFeeds.Where(p => p.Id == id);
+            if (res.Count()==0)
             {
-                return NotFound();
+                return View("NotFound");
             }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(newsFeed);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!NewsFeedExists(newsFeed.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+
+                _context.Update(newsFeed);
+                await _context.SaveChangesAsync();                
+                return RedirectToAction("Index");
             }
             return View(newsFeed);
         }
-
-        // GET: NewsFeeds/Delete/5
+        [HttpPost]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.NewsFeeds == null)
-            {
-                return NotFound();
-            }
-
-            var newsFeed = await _context.NewsFeeds
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (newsFeed == null)
-            {
-                return NotFound();
-            }
-
-            return View(newsFeed);
-        }
-
-        // POST: NewsFeeds/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.NewsFeeds == null)
-            {
-                return Problem("Entity set 'LibraryManagementContext.NewsFeeds'  is null.");
-            }
-            var newsFeed = await _context.NewsFeeds.FindAsync(id);
+            // ok
+            var newsFeed = _context.NewsFeeds.Find(id);
             if (newsFeed != null)
             {
                 _context.NewsFeeds.Remove(newsFeed);
             }
-            
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool NewsFeedExists(int id)
-        {
-          return (_context.NewsFeeds?.Any(e => e.Id == id)).GetValueOrDefault();
+            return RedirectToAction("Index");
         }
     }
 }

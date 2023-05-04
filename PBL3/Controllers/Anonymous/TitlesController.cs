@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PBL3.Models.Entities;
-using PBL3.Models;
 using PBL3.Data;
 using Microsoft.AspNetCore.Authorization;
+using PBL3.Models;
 
 namespace PBL3.Controllers.Anonymous
 {
