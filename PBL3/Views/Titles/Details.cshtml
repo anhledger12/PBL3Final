@@ -60,10 +60,10 @@
 <div>
     @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
     {
-        <a asp-action="Edit" asp-route-id="@Model?.IdTitle">Edit</a>
+        <a asp-action="Edit" asp-route-id="@Model.IdTitle">Edit</a>
     } else
     {
-        <a asp-action="AddToRental" asp-route-id="@Model?.IdTitle">Thêm vào đơn mượn</a>
+        <a asp-action="AddToRental" asp-route-id="@Model.IdTitle">Thêm vào đơn mượn</a>
     }
     <a asp-action="Index">Back to List</a>
 </div>
