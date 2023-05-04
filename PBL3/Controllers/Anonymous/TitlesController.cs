@@ -68,29 +68,28 @@ namespace PBL3.Controllers.Anonymous
             return View(title);
         }
 
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = UserRole.All)]
         public async Task<IActionResult> AddToRental(string id)
         {
             string accName = User.Identity.Name;
             //lấy đơn mượn tạm -> tempBookRental
-            BookRental tempBookRental = await _context.BookRentals.Where(p => p.AccSending == accName
+            BookRental? tempBookRental = await _context.BookRentals.Where(p => p.AccSending == accName
             && p.StateSend == false).FirstOrDefaultAsync();
             if (tempBookRental == null)
             {
-                await _context.BookRentals.AddAsync(new BookRental
+                tempBookRental = new BookRental
                 {
                     StateSend = false,
                     AccApprove = null,
                     AccSending = accName,
                     StateApprove = false,
                     TimeCreate = DateTime.Now
-                });
-                tempBookRental = await _context.BookRentals.Where(p => p.AccSending == accName
-                && p.StateSend == false).FirstOrDefaultAsync();
+                };
+                await _context.BookRentals.AddAsync(tempBookRental);
+                _context.SaveChanges();               
             }
 
-            BookRentDetail query = _context.BookRentDetails.Where(p => p.IdBookRental == tempBookRental.Id
+            BookRentDetail? query = _context.BookRentDetails.Where(p => p.IdBookRental == tempBookRental.Id
             && p.IdBook.Contains(id)).FirstOrDefault();
             
             if (query!=null)
@@ -101,8 +100,8 @@ namespace PBL3.Controllers.Anonymous
             }
             else
             {
-                string tempBookId = await _context.Books.Where(p => p.IdTitle == id &&
-                p.StateRent == false).Select(p => p.IdBook).FirstOrDefaultAsync();
+                string tempBookId = _context.Books.Where(p => p.IdTitle == id &&
+                p.StateRent == false).Select(p => p.IdBook).First();
                 _context.BookRentDetails.Add(new BookRentDetail
                 {
                     IdBookRental = tempBookRental.Id,
@@ -111,12 +110,13 @@ namespace PBL3.Controllers.Anonymous
                     StateTake = false,
                     ReturnDate = null
                 });
+                _context.SaveChanges();
                 //báo thêm thành công
                 ViewData["AlertType"] = "alert-success";
                 ViewData["AlertMessage"] = "Thêm sách vào đơn mượn tạm thành công.";
             }
             Title title = _context.Titles.Where(p => p.IdTitle == id).FirstOrDefault();
-            return View("Details",title);
+            return View(viewName: "Details", model: title);
         }
 
         // GET: Titles/Create
