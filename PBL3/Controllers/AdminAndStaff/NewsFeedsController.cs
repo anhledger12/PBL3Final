@@ -21,7 +21,7 @@ namespace PBL3.Controllers.AdminAndStaff
             // code phân trang
             ViewBag.PageCount = (_context.NewsFeeds.Count()+4) / 5;
             ViewBag.CurrentPage = page;
-            var res = await _context.NewsFeeds.Skip(page * 5 - 5).Take(5).ToListAsync();
+            var res = await _context.NewsFeeds.OrderByDescending(p=>p.Id).Skip(page * 5 - 5).Take(5).ToListAsync();
             return View(res);
         }
         public async Task<IActionResult> Details(int? id)
@@ -40,13 +40,12 @@ namespace PBL3.Controllers.AdminAndStaff
         }
         public IActionResult Create()
         {
-            // create cũng cần chỉnh sửa về giao diện
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Content")] NewsFeed newsFeed)
+        public async Task<IActionResult> Create(NewsFeed newsFeed)
         {
             // create post thì không cần sửa gì, đơn giản rồi
             if (ModelState.IsValid)
