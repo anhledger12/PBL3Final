@@ -1,8 +1,10 @@
-﻿@model PBL3.Models.Entities.BookRental
-
-@{
+﻿@{
+    //Chi tiết đơn mượn => gồm 1 BookRental và 
+    // 1 list<Title>, kèm theo một số lượng Books thuộc các Title đó mà StateRent = false
     ViewData["Title"] = "Details";
 }
+
+
 
 <h1>Details</h1>
 
@@ -11,26 +13,46 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TimeCreate)
+            Mã đơn mượn:
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TimeCreate)
+            @ViewBag.BookRent.Id
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AccApproveNavigation)
+            Tài khoản gửi đơn:
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AccApproveNavigation.AccName)
+            @ViewBag.BookRent.AccSending
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AccSendingNavigation)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AccSendingNavigation.AccName)
-        </dd>
+        @if (ViewBag.BookRent.StateApprove == true)
+        {
+            <dt class="col-sm-2">
+                Tài khoản phê duyệt:
+            </dt>
+            <dd class="col-sm-10">
+                @ViewBag.BookRent.AccApprove
+            </dd>
+        }
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+@if (ViewBag.Status == "Pending")
+{
+    //nút phê duyệt & không phê duyệt
+    //hiện số lượng còn lại của mỗi đầu sách trong đơn
+    //nếu phê duyệt => trả về một thông báo: các sách 
+    //có thể mượn và các sách không thể mượn
+}
+else if (ViewBag.Status == "WaitingTake")
+{
+    //nút xác nhận độc giả đến lấy đơn
+    //những đơn ở trạng thái này tự động kết thúc sau 3 ngày không lấy
+    //thuộc tính CountDown
+}
+else if (ViewBag.Status == "WaitingReturn")
+{
+    //nút xác nhận đóng đơn
+    //hiện trạng thái đã trả/chưa trả và hạn trả của các sách trong đơn
+    //mỗi dòng nếu chưa trả thì có nút trả
+    //khi tất cả các sách đã trả mới có thể đóng đơn
+}
+

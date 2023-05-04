@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PBL3.Data;
+using PBL3.Data.ViewModel;
 using PBL3.Models.Entities;
 
 namespace PBL3.Controllers.AdminAndStaff
@@ -28,13 +29,13 @@ namespace PBL3.Controllers.AdminAndStaff
         // GET: BookRentals
         public async Task<IActionResult> Index()
         {
-            //ViewBag gồm 1 danh sách đơn đang mượn, 1 danh sách đơn chờ duyệt
+            //ViewBag gồm 1 danh sách đơn đang mượn, 1 danh sách đơn chờ duyệt, 1 danh sách đơn chờ lấy
             //Duyệt hoặc không duyệt nằm trong detail
-            List<BookRental> pending = _context.BookRentals.Where(p => p.StateSend == true
-            && p.StateApprove == false).OrderBy(p => p.TimeCreate).ToList();
+            List<BookRental> pending = await _context.BookRentals.Where(p => p.StateSend == true
+            && p.StateApprove == false).OrderBy(p => p.TimeCreate).ToListAsync();
             ViewBag.Pending = pending;
 
-            List<BookRental> waitingTake = _context.BookRentals.
+            List<BookRental> waitingTake = await _context.BookRentals.
                 Where(p => p.StateApprove == true)
                 .Join(
                 _context.BookRentDetails.Where(p =>
@@ -50,11 +51,11 @@ namespace PBL3.Controllers.AdminAndStaff
                     TimeCreate = bookRental.TimeCreate,
                     StateSend = true,
                     StateApprove = true
-                }).ToList();
+                }).ToListAsync();
 
             ViewBag.WaitingTake = waitingTake;
 
-            List<BookRental> waitingReturn = _context.BookRentals
+            List<BookRental> waitingReturn = await _context.BookRentals
                 .Where(p => p.StateApprove == true)
                 .Join(
                 _context.BookRentDetails.Where(p =>
@@ -71,7 +72,7 @@ namespace PBL3.Controllers.AdminAndStaff
                     TimeCreate = bookRental.TimeCreate,
                     StateSend = true,
                     StateApprove = true
-                }).ToList();
+                }).ToListAsync();
             
             ViewBag.WaitingReturn = waitingReturn;
 
@@ -79,23 +80,85 @@ namespace PBL3.Controllers.AdminAndStaff
         }
 
         // GET: BookRentals/Details/5
-        public async Task<IActionResult> Details(int? id)
+        
+        public async Task<IActionResult> DetailsPending(int? id)
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> DetailsWaitingTake(int? id)
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> DetailsWaitingReturn(int? id)
+        {
+            return View();
+        }
+        public async Task<IActionResult> Details(int? id, int type = 1)
         {
             if (id == null || _context.BookRentals == null)
             {
                 return NotFound();
             }
 
-            var bookRental = await _context.BookRentals
-                .Include(b => b.AccApproveNavigation)
-                .Include(b => b.AccSendingNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            BookRental? bookRental = await _context.BookRentals
+                .Where(p => p.Id == id)
+                .FirstOrDefaultAsync();    
             if (bookRental == null)
             {
                 return NotFound();
             }
+            List<string> query = await _context.BookRentDetails
+                .Where(p => p.IdBookRental == id)
+                .Select(p => p.IdBook)
+                .ToListAsync();
 
-            return View(bookRental);
+            List<ViewTitle> details = new List<ViewTitle>();
+            
+            foreach (string b in query)
+            {
+                Title? title = _context.Titles
+                    .Where(p => b.Contains(p.IdTitle))
+                    .FirstOrDefault();
+                if (title == null)
+                {
+                    return NotFound();
+                }
+                int amount = _context.Books
+                    .Where(p => p.IdTitle == title.IdTitle &&
+                    p.StateRent == false)
+                    .Count();
+                details.Add(new ViewTitle
+                {
+                    IdTitle = title.IdTitle,
+                    NameBook = title.NameBook,
+                    NameWriter = title.NameWriter,
+                    NameBookshelf = title.NameBookshelf,
+                    AmountLeft = amount
+                });
+            }
+            ViewBag.BookRent = bookRental;
+            ViewBag.Details = details;
+            switch (type)
+            {
+                case 1:
+                    {
+                        ViewBag.Status = "Pending";
+                        break;
+                    }
+                case 2:
+                    {
+                        ViewBag.Status = "WaitingTake";
+                        break;
+                    }
+                case 3:
+                    {
+                        ViewBag.Status = "WaitingReturn";
+                        break;
+                    }
+            }
+            return View();
         }
 
         // GET: BookRentals/Create

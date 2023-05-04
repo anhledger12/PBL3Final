@@ -1,0 +1,41 @@
+﻿@model IEnumerable<PBL3.Models.Entities.NewsFeed>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Content)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <div class = "row">
+                <div class = "col-md-10">
+                @Html.DisplayFor(modelItem => item.Content)
+                </div>
+                <div class = "col-md-2 float-right">
+                <button asp-action="Edit" asp-route-id="@item.Id">Edit</button> |
+                <button asp-action="Details" asp-route-id="@item.Id">Details</button> |
+                <form asp-action="Delete" asp-route-id="@item.Id" method="post">
+                    <button type="submit">Delete</button>
+                </form>
+                </div>
+            </div>
+            <hr>
+        </tr>
+}
+    </tbody>
+</table>
+<!--Page-->

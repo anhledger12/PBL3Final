@@ -1,0 +1,25 @@
+﻿@model PBL3.Models.Entities.NewsFeed
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+@{
+    var html = Markdig.Markdown.ToHtml(Model.Content);
+}
+<h1>Details</h1>
+
+<div>
+    <h4>NewsFeed</h4>
+    <hr />
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Content)
+        </dt>
+        <div>
+            @Html.Raw(html)
+        </div>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
