@@ -54,6 +54,7 @@
                     <th>Mã đơn mượn</th>
                     <th>Người gửi</th>
                     <th>Người phê duyệt</th>
+                    <th>Thời gian duyệt</th>
                     <th></th>
                 </tr>
             </thead>
@@ -64,6 +65,7 @@
                         <td>@bookRental.Id</td>
                         <td>@bookRental.AccSending</td>
                         <td>@bookRental.AccApprove</td>
+                        <td>@bookRental.TimeApprove</td>
                         <td>
                             <a asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="2">Chi tiết</a>
                         </td>

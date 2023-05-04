@@ -44,6 +44,21 @@ namespace PBL3.Controllers.AdminAndStaff
                 .Where(b => b.IdBookRental == p.Id &&
                 b.StateTake == true).Any() == false)
                 .ToListAsync();
+            //kiểm tra xem có đơn nào đã quá 3 ngày mà không được nhận => bỏ và xem như đóng đơn
+            List<BookRental> outDue = new List<BookRental> ();
+            foreach (BookRental b in waitingTake)
+            {
+                if (b.TimeApprove > DateTime.Now.AddDays(-3))
+                {
+                    //thêm vào outDue chờ đóng
+                    outDue.Add(b);
+                }
+            }
+            foreach (BookRental b in outDue)
+                waitingTake.Remove(b);
+            //gọi xử lí list outDue ở đây
+
+
             ViewBag.WaitingTake = waitingTake;
 
             //chờ trả: tất cả đơn có stateapprove = true, 
@@ -149,7 +164,7 @@ namespace PBL3.Controllers.AdminAndStaff
             return View("Details");
             
         }
-        public async Task<IActionResult> Details(int? id, int type = 1)
+        public async Task<IActionResult> Details(int? id, int? type = 1)
         {
             if (id == null || _context.BookRentals == null)
             {
@@ -186,129 +201,137 @@ namespace PBL3.Controllers.AdminAndStaff
             return View();
         }
 
-        // GET: BookRentals/Create
-        public IActionResult Create()
+        //xoá đơn mượn khỏi hệ thống - kiểm tra xem stateReturn đã true hết chưa
+        public async Task<IActionResult> Delete (int? id)
         {
-            ViewData["AccApprove"] = new SelectList(_context.Accounts, "AccName", "AccName");
-            ViewData["AccSending"] = new SelectList(_context.Accounts, "AccName", "AccName");
-            return View();
-        }
-
-        // POST: BookRentals/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,AccApprove,AccSending,TimeCreate")] BookRental bookRental)
-        {
-            if (ModelState.IsValid)
+            if (_context.BookRentDetails.Where(p => p.IdBookRental == id)
+                .All(p => p.StateTake == true && p.StateReturn == true))
             {
-                _context.Add(bookRental);
+                //cho phép xoá
+                _context.RemoveRange(
+                    _context.BookRentDetails.Where(p => p.IdBookRental == id).ToArray());
+                _context.Remove(
+                    _context.BookRentals.Where(p => p.Id == id).First());
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                //thông báo xoá xong
             }
-            ViewData["AccApprove"] = new SelectList(_context.Accounts, "AccName", "AccName", bookRental.AccApprove);
-            ViewData["AccSending"] = new SelectList(_context.Accounts, "AccName", "AccName", bookRental.AccSending);
-            return View(bookRental);
+            else
+            {
+                //code báo lỗi không cho xoá
+            }
+            return await Index();
         }
 
-        // GET: BookRentals/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        //phê duyệt đơn mượn
+        //kiểm tra từng detail, check availability, nếu false => tìm book id khác sửa vào detail, với id mới sửa staterent thành true
+        //lưu riêng những bookrentdetail không thể chuyển => báo lỗi và xoá
+        //=> với bookrental chuyển trạng thái StateApprove thành true, set TimeApprove
+        public async Task<IActionResult> Approve (int? id, DateTime timeApprove)
         {
-            if (id == null || _context.BookRentals == null)
+            BookRental tempUpdate = _context.BookRentals.Where(p => p.Id == id).First();
+            if (tempUpdate != null)
             {
-                return NotFound();
-            }
+                List<BookRentDetail> pendingApprove = _context.BookRentDetails.Where(p => p.IdBookRental == id).ToList();
+                List<BookRentDetail> notApprovable = new List<BookRentDetail>();
 
-            var bookRental = await _context.BookRentals.FindAsync(id);
-            if (bookRental == null)
-            {
-                return NotFound();
-            }
-            ViewData["AccApprove"] = new SelectList(_context.Accounts, "AccName", "AccName", bookRental.AccApprove);
-            ViewData["AccSending"] = new SelectList(_context.Accounts, "AccName", "AccName", bookRental.AccSending);
-            return View(bookRental);
-        }
-
-        // POST: BookRentals/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,AccApprove,AccSending,TimeCreate")] BookRental bookRental)
-        {
-            if (id != bookRental.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                foreach (BookRentDetail detail in pendingApprove)
                 {
-                    _context.Update(bookRental);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BookRentalExists(bookRental.Id))
+                    if (_context.Books.Where(p => p.IdBook == detail.IdBook).First().StateRent == true)
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        //cần lựa cuốn khác
+                        string titleId = detail.IdBook.Split('.')[0];
+                        string? newId = _context.Books.Where(p => p.IdBook.Contains(titleId) && p.StateRent == false)
+                            .OrderBy(p => p.IdBook)
+                            .Select(p => p.IdBook).FirstOrDefault();
+                        if (newId == null)
+                        {
+                            //không có cuốn nào khác => không thể mượn
+                            notApprovable.Add(detail);
+                        }
+                        else
+                        {
+                            //khả thi
+                            detail.IdBook = newId;
+                        }
                     }
                 }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["AccApprove"] = new SelectList(_context.Accounts, "AccName", "AccName", bookRental.AccApprove);
-            ViewData["AccSending"] = new SelectList(_context.Accounts, "AccName", "AccName", bookRental.AccSending);
-            return View(bookRental);
-        }
 
-        // GET: BookRentals/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.BookRentals == null)
+                //Update các record trong pendingApprove
+                //Xoá các record trong notApprovable
+                foreach (BookRentDetail detail in notApprovable)
+                {
+                    pendingApprove.Remove(detail);
+                    _context.Remove(detail);
+                }
+
+                foreach (BookRentDetail detail in pendingApprove)
+                {
+                    Book getBook = _context.Books.Where(p => p.IdBook == detail.IdBook).First();
+                    getBook.StateRent = true;
+                    _context.Update(getBook);
+                }
+                tempUpdate.StateApprove = true;
+                tempUpdate.TimeApprove = timeApprove;
+                _context.Update(tempUpdate);
+                await _context.SaveChangesAsync();  
+
+                //thông báo phê duyệt xong
+            }
+            else
             {
                 return NotFound();
             }
-
-            var bookRental = await _context.BookRentals
-                .Include(b => b.AccApproveNavigation)
-                .Include(b => b.AccSendingNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (bookRental == null)
+            return await Index();
+        }
+        
+        //xem xét từ chối = xoá khỏi hệ thống => delete cứng, trả stateRent về false
+        public async Task<IActionResult> Refuse (int? id)
+        {
+            List<BookRentDetail> tempDelete = _context.BookRentDetails.Where(p => p.IdBookRental == id).ToList();
+            foreach (BookRentDetail detail in tempDelete)
             {
-                return NotFound();
+                Book getBook = _context.Books.Where(p => p.IdBook == detail.IdBook).First();
+                getBook.StateRent = false;
+                _context.Update(getBook);
             }
-
-            return View(bookRental);
+            _context.Remove(tempDelete);
+            _context.Remove(
+                _context.BookRentals.Where(p => p.Id == id).First());
+            await _context.SaveChangesAsync();
+            return await Index();
         }
 
-        // POST: BookRentals/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        //chuyển stateTake của tất cả các detail trong rental tương ứng thành true
+        public async Task<IActionResult> ReaderTake (int? id)
         {
-            if (_context.BookRentals == null)
-            {
-                return Problem("Entity set 'LibraryManagementContext.BookRentals'  is null.");
-            }
-            var bookRental = await _context.BookRentals.FindAsync(id);
-            if (bookRental != null)
-            {
-                _context.BookRentals.Remove(bookRental);
-            }
+            List<BookRentDetail> tempUpdate = _context.BookRentDetails.Where(p => p.IdBookRental == id).ToList();
+            foreach (BookRentDetail detail in tempUpdate)
+                detail.StateTake = true;
+            _context.UpdateRange(tempUpdate);
+            await _context.SaveChangesAsync();
+            //code báo thành công
+
+            return await Index();
+        }
+
+        //chuyển stateReturn của một sách cụ thể trong rental thành true
+        public async Task<IActionResult> Return (int? id, string idDetail)
+        {
+            BookRentDetail tempUpdate = _context.BookRentDetails.Where(p => 
+            p.IdBookRental == id &&
+            p.IdBook == idDetail).First();
+            tempUpdate.StateReturn = true;
+            _context.Update(tempUpdate);
+
+            Book getBook = _context.Books.Where(p => p.IdBook == idDetail).First();
+            getBook.StateRent = false;
+            _context.Update(getBook);
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+            //code báo thành công
 
-        private bool BookRentalExists(int id)
-        {
-            return (_context.BookRentals?.Any(e => e.Id == id)).GetValueOrDefault();
+            return await Index();
         }
     }
 }
