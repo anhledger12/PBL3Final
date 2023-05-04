@@ -38,7 +38,7 @@
                         <td>@bookRental.AccSending</td>
                         <td>@bookRental.TimeCreate</td>
                         <td>
-                            <a asp-action="Details" asp-route-id="@bookRental.Id">Chi tiết</a>
+                            <a asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="1">Chi tiết</a>
                         </td>
                     </tr>
                 }
@@ -65,7 +65,7 @@
                         <td>@bookRental.AccSending</td>
                         <td>@bookRental.AccApprove</td>
                         <td>
-                            <a asp-action="Details" asp-route-id="@bookRental.Id">Chi tiết</a>
+                            <a asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="2">Chi tiết</a>
                         </td>
                     </tr>
                 }
@@ -92,7 +92,7 @@
                         <td>@bookRental.AccSending</td>
                         <td>@bookRental.AccApprove</td>
                         <td>
-                            <a asp-action="Details" asp-route-id="@bookRental.Id">Chi tiết</a>
+                            <a asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="3">Chi tiết</a>
                         </td>
                     </tr>
                 }
