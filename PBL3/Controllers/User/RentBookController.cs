@@ -25,7 +25,7 @@ namespace PBL3.Controllers.User
         }
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("ViewCart");
         }
 
         //Xem giỏ hàng
