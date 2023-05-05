@@ -20,10 +20,13 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
+            var html = Markdig.Markdown.ToHtml(item.Content);
+            <tr>
+            <div class = "card md-4">
+
             <div class = "row">
-                <div class = "col-md-11">
-                @Html.DisplayFor(modelItem => item.Content)
+                <div class = "col-md-10 ms-3">
+                   @Html.Raw(html)
                 </div>
                 <div class = "col-md-1 float-right">
                 <a class="btn btn-link" asp-action="Edit" asp-route-id="@item.Id">Edit</a> <br>
@@ -32,6 +35,7 @@
                         <button type="submit" class="btn btn-link">Delete</button>
                 </form>
                 </div>
+            </div>
             </div>
             <hr>
         </tr>
