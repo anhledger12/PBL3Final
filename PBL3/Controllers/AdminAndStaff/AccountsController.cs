@@ -28,16 +28,16 @@ namespace PBL3.Controllers.Admin
         {
             // cũng sẽ làm phân trang một chút
             // chỉnh sửa lại view 
-            ViewBag.PageCount = (_context.Accounts.Count() + 4) / 5;
+            ViewBag.PageCount = (_context.Accounts.Count() + 9) / 10;
             ViewBag.CurrentPage = page;
-            var res = await _context.Accounts.Skip(page * 5 - 5).Take(5).ToListAsync();
+            var res = await _context.Accounts.Skip(page * 10 - 10).Take(5).ToListAsync();
             return View(res);
         }
 
-        // GET: Accounts/Details/5
+        // Thủ thư cũng được quyền xem danh sách và xem chi tiết đơn mượn của những người này
+        // Sau khi xem cấu trúc code của team thì sửa thêm vào
         public async Task<IActionResult> Details(string id)
         {
-
             // Sửa lại hết, không có phương thức detail nào ở đây, mà là redirect đến cái view đó
             return Redirect("/Account/Detail/" + id);
         }
@@ -47,7 +47,7 @@ namespace PBL3.Controllers.Admin
             // Cái create phải làm khác này
             return View();
         }
-
+        [Authorize(Roles = UserRole.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Account account)
