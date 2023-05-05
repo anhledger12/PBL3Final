@@ -2,18 +2,12 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
-function Enable1() {
-    $("#home").removeClass("fade").addClass("active");
-    $("#menu1").removeClass("active").addClass("fade");
-    $('#Titles').removeClass("active");
-    $("#Titles").addClass("active");
-    $("#AccNames").removeClass("active");
-}
-function Enable2() {
-    $("#home").removeClass("active").addClass("fade");
-    $("#menu1").removeClass("fade").addClass("active");
-    $("#Titles").removeClass("active");
-    $("#AccNames").addClass("active");
+
+function Enable1(id1, id2, id3, id4) {
+    $(id1).addClass("active");
+    $(id2).removeClass("active");
+    $(id3).removeClass("fade").addClass("active");
+    $(id4).removeClass("active").addClass("fade");
 }
 
 function On1() {

@@ -8,12 +8,12 @@
 @model SearchViewModel;
 
 <ul class="nav nav-pills">  
-  <li class="nav-item ">  
-    <a class="nav-link active rounded-0" id ="Titles" data-toggle="pill" href="#home" onclick = "Enable1()">Titles</a>  
-  </li>  
-  <li class="nav-item">  
-    <a class="nav-link rounded-0" id = "AccNames" data-toggle="pill" href="#menu1" onclick = "Enable2()">AccNames</a>  
-  </li>   
+  <li class="nav-item ">
+        <a class="nav-link active rounded-0" id="Titles" data-toggle="pill" href="#home" onclick="Enable1('#Titles','#AccNames','#home','#menu1')">Titles</a>
+    </li>  
+  <li class="nav-item">
+        <a class="nav-link rounded-0" id="AccNames" data-toggle="pill" href="#menu1" onclick="Enable1('#AccNames','#Titles','#menu1','#home')">AccNames</a>
+    </li>   
 </ul>  
 <div class="tab-content">  
     <div class="tab-pane container active p-0" id="home">  

@@ -8,6 +8,7 @@ using PBL3.Models;
 using PBL3.Models.Entities;
 using System.Collections.Specialized;
 using System.Net.Security;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace PBL3.Controllers.User
 {
@@ -52,7 +53,7 @@ namespace PBL3.Controllers.User
                                book = b,
                                title = Titles
                            }).ToList();
-                return View("/Views/BookRentals/ViewCart.cshtml",Cart);
+                return View(Cart);
             }
             catch
             {
@@ -107,13 +108,34 @@ namespace PBL3.Controllers.User
                 return NotFound();
             }
             var check = (from br in _context.BookRentals
-                        where br.StateSend == false
-                        select br).FirstOrDefault();
+                         where br.StateSend == false && br.AccSending == User.Identity.Name
+                         select br).FirstOrDefault();
             check.StateSend = true;
+            check.TimeCreate = DateTime.Now;
             _context.Update<BookRental>(check);
             _context.SaveChanges();
-            return View("/Views/Home/Index.cshtml");
+            return RedirectToAction("UserRentals");
             //return id.ToString();
+        }
+        [Authorize(Roles = UserRole.User)]
+        public async Task<IActionResult> UserRentals()
+        {
+            List<BookRental> s = QueryTitle(true);
+            ViewBag.Approve = s;
+            List<BookRental> s1 = QueryTitle(false);
+            ViewBag.NotApprove = s1;
+            ViewBag.AccName = User.Identity.Name;
+            return View();
+        }
+        private List<BookRental> QueryTitle(bool stateApprove)
+        {
+            var s = (from brd in _context.BookRentDetails
+                         join br in _context.BookRentals on brd.IdBookRental equals br.Id
+                         join b in _context.Books on brd.IdBook equals b.IdBook
+                         join Titles in _context.Titles on b.IdTitle equals Titles.IdTitle
+                         where br.AccSending == User.Identity.Name && br.StateSend == true && br.StateApprove == stateApprove
+                         select br).ToList();
+            return s;
         }
     }
 }
