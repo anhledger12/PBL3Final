@@ -186,6 +186,7 @@ namespace PBL3.Controllers.AdminAndStaff
             return View("Details");
         }
 
+        [Authorize(Roles = UserRole.All)]
         public async Task<IActionResult> Details(int? id, int? type = 1)
         {
             if (id == null || _context.BookRentals == null)
