@@ -129,10 +129,7 @@ namespace PBL3.Controllers.User
         }
         private List<BookRental> QueryTitle(bool stateApprove)
         {
-            var s = (from brd in _context.BookRentDetails
-                         join br in _context.BookRentals on brd.IdBookRental equals br.Id
-                         join b in _context.Books on brd.IdBook equals b.IdBook
-                         join Titles in _context.Titles on b.IdTitle equals Titles.IdTitle
+            var s = (from br in _context.BookRentals
                          where br.AccSending == User.Identity.Name && br.StateSend == true && br.StateApprove == stateApprove
                          select br).ToList();
             return s;

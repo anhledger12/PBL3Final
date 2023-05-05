@@ -35,7 +35,7 @@
                         <td>@bookRental.TimeApprove</td>
                         <td>@bookRental.TimeCreate</td>
                         <td>
-                            <a asp-controller = "BookRentals" asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="1">Chi tiết</a>
+                            <a asp-controller = "BookRentals" asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="4">Chi tiết</a>
                         </td>
                     </tr>
                 }
@@ -47,7 +47,7 @@
         <h5 class="text-uppercase p-2 text-center">Danh sách chờ duyệt</h5>
         <table class="table">
             <thead>
-                <tr>
+                <tr> 
                     <th>Id</th>
                     <th>Ngày gửi đơn</th>
                 </tr>
@@ -59,7 +59,7 @@
                         <td>@bookRental.Id</td>
                         <td>@bookRental.TimeCreate</td>
                         <td>
-                            <a asp-controller="BookRentals"  asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="2">Chi tiết</a>
+                            <a asp-controller="BookRentals"  asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="4">Chi tiết</a>
                         </td>
                     </tr>
                 }
