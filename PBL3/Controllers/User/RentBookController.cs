@@ -33,13 +33,6 @@ namespace PBL3.Controllers.User
         [Authorize(Roles = UserRole.User)]
         public async Task<IActionResult> ViewCart()
         {
-            var check = (from br in _context.BookRentals
-                         where br.StateSend == false
-                         select br).FirstOrDefault();
-            if (check == null)
-            {
-                return View("/Views/BookRentals/ViewCartEmpty.cshtml");
-            }
             string AccName = User.Identity.Name;
             try
             {
@@ -59,10 +52,6 @@ namespace PBL3.Controllers.User
                                book = b,
                                title = Titles
                            }).ToList();
-                if (Cart == null)
-                {
-                    return View("/Views/BookRentals/ViewCart.cshtml", "Không có đơn nào chưa gửi");
-                }
                 return View("/Views/BookRentals/ViewCart.cshtml",Cart);
             }
             catch
