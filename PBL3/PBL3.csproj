@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <Folder Include="Data\Services\" />
+    <Folder Include="Views\RentBook\" />
   </ItemGroup>
 
 </Project>

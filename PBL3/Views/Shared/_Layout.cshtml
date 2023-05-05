@@ -51,7 +51,7 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Notificates" asp-action="Index">Thông báo</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="RentBook" asp-action="ViewCart">Mượn sách</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="RentBook" asp-action="UserRentals">Mượn sách</a>
                             </li>
                         }
                         @if (User.IsInRole(UserRole.Admin))
@@ -89,7 +89,8 @@
                                            <button class="btn btn-outline-primary" asp-controller="Account" asp-action="Detail" asp-route-id = "@User.Identity.Name">Xin chào, @User.Identity.Name</button>
                                         <div class="dropdown-content">
                                             <a asp-controller="Account" asp-action="Detail" asp-route-id = "@User.Identity.Name">Tài khoản</a>
-                                            <a asp-controller="RentBook" asp-action = "ViewCart"> Đơn mượn</a>
+                                            <a asp-controller="RentBook" asp-action="ViewCart"> Giỏ hàng</a>
+                                            <a asp-controller="RentBook" asp-action = "UserRentals"> Đơn mượn</a>
                                          </div>
                                     </div>
                                 <a class="btn btn-outline-secondary" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
