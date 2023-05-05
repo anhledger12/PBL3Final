@@ -6,6 +6,7 @@
 
 @using PBL3.Data.ViewModel
 @using PBL3.Models.Entities
+@using PBL3.Data
 
 <h1>Details</h1>
 
@@ -36,7 +37,7 @@
         }
     </dl>
 </div>
-@if (ViewBag.Status == "Pending")
+@if (ViewBag.Status == "Pending" && User.Identity.IsAuthenticated && !User.IsInRole(UserRole.User))
 {
     <table class="table">
         <thead>
@@ -78,9 +79,9 @@
     //có thể mượn và các sách không thể mượn
     //duyệt xong hiện ở waiting take
 }
-else if (ViewBag.Status == "WaitingTake")
+else if (ViewBag.Status == "WaitingTake" && User.Identity.IsAuthenticated && !User.IsInRole(UserRole.User))
 {
-    <a asp-action="ReaderTake" asp-route-id="@ViewBag.BookRent.Id">Xác nhận lấy đơn</a>
+    <a asp-action="ReaderTake" asp-route-id="@ViewBag.BookRent.Id" asp-route-timeTake="@DateTime.Now">Xác nhận lấy đơn</a>
     //nút xác nhận độc giả đến lấy đơn
     <p>Đơn này được phê duyệt vào ngày @ViewBag.BookRent.TimeApprove</p>
     <table class="table">
@@ -111,9 +112,9 @@ else if (ViewBag.Status == "WaitingTake")
     //hiện các sách có id cụ thể
     //xác nhận xong hiện ở waiting return
 }
-else if (ViewBag.Status == "WaitingReturn")
+else if (ViewBag.Status == "WaitingReturn" && User.Identity.IsAuthenticated && !User.IsInRole(UserRole.User))
 {
-    <a asp-action="Delete" asp-route-id="@ViewBag.BookRent.Id"></a>
+    <a class="btn btn-primary" asp-action="Delete" asp-route-id="@ViewBag.BookRent.Id">Đóng đơn</a>
     //nút xác nhận đóng đơn
 
     <table class="table">
@@ -142,18 +143,54 @@ else if (ViewBag.Status == "WaitingReturn")
                     else
                     {
                         <td>Đang mượn</td>
-                        <td>v.ReturnDue</td>
+                        <td>@v.ReturnDue</td>
+                        <td>
+                            <a asp-action="Return" asp-route-id="@ViewBag.BookRent.Id" asp-route-idDetail="@v.IdBook">Trả sách</a>
+                        </td>
                     }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    //hiện trạng thái đã trả/chưa trả và hạn trả của các sách trong đơn
+    //mỗi dòng nếu chưa trả thì có nút trả
+    //khi tất cả các sách đã trả mới có thể đóng đơn
+}
+else if (ViewBag.Status == "UserView" && User.Identity.IsAuthenticated && User.IsInRole(UserRole.User))
+{
+    //nút xác nhận độc giả đến lấy đơn
+    @if (ViewBag.BookRent.StateApprove == true)
+    {
+        <p>Đơn này được phê duyệt vào ngày @ViewBag.BookRent.TimeApprove</p>
+    }
+    else
+    {
+        <p>Đơn đang chờ phê duyệt</p>
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Mã sách</th>
+                <th>Tên sách</th>
+                <th>Tên tác giả</th>
+                <th>Vị trí kệ</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ViewTitle v in ViewBag.Details)
+            {
+                <tr>
+                    <td>@v.IdBook</td>
+                    <td>@v.NameBook</td>
+                    <td>@v.NameWriter</td>
+                    <td>@v.NameBookshelf</td>
                     <td>
-                        <a asp-action="Return" asp-route-id="@v.IdTitle" asp-route-idDetail="@v.IdBook">Trả sách</a>
+                        <a asp-action="Details" asp-controller="Titles" asp-route-id="@v.IdTitle">Chi tiết</a>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-    
-    //hiện trạng thái đã trả/chưa trả và hạn trả của các sách trong đơn
-    //mỗi dòng nếu chưa trả thì có nút trả
-    //khi tất cả các sách đã trả mới có thể đóng đơn
 }
 

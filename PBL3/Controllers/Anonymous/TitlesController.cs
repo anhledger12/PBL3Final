@@ -116,7 +116,7 @@ namespace PBL3.Controllers.Anonymous
                 ViewData["AlertMessage"] = "Thêm sách vào đơn mượn tạm thành công.";
             }
             Title title = _context.Titles.Where(p => p.IdTitle == id).FirstOrDefault();
-            return View(viewName: "Details", model: title);
+            return View("Details",title);
         }
 
         // GET: Titles/Create

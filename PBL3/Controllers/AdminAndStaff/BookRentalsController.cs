@@ -48,7 +48,7 @@ namespace PBL3.Controllers.AdminAndStaff
             List<BookRental> outDue = new List<BookRental> ();
             foreach (BookRental b in waitingTake)
             {
-                if (b.TimeApprove > DateTime.Now.AddDays(-3))
+                if (b.TimeApprove < DateTime.Now.AddDays(-3))
                 {
                     //thêm vào outDue chờ đóng
                     outDue.Add(b);
@@ -58,7 +58,6 @@ namespace PBL3.Controllers.AdminAndStaff
                 waitingTake.Remove(b);
             //gọi xử lí list outDue ở đây
 
-
             ViewBag.WaitingTake = waitingTake;
 
             //chờ trả: tất cả đơn có stateapprove = true, 
@@ -67,8 +66,7 @@ namespace PBL3.Controllers.AdminAndStaff
                 Where(p => p.StateApprove == true &&
                 _context.BookRentDetails
                 .Where(b => b.IdBookRental == p.Id)
-                .All(b => b.StateReturn == false &&
-                b.StateTake == true) == false)
+                .All(b => b.StateTake == true) == true)
                 .ToListAsync();
 
             ViewBag.WaitingReturn = waitingReturn;
@@ -162,8 +160,32 @@ namespace PBL3.Controllers.AdminAndStaff
             ViewBag.BookRent = bookRental;
             ViewBag.Details = details;
             return View("Details");
-            
         }
+
+        public async Task<IActionResult> UserView(BookRental bookRental, List<string> listIdBook)
+        {
+            List<ViewTitle> details = new List<ViewTitle>();
+
+            foreach (string b in listIdBook)
+            {
+                Title? title = _context.Titles
+                    .Where(p => b.Contains(p.IdTitle))
+                    .FirstOrDefault();
+
+                details.Add(new ViewTitle
+                {
+                    IdTitle = title.IdTitle,
+                    NameBook = title.NameBook,
+                    NameWriter = title.NameWriter,
+                    NameBookshelf = title.NameBookshelf
+                });
+            }
+            ViewBag.Status = "UserView";
+            ViewBag.BookRent = bookRental;
+            ViewBag.Details = details;
+            return View("Details");
+        }
+
         public async Task<IActionResult> Details(int? id, int? type = 1)
         {
             if (id == null || _context.BookRentals == null)
@@ -197,6 +219,10 @@ namespace PBL3.Controllers.AdminAndStaff
                     {
                         return await WaitingReturn(bookRental, listIdBook);
                     }
+                case 4:
+                    {
+                        return await UserView(bookRental, listIdBook);
+                    }
             }
             return View();
         }
@@ -208,9 +234,9 @@ namespace PBL3.Controllers.AdminAndStaff
                 .All(p => p.StateTake == true && p.StateReturn == true))
             {
                 //cho phép xoá
-                _context.RemoveRange(
+                _context.BookRentDetails.RemoveRange(
                     _context.BookRentDetails.Where(p => p.IdBookRental == id).ToArray());
-                _context.Remove(
+                _context.BookRentals.Remove(
                     _context.BookRentals.Where(p => p.Id == id).First());
                 await _context.SaveChangesAsync();
 
@@ -220,7 +246,7 @@ namespace PBL3.Controllers.AdminAndStaff
             {
                 //code báo lỗi không cho xoá
             }
-            return await Index();
+            return RedirectToAction("Index");
         }
 
         //phê duyệt đơn mượn
@@ -272,6 +298,7 @@ namespace PBL3.Controllers.AdminAndStaff
                     _context.Update(getBook);
                 }
                 tempUpdate.StateApprove = true;
+                tempUpdate.AccApprove = User.Identity.Name;
                 tempUpdate.TimeApprove = timeApprove;
                 _context.Update(tempUpdate);
                 await _context.SaveChangesAsync();  
@@ -282,7 +309,7 @@ namespace PBL3.Controllers.AdminAndStaff
             {
                 return NotFound();
             }
-            return await Index();
+            return RedirectToAction("Index");
         }
         
         //xem xét từ chối = xoá khỏi hệ thống => delete cứng, trả stateRent về false
@@ -299,24 +326,28 @@ namespace PBL3.Controllers.AdminAndStaff
             _context.Remove(
                 _context.BookRentals.Where(p => p.Id == id).First());
             await _context.SaveChangesAsync();
-            return await Index();
+            return RedirectToAction("Index");
         }
 
         //chuyển stateTake của tất cả các detail trong rental tương ứng thành true
-        public async Task<IActionResult> ReaderTake (int? id)
+        public async Task<IActionResult> ReaderTake (int id, DateTime timeTake)
         {
             List<BookRentDetail> tempUpdate = _context.BookRentDetails.Where(p => p.IdBookRental == id).ToList();
             foreach (BookRentDetail detail in tempUpdate)
+            {
                 detail.StateTake = true;
+                detail.ReturnDate = timeTake.AddDays(90);
+            }
             _context.UpdateRange(tempUpdate);
+
             await _context.SaveChangesAsync();
             //code báo thành công
 
-            return await Index();
+            return RedirectToAction("Index");
         }
 
         //chuyển stateReturn của một sách cụ thể trong rental thành true
-        public async Task<IActionResult> Return (int? id, string idDetail)
+        public async Task<IActionResult> Return (int? id, string? idDetail)
         {
             BookRentDetail tempUpdate = _context.BookRentDetails.Where(p => 
             p.IdBookRental == id &&
@@ -327,11 +358,10 @@ namespace PBL3.Controllers.AdminAndStaff
             Book getBook = _context.Books.Where(p => p.IdBook == idDetail).First();
             getBook.StateRent = false;
             _context.Update(getBook);
-
             await _context.SaveChangesAsync();
             //code báo thành công
 
-            return await Index();
+            return RedirectToAction("Index");
         }
     }
 }
