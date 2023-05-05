@@ -171,7 +171,7 @@ else if (ViewBag.Status == "UserView" && User.Identity.IsAuthenticated && User.I
     <table class="table">
         <thead>
             <tr>
-                <th>Mã sách</th>
+                <th>Mã đầu sách</th>
                 <th>Tên sách</th>
                 <th>Tên tác giả</th>
                 <th>Vị trí kệ</th>
@@ -181,7 +181,7 @@ else if (ViewBag.Status == "UserView" && User.Identity.IsAuthenticated && User.I
             @foreach (ViewTitle v in ViewBag.Details)
             {
                 <tr>
-                    <td>@v.IdBook</td>
+                    <td>@v.IdTitle</td>
                     <td>@v.NameBook</td>
                     <td>@v.NameWriter</td>
                     <td>@v.NameBookshelf</td>

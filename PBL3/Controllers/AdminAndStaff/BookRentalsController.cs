@@ -12,7 +12,6 @@ using PBL3.Models.Entities;
 
 namespace PBL3.Controllers.AdminAndStaff
 {
-    [Authorize(Roles = UserRole.AdminOrStaff)]
     public class BookRentalsController : Controller
     {
         private readonly LibraryManagementContext _context;
@@ -27,6 +26,7 @@ namespace PBL3.Controllers.AdminAndStaff
         }
 
         // GET: BookRentals
+        [Authorize(Roles = UserRole.AdminOrStaff)]
         public async Task<IActionResult> Index()
         {
             //ViewBag gồm 1 danh sách đơn đang mượn, 1 danh sách đơn chờ duyệt, 1 danh sách đơn chờ lấy
@@ -229,6 +229,7 @@ namespace PBL3.Controllers.AdminAndStaff
         }
 
         //xoá đơn mượn khỏi hệ thống - kiểm tra xem stateReturn đã true hết chưa
+        [Authorize(Roles = UserRole.AdminOrStaff)]
         public async Task<IActionResult> Delete (int? id)
         {
             if (_context.BookRentDetails.Where(p => p.IdBookRental == id)
@@ -254,6 +255,7 @@ namespace PBL3.Controllers.AdminAndStaff
         //kiểm tra từng detail, check availability, nếu false => tìm book id khác sửa vào detail, với id mới sửa staterent thành true
         //lưu riêng những bookrentdetail không thể chuyển => báo lỗi và xoá
         //=> với bookrental chuyển trạng thái StateApprove thành true, set TimeApprove
+        [Authorize(Roles = UserRole.AdminOrStaff)]
         public async Task<IActionResult> Approve (int? id, DateTime timeApprove)
         {
             BookRental tempUpdate = _context.BookRentals.Where(p => p.Id == id).First();
@@ -312,8 +314,9 @@ namespace PBL3.Controllers.AdminAndStaff
             }
             return RedirectToAction("Index");
         }
-        
+
         //xem xét từ chối = xoá khỏi hệ thống => delete cứng, trả stateRent về false
+        [Authorize(Roles = UserRole.AdminOrStaff)]
         public async Task<IActionResult> Refuse (int? id)
         {
             List<BookRentDetail> tempDelete = _context.BookRentDetails.Where(p => p.IdBookRental == id).ToList();
@@ -331,6 +334,7 @@ namespace PBL3.Controllers.AdminAndStaff
         }
 
         //chuyển stateTake của tất cả các detail trong rental tương ứng thành true
+        [Authorize(Roles = UserRole.AdminOrStaff)]
         public async Task<IActionResult> ReaderTake (int id, DateTime timeTake)
         {
             List<BookRentDetail> tempUpdate = _context.BookRentDetails.Where(p => p.IdBookRental == id).ToList();
@@ -348,6 +352,7 @@ namespace PBL3.Controllers.AdminAndStaff
         }
 
         //chuyển stateReturn của một sách cụ thể trong rental thành true
+        [Authorize(Roles = UserRole.AdminOrStaff)]
         public async Task<IActionResult> Return (int? id, string? idDetail)
         {
             BookRentDetail tempUpdate = _context.BookRentDetails.Where(p => 
