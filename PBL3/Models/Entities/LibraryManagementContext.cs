@@ -49,7 +49,7 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("MSSV");
-            entity.Property(e => e.DateOfBirth).HasColumnType("date");
+            entity.Property(e => e.DateOfBirth).HasColumnType("datetime");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
                 .IsUnicode(false);
@@ -147,8 +147,8 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
             entity.Property(e => e.AccSending)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.TimeCreate).HasColumnType("date");
-            entity.Property(e => e.StateSend).HasDefaultValueSql("((0))");
+            entity.Property(e => e.TimeCreate).HasColumnType("datetime");
+            entity.Property(e => e.StateSend).HasDefaultValueSql("((0))");  
             entity.Property(e => e.StateApprove).HasDefaultValueSql("((0))");
             entity.HasOne(d => d.AccApproveNavigation).WithMany(p => p.BookRentalAccApproveNavigations)
                 .HasForeignKey(d => d.AccApprove)
@@ -195,7 +195,7 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
             entity.Property(e => e.AccReceive)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.TimeSending).HasColumnType("date");
+            entity.Property(e => e.TimeSending).HasColumnType("datetime");
 
             entity.HasOne(d => d.AccReceiveNavigation).WithMany(p => p.Notificates)
                 .HasForeignKey(d => d.AccReceive)
