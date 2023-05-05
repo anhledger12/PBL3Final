@@ -108,8 +108,8 @@ namespace PBL3.Controllers.User
                 return NotFound();
             }
             var check = (from br in _context.BookRentals
-                        where br.StateSend == false
-                        select br).FirstOrDefault();
+                         where br.StateSend == false && br.AccSending == User.Identity.Name
+                         select br).FirstOrDefault();
             check.StateSend = true;
             check.TimeCreate = DateTime.Now;
             _context.Update<BookRental>(check);
