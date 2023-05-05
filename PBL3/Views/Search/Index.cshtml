@@ -1,4 +1,5 @@
-﻿@*
+﻿@using PBL3.Data;
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
@@ -7,14 +8,17 @@
 
 @model SearchViewModel;
 
-<ul class="nav nav-pills">  
-  <li class="nav-item ">
-        <a class="nav-link active rounded-0" id="Titles" data-toggle="pill" href="#home" onclick="Enable1('#Titles','#AccNames','#home','#menu1')">Titles</a>
-    </li>  
-  <li class="nav-item">
-        <a class="nav-link rounded-0" id="AccNames" data-toggle="pill" href="#menu1" onclick="Enable1('#AccNames','#Titles','#menu1','#home')">AccNames</a>
-    </li>   
-</ul>  
+@if (User.IsInRole(UserRole.AdminOrStaff))
+ {
+    <ul class="nav nav-pills"> 
+        <li class="nav-item ">
+            <a class="nav-link active rounded-0" id="Titles" data-toggle="pill" href="#home" onclick="Enable1('#Titles','#AccNames','#home','#menu1')">Titles</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-0" id="AccNames" data-toggle="pill" href="#menu1" onclick="Enable1('#AccNames','#Titles','#menu1','#home')">AccNames</a>
+        </li>     
+    </ul>  
+ }
 <div class="tab-content">  
     <div class="tab-pane container active p-0" id="home">  
         <h5 class="text-uppercase p-2 text-center">List of Books</h5>  
@@ -50,30 +54,33 @@
             </tbody>  
         </table>  
     </div>
-    <div class="tab-pane container fade p-0" id="menu1">  
-        <h5 class="text-uppercase p-2 text-center">List of Accounts</h5>  
-        <table class="table table-bordered table-striped">  
-            <thead class="thead-dark text-dark">  
-                <tr>  
-                    <th>Mã số sinh viên</th>  
-                    <th>Tên tài khoản</th>  
-                    <th>Số điện thoại</th>
-                    <th>Email</th> 
-                    <th>Ngày sinh</th> 
-                </tr>  
-            </thead>  
-            <tbody>  
-                @foreach (var Account in Model.Accounts)
-                {  
+    @if (User.IsInRole(UserRole.AdminOrStaff))
+    {
+        <div class="tab-pane container fade p-0" id="menu1">  
+            <h5 class="text-uppercase p-2 text-center">List of Accounts</h5>  
+            <table class="table table-bordered table-striped">  
+                <thead class="thead-dark text-dark">  
+                    <tr>  
+                        <th>Mã số sinh viên</th>  
+                        <th>Tên tài khoản</th>  
+                        <th>Số điện thoại</th>
+                        <th>Email</th> 
+                        <th>Ngày sinh</th> 
+                    </tr>  
+                </thead>  
+                <tbody>  
+                    @foreach (var Account in Model.Accounts)
+                    {
                         <tr>  
                             <td>@Account.Mssv</td>  
                             <td>@Account.AccName</td>  
                             <td>@Account.Phone</td> 
                             <td>@Account.Email</td>
                             <td>@Account.DateOfBirth</td> 
-                        </tr>  
-                }  
-            </tbody>  
-        </table>  
-    </div>  
+                        </tr>
+                    }  
+                </tbody>  
+            </table>  
+        </div>
+    }
 </div>  

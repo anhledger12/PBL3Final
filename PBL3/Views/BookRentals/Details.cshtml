@@ -8,6 +8,21 @@
 @using PBL3.Models.Entities
 @using PBL3.Data
 
+@section scripts{
+    <script>
+        $(function () {
+            $('#AlertBox').addClass('hide');
+            $('#AlertBox').removeClass('hide');
+            $('#AlertBox').delay(2000).slideUp(500);
+        });
+    </script>
+    }
+@if (TempData["AlertMessage"] != null)
+{
+    <div id="AlertBox" class="alert @TempData["AlertType"] hide" role="alert">
+        @TempData["AlertMessage"]
+    </div>
+}
 <h1>Details</h1>
 
 <div>
@@ -187,6 +202,7 @@ else if (ViewBag.Status == "UserView" && User.Identity.IsAuthenticated && User.I
                     <td>@v.NameBookshelf</td>
                     <td>
                         <a asp-action="Details" asp-controller="Titles" asp-route-id="@v.IdTitle">Chi tiết</a>
+                        <a asp-action = "ExtendRent" asp-controller="RentBook" asp-route-id ="@v.IdTitle" asp-route-idBookRent ="@ViewBag.BookRent.Id" > Gia hạn </a>
                     </td>
                 </tr>
             }
