@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -55,8 +57,12 @@ namespace PBL3.Controllers.AdminAndStaff
                 }
             }
             foreach (BookRental b in outDue)
+            {
                 waitingTake.Remove(b);
+            }
+                
             //gọi xử lí list outDue ở đây
+            string deleteOutDue = DeleteOutDue(outDue);
 
             ViewBag.WaitingTake = waitingTake;
 
@@ -253,6 +259,21 @@ namespace PBL3.Controllers.AdminAndStaff
                 //code báo lỗi không cho xoá
             }
             return RedirectToAction("Index");
+        }
+
+        public string DeleteOutDue(List<BookRental> outDue)
+        {
+            //trả về một string lưu các id đơn quá hạn
+            string result = string.Empty;
+            foreach (BookRental bookRental in outDue)
+            {
+                _context.BookRentDetails.RemoveRange(
+                    _context.BookRentDetails.Where(p => p.IdBookRental == bookRental.Id).ToArray());
+                _context.BookRentals.Remove(bookRental);
+                result += "Mã đơn: " + bookRental.Id.ToString() + ", người gửi: " + bookRental.AccSending; 
+            }
+            _context.SaveChanges();
+            return result;
         }
 
         //phê duyệt đơn mượn

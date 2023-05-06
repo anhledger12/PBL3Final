@@ -89,14 +89,24 @@ namespace PBL3.Controllers.Anonymous
                 _context.SaveChanges();               
             }
 
-            BookRentDetail? query = _context.BookRentDetails.Where(p => p.IdBookRental == tempBookRental.Id
-            && p.IdBook.Contains(id)).FirstOrDefault();
+            bool ableToAdd = true;
+
+            //kiểm tra tất cả các đơn mượn của accName này, xem có đơn nào có tồn tại bookrentdetail:
+            //bookId = id và stateReturn = false
+            List<BookRental> thisAccRental = _context.BookRentals.Where(p => p.AccSending == accName).ToList();
+            foreach (BookRental item in thisAccRental)
+            {
+                ableToAdd = !_context.BookRentDetails.Where(p => p.IdBookRental == item.Id &&
+                p.IdBook.Contains(id) && p.StateReturn == false).Any();
+                if (ableToAdd == false) break;
+            }
             
-            if (query!=null)
+            
+            if (ableToAdd == false)
             {
                 //báo lỗi, không thể thêm sách trùng
                 ViewData["AlertType"] = "alert-warning";
-                ViewData["AlertMessage"] = "Trong đơn mượn tạm đã có sách này, không thể thêm.";
+                ViewData["AlertMessage"] = "Trong đơn mượn tạm của bạn, hoặc trong đơn mượn đang xử lí đã có sách này, không thể mượn thêm.";
             }
             else
             {
@@ -312,13 +322,19 @@ namespace PBL3.Controllers.Anonymous
                 }
                 else
                 {
-                    _context.RemoveRange(booksOfTitle);
-#warning Có thể sẽ conflict với bảng BookRentDetail. Cần cân nhắc bỏ constraint Foreign_Key của IdBook trong BookRentDetail, hoặc xoá luôn các record BookRentDetail/BookRental có liên quan tới sách
+                    foreach (Book book in booksOfTitle)
+                    {
+                        List<BookRentDetail> relatedDetail = _context.BookRentDetails.Where(p =>
+                        p.IdBook == book.IdBook).ToList();
+                        _context.BookRentDetails.RemoveRange(relatedDetail);
+                    }
+                    _context.Books.RemoveRange(booksOfTitle);
                     _context.Titles.Remove(title);
+                    await _context.SaveChangesAsync();
                 }
             }
 
-            await _context.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
         }
 

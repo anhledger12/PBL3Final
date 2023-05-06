@@ -76,7 +76,8 @@ namespace PBL3.Controllers.User
                                           IdBook = brd.IdBook,
                                           StateReturn = brd.StateReturn,
                                           StateTake = brd.StateTake,
-                                          ReturnDate = brd.ReturnDate
+                                          ReturnDate = brd.ReturnDate,
+                                          Id = brd.Id
                                       }).FirstOrDefaultAsync();
             if (s == null)
             {
