@@ -12,18 +12,59 @@ namespace PBL3.Controllers.Anonymous
             _context = context;
         }
 
-        public IActionResult Index(string name = "")
+        public IActionResult Index(string name = "", string sortOrder = "asc", string sortType = "name")
         {
+            var accounts = _context.Accounts
+                                    .Select(x => x)
+                                    .Where(x => x.AccName.Contains(name));
+            var titles = _context.Titles
+                                .Select(x => x)
+                                .Where(x => x.NameBook.Contains(name));
+            switch (sortType)
+            {
+                case "name":
+                    {
+                        switch (sortOrder)
+                        {
+                            case "asc":
+                                {
+                                    accounts = accounts.OrderBy(s => s.AccName);
+                                    titles = titles.OrderBy(s => s.NameBook);
+                                    break;
+                                }
+                            case "desc":
+                                {
+                                    accounts = accounts.OrderByDescending(s => s.AccName);
+                                    titles = titles.OrderByDescending(s => s.NameBook);
+                                    break;
+                                }
+                        }
+                        break;
+                    }
+                case "date":
+                    {
+                        switch (sortOrder)
+                        {
+                            case "asc":
+                                {
+                                    accounts = accounts.OrderBy(s => s.DateOfBirth);
+                                    titles = titles.OrderBy(s => s.ReleaseYear);
+                                    break;
+                                }
+                            case "desc":
+                                {
+                                    accounts = accounts.OrderByDescending(s => s.DateOfBirth);
+                                    titles = titles.OrderByDescending(s => s.ReleaseYear);
+                                    break;
+                                }
+                        }
+                        break;
+                    }
+            }
             var tables = new SearchViewModel
             {
-                Accounts = _context.Accounts
-                                .Select(x => x)
-                                .Where(x => x.AccName.Contains(name)).ToList(),
-                Titles = _context.Titles
-                            .Select(x => x)
-                            .Where(x => x.NameBook.Contains(name)).ToList(),
-                
-                BookRentals = _context.BookRentals.ToList()
+                Accounts = accounts,
+                Titles = titles,
             };
             return View(tables);
         }

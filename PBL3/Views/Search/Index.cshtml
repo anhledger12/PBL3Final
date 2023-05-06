@@ -19,6 +19,21 @@
         </li>     
     </ul>  
  }
+ <label>Sắp xếp theo</label>
+ <div class="dropdown">
+    <select name="sortOrder" class="" title="Tiêu chí"></select>
+        <div class="dropdown-content">
+           <a id = "TitlesSearch" asp-action = "Index" asp-route-name="@Model.Titles.FirstOrDefault().NameBook" asp-route-sortOrder="asc" asp-route-sortType="name">Tăng dần theo tên sách</a>
+           <a id="TitlesSearch" asp-action="Index" asp-route-name="@Model.Titles.FirstOrDefault().NameBook" asp-route-sortOrder="desc" asp-route-sortType="name">Giảm dần theo tên sách</a>
+           <a id="TitlesSearch" asp-action="Index" asp-route-name="@Model.Titles.FirstOrDefault().NameBook" asp-route-sortOrder="asc" asp-route-sortType="date">Tăng dần theo năm xuất bản</a>
+           <a id="TitlesSearch" asp-action="Index" asp-route-name="@Model.Titles.FirstOrDefault().NameBook" asp-route-sortOrder="desc" asp-route-sortType="date">Giảm dần theo năm xuất bản</a>
+           <a id="AccountsSearch" asp-action="Index" asp-route-name="@Model.Titles.FirstOrDefault().NameBook" asp-route-sortOrder="asc" asp-route-sortType="name">Tăng dần theo tên tài khoản</a>
+           <a id="AccountsSearch" asp-action="Index" asp-route-name="@Model.Titles.FirstOrDefault().NameBook" asp-route-sortOrder="desc" asp-route-sortType="name">Giảm dần theo tên tài khoản</a>
+           <a id="AccountsSearch" asp-action="Index" asp-route-name="@Model.Titles.FirstOrDefault().NameBook" asp-route-sortOrder="asc" asp-route-sortType="date">Tăng dần theo ngày sinh</a>
+           <a id="AccountsSearch" asp-action="Index" asp-route-name="@Model.Titles.FirstOrDefault().NameBook" asp-route-sortOrder="desc" asp-route-sortType="date">Giảm dần theo ngày sinh</a>
+        </div>
+</div>
+ 
 <div class="tab-content">  
     <div class="tab-pane container active p-0" id="home">  
         <h5 class="text-uppercase p-2 text-center">List of Books</h5>  

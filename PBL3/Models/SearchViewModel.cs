@@ -7,6 +7,5 @@ namespace PBL3.Models
     {
         public IEnumerable<Title> Titles { get; set; }
         public IEnumerable<Account> Accounts { get; set; }
-        public IEnumerable<BookRental> BookRentals { get; set; }
     }
 }
