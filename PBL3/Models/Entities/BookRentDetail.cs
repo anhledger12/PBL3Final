@@ -5,6 +5,8 @@ namespace PBL3.Models.Entities;
 
 public partial class BookRentDetail
 {
+    
+    public int Id { get; set; }
     public int IdBookRental { get; set; }
 
     public string IdBook { get; set; } = null!;

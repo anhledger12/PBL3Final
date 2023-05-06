@@ -113,7 +113,7 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
 
         modelBuilder.Entity<BookRentDetail>(entity =>
         {
-            entity.HasKey(e => new { e.IdBookRental, e.IdBook }).HasName("PK_IdBookRent_IdBook");
+            entity.HasKey(e => e.Id).HasName("PK_Id_BookRentDetail");
 
             entity.ToTable("BookRentDetail");
 
