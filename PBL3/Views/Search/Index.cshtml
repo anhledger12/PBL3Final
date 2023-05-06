@@ -8,7 +8,7 @@
 
 @model SearchViewModel;
 
-@if (User.IsInRole(UserRole.AdminOrStaff))
+@if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
  {
     <ul class="nav nav-pills"> 
         <li class="nav-item ">
@@ -54,7 +54,7 @@
             </tbody>  
         </table>  
     </div>
-    @if (User.IsInRole(UserRole.AdminOrStaff))
+    @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
     {
         <div class="tab-pane container fade p-0" id="menu1">  
             <h5 class="text-uppercase p-2 text-center">List of Accounts</h5>  
@@ -76,7 +76,12 @@
                             <td>@Account.AccName</td>  
                             <td>@Account.Phone</td> 
                             <td>@Account.Email</td>
-                            <td>@Account.DateOfBirth</td> 
+                            <td>@Account.DateOfBirth</td>
+                            <td>
+                                <a asp-controller = "Accounts" asp-action="Edit" asp-route-id="@Account.AccName">Edit</a> |
+                                <a asp-controller="Accounts" asp-action="Details" asp-route-id="@Account.AccName">Details</a> |
+                                <a asp-controller="Accounts" asp-action="Delete" asp-route-id="@Account.AccName">Delete</a>
+                            </td>
                         </tr>
                     }  
                 </tbody>  
