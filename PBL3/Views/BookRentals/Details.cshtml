@@ -190,6 +190,7 @@ else if (ViewBag.Status == "UserView" && User.Identity.IsAuthenticated && User.I
                 <th>Tên sách</th>
                 <th>Tên tác giả</th>
                 <th>Vị trí kệ</th>
+                <th>Ngày tới hạn</th>
             </tr>
         </thead>
         <tbody>
@@ -200,6 +201,7 @@ else if (ViewBag.Status == "UserView" && User.Identity.IsAuthenticated && User.I
                     <td>@v.NameBook</td>
                     <td>@v.NameWriter</td>
                     <td>@v.NameBookshelf</td>
+                    <td>@v.ReturnDue</td>
                     <td>
                         <a asp-action="Details" asp-controller="Titles" asp-route-id="@v.IdTitle">Chi tiết</a>
                         <a asp-action = "ExtendRent" asp-controller="RentBook" asp-route-id ="@v.IdTitle" asp-route-idBookRent ="@ViewBag.BookRent.Id" > Gia hạn </a>

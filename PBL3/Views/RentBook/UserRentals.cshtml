@@ -24,6 +24,7 @@
             <thead>
                 <tr>
                     <th>Id</th>
+                    <th>Ngày gửi đơn</th>
                     <th>Duyệt lúc</th>
                 </tr>
             </thead>
@@ -32,8 +33,8 @@
                 {
                     <tr>
                         <td>@bookRental.Id</td>
-                        <td>@bookRental.TimeApprove</td>
                         <td>@bookRental.TimeCreate</td>
+                        <td>@bookRental.TimeApprove</td>
                         <td>
                             <a asp-controller = "BookRentals" asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="4">Chi tiết</a>
                         </td>

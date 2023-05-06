@@ -118,6 +118,7 @@ namespace PBL3.Controllers.User
             return RedirectToAction("UserRentals");
             //return id.ToString();
         }
+
         [Authorize(Roles = UserRole.User)]
         public async Task<IActionResult> UserRentals()
         {
@@ -128,6 +129,7 @@ namespace PBL3.Controllers.User
             ViewBag.AccName = User.Identity.Name;
             return View();
         }
+        
         private List<BookRental> QueryTitle(bool stateApprove)
         {
             var s = (from br in _context.BookRentals
@@ -135,6 +137,7 @@ namespace PBL3.Controllers.User
                      select br).ToList();
             return s;
         }
+
         [Authorize(Roles = UserRole.User)]
         public async Task<IActionResult> ExtendRent(string id, string idBookRent)
         {
@@ -148,27 +151,33 @@ namespace PBL3.Controllers.User
             TimeSpan timeSpan = a.Subtract(Convert.ToDateTime(s.TimeApprove));
             if (Convert.ToBoolean(s.StateApprove) == false)
             {
-                message = "Đơn chưa được duyệt, không thể gia hạn";
-                SetAlert(message, 2);
-                return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
+                return Alert("Đơn chưa được duyệt, không thể gia hạn", 2, "/BookRentals/Details/" + idBookRent + "?type=4");
             }
             if (timeSpan.Days > 180)
             {
-                message = "Quá 180 ngày kể từ ngày phê duyệt, không thể gia hạn";
-                SetAlert(message, 2);
-                return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
+                return Alert("Quá 180 ngày kể từ ngày phê duyệt, không thể gia hạn", 2, "/BookRentals/Details/" + idBookRent + "?type=4");
+                //message = "Quá 180 ngày kể từ ngày phê duyệt, không thể gia hạn";
+                //SetAlert(message, 2);
+                //return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
             }
             if (Convert.ToDateTime(s.brd.ReturnDate) < a)
             {
-                message = "Đơn quá hạn, không thể gia hạn";
-                SetAlert(message, 2);
-                return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
+                return Alert("Đơn quá hạn, không thể gia hạn", 2, "/BookRentals/Details/" + idBookRent + "?type=4");
+                //message = "Đơn quá hạn, không thể gia hạn";
+                //SetAlert(message, 2);
+                //return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
             }
             if (s.brd.StateTake == false)
             {
-                message = "Sách chưa được lấy, không thể gia hạn";
-                SetAlert(message, 2);
-                return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
+                return Alert("Sách chưa được lấy, không thể gia hạn", 2, "/BookRentals/Details/" + idBookRent + "?type=4");
+                //message = "Sách chưa được lấy, không thể gia hạn";
+                //SetAlert(message, 2);
+                //return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
+            }
+            timeSpan = Convert.ToDateTime(s.brd.ReturnDate).Subtract(DateTime.Now);
+            if (timeSpan.Days > 3)
+            {
+                return Alert("Chưa tới thời gian có thể gia hạn", 2, "/BookRentals/Details/" + idBookRent + "?type=4");
             }
             s.brd.ReturnDate = Convert.ToDateTime(s.brd.ReturnDate).AddDays(14);
             BookRentDetail bookRentDetail = s.brd;
@@ -197,6 +206,11 @@ namespace PBL3.Controllers.User
             {
                 TempData["AlertType"] = "alert-info";
             }
+        }
+        public IActionResult Alert(string message, int alertType, string URL)
+        {
+            SetAlert(message, alertType);
+            return Redirect(URL);
         }
     }
 }

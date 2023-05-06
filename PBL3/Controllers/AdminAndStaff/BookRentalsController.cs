@@ -171,13 +171,17 @@ namespace PBL3.Controllers.AdminAndStaff
                 Title? title = _context.Titles
                     .Where(p => b.Contains(p.IdTitle))
                     .FirstOrDefault();
+                DateTime? dateTime = _context.BookRentDetails
+                                            .Where(p => p.IdBook == b && p.IdBookRental == bookRental.Id)
+                                            .Select(p => p.ReturnDate).FirstOrDefault();
 
                 details.Add(new ViewTitle
                 {
                     IdTitle = title.IdTitle,
                     NameBook = title.NameBook,
                     NameWriter = title.NameWriter,
-                    NameBookshelf = title.NameBookshelf
+                    NameBookshelf = title.NameBookshelf,
+                    ReturnDue = dateTime
                 });
             }
             ViewBag.Status = "UserView";
