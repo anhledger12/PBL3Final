@@ -20,6 +20,7 @@ namespace PBL3.Controllers.Anonymous
             var titles = _context.Titles
                                 .Select(x => x)
                                 .Where(x => x.NameBook.Contains(name));
+            ViewBag.Name = name;
             switch (sortType)
             {
                 case "name":
