@@ -45,7 +45,7 @@ namespace PBL3.Data
                     //thêm vào tài khoản một thông tin về admin nữa
                 }
 
-                var result2 = await UM.FindByNameAsync("staff1");
+                var result2 = db.Accounts.Where(p=>p.AccName=="staff1").FirstOrDefault();
                 if (result2 == null)
                 {
                     Account DetailStaff = new Account()

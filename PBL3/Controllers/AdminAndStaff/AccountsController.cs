@@ -65,7 +65,6 @@ namespace PBL3.Controllers.Admin
                 if (ExistAccount(model.Account.AccName,model.Account.Email)) return View("Error");
                 if (!ExistRole(model.Role)) return View("Error");
                 await CreateAccount(model);
-                Console.WriteLine(GetRole(model.Account.AccName));
                 return RedirectToAction("Index");
             }            
             
@@ -81,45 +80,10 @@ namespace PBL3.Controllers.Admin
 
         public async Task<IActionResult> Delete(string id)
         {
-            // Cần xem xét delete đầy đủ này, delete trong database trước hay sao
-            // Ép buộc xóa tất cả các đơn mượn liên quan 
-            // 
-            if (id == null || _context.Accounts == null)
-            {
-                return NotFound();
-            }
-
-            var account = await _context.Accounts
-                .FirstOrDefaultAsync(m => m.AccName == id);
-            if (account == null)
-            {
-                return NotFound();
-            }
-
-            return View(account);
-        }
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            // chưa tính, tối về tính
-            if (_context.Accounts == null)
-            {
-                return Problem("Entity set 'LibraryManagementContext.Accounts'  is null.");
-            }
-            var account = await _context.Accounts.FindAsync(id);
-            if (account != null)
-            {
-                _context.Accounts.Remove(account);
-            }
-            await _context.SaveChangesAsync();
-            var user = await usermanager.FindByNameAsync(id);
-            if (user != null)
-            {
-                await usermanager.DeleteAsync(user);
-
-            }
-            return RedirectToAction(nameof(Index));
+            if (!ExistAccount(id,"")) return View("NotFound");
+            await DeleteUserByName(id);
+            
+            return RedirectToAction("Index");
         }
         #region Method
         // Kiểm tra trùng Tên email với tên tài khoản
@@ -155,17 +119,53 @@ namespace PBL3.Controllers.Admin
             await usermanager.CreateAsync(NewUser, model.Password);
             await usermanager.AddToRoleAsync(NewUser, model.Role);
         }
-        // delete all BookRentalDetail relate to BookRentalID
-        private async Task DeleteBRDByID(string BRid)
-        {
 
+        //Delete All BookRentDetail relate to the BookRentID
+        private async Task DeleteBRDbyId(int id)
+        {
+            var delitem = _context.BookRentDetails.Where(p => p.IdBookRental == id);
+            _context.BookRentDetails.RemoveRange(delitem);
+            await _context.SaveChangesAsync();
         }
 
         // Delete All BookRental relate to UserName
         private async Task DeleteBRbyName(string username)
         {
-            
-            //var delItem = _context.BookRentals.Where(p => p.AccSending )
+            string role = await GetRole(username);
+            if (role == UserRole.Staff)
+            {
+                IList<BookRental> delItem = _context.BookRentals.Where(p => p.AccApprove == username).ToList();
+                foreach(BookRental b in delItem)
+                {
+                    await DeleteBRDbyId(b.Id);
+                }
+                _context.BookRentals.RemoveRange(delItem);
+            }
+            else if (role == UserRole.User)
+            {
+                IList<BookRental> delItem = _context.BookRentals.Where(p => p.AccSending == username).ToList();
+                foreach (BookRental b in delItem)
+                {
+                    await DeleteBRDbyId(b.Id);
+                }
+                _context.BookRentals.RemoveRange(delItem);
+            }
+            await _context.SaveChangesAsync();
+        }
+        //Delete User and all related infomation
+        private async Task DeleteUserByName(string username)
+        {
+            var user = await usermanager.FindByNameAsync(username);
+
+            if (user != null)
+            {
+                await DeleteBRbyName(username);
+                await usermanager.DeleteAsync(user);
+                var delItem = _context.Accounts.Where(p => p.AccName == user.UserName);
+                _context.Accounts.RemoveRange(delItem);
+                await _context.SaveChangesAsync();
+            }
+            else return;
         }
         // get role with username
         private async Task<string?> GetRole(string username)
