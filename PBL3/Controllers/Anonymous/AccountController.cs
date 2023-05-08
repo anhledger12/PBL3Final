@@ -85,30 +85,16 @@ namespace PBL3.Controllers.Anonymus
                 Email = result.Email,
                 UserName = result.UserName,
             };
-            var IsNewUser = await userManager.CreateAsync(newUser, result.Password);
+            var Account = new Account()
+            {
+                AccName = result.UserName,
+                Email = result.Email
+            };
+            libraryManagementContext.Accounts.Add(Account);
+            await libraryManagementContext.SaveChangesAsync();
+            await userManager.CreateAsync(newUser, result.Password);
+            await userManager.AddToRoleAsync(newUser, UserRole.User);
 
-            if (IsNewUser.Succeeded)
-            {
-                // them User account login role
-                await userManager.AddToRoleAsync(newUser, UserRole.User);
-                // them User vao thong tin acount chinh
-                var Account = new Account()
-                {
-                    AccName = result.UserName,
-                    Email = result.Email
-                };
-                libraryManagementContext.Accounts.Add(Account);
-                await libraryManagementContext.SaveChangesAsync();
-                //Những thông tin khác hiện tại coi như trống
-            }
-            else
-            {
-                foreach (var er in IsNewUser.Errors)
-                {
-                    ModelState.AddModelError("", er.Description);
-                }
-                return View(result);
-            }
             return View("RegisterSuccess");
         }
         [Authorize]
@@ -197,6 +183,7 @@ namespace PBL3.Controllers.Anonymus
         [Authorize]
         public async Task<IActionResult> Edit(string id)
         {
+            // ok
             if (!UserOrAdmin(id))
             {
                 return View("NotFound");
@@ -239,6 +226,8 @@ namespace PBL3.Controllers.Anonymus
             }
             return true;
         }
+        // Delete user id
+
         #endregion
     }
 }

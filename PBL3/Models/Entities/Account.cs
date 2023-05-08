@@ -19,8 +19,6 @@ public partial class Account
 
     public string? Mssv { get; set; }
 
-    public virtual AccountLogin? AccountLogin { get; set; }
-
     public virtual UserIdentity? UserIdentity { get; set; } 
 
     public virtual ICollection<ActionLog> ActionLogs { get; set; } = new List<ActionLog>();

@@ -14,9 +14,6 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
     }   
 
     public virtual DbSet<Account> Accounts { get; set; }
-
-    public virtual DbSet<AccountLogin> AccountLogins { get; set; }
-
     public virtual DbSet<ActionLog> ActionLogs { get; set; }
 
     public virtual DbSet<Book> Books { get; set; }
@@ -68,23 +65,6 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
             .HasForeignKey<UserIdentity>(d => d.UserName)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK__Asp_Account");
-        });
-
-        modelBuilder.Entity<AccountLogin>(entity =>
-        {
-            entity.HasKey(e => e.AccName).HasName("PK__AccountL__09224552BE35A89A");
-
-            entity.ToTable("AccountLogin");
-
-            entity.Property(e => e.AccName)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.PassHashCode).IsUnicode(false);
-
-            entity.HasOne(d => d.AccNameNavigation).WithOne(p => p.AccountLogin)
-                .HasForeignKey<AccountLogin>(d => d.AccName)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__AccountLo__Permi__38996AB5");
         });
 
         modelBuilder.Entity<ActionLog>(entity =>
