@@ -59,6 +59,17 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<UserIdentity>(entity =>
+        {
+            entity.Property(e => e.UserName)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.HasOne(d => d.account).WithOne(p => p.UserIdentity)
+            .HasForeignKey<UserIdentity>(d => d.UserName)
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("FK__Asp_Account");
+        });
+
         modelBuilder.Entity<AccountLogin>(entity =>
         {
             entity.HasKey(e => e.AccName).HasName("PK__AccountL__09224552BE35A89A");

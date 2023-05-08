@@ -27,14 +27,6 @@ namespace PBL3.Data
                 var result = await UM.FindByNameAsync("admin");
                 if (result == null)
                 {
-                    var NewAdmin = new UserIdentity()
-                    {
-                        UserName = "admin",
-                        Email = "sontranviet21@gmail.com"            
-                    };
-                    await UM.CreateAsync(NewAdmin, "123456");
-                    await UM.AddToRoleAsync(NewAdmin, UserRole.Admin);
-                    //thêm vào tài khoản một thông tin về admin nữa
                     Account DetailAdmin = new Account()
                     {
                         AccName = "admin",
@@ -43,19 +35,19 @@ namespace PBL3.Data
                     };
                     db.Accounts.Add(DetailAdmin);
                     db.SaveChanges();
+                    var NewAdmin = new UserIdentity()
+                    {
+                        UserName = "admin",
+                        Email = "sontranviet21@gmail.com"            
+                    };
+                    await UM.CreateAsync(NewAdmin, "123456");
+                    await UM.AddToRoleAsync(NewAdmin, UserRole.Admin);
+                    //thêm vào tài khoản một thông tin về admin nữa
                 }
 
                 var result2 = await UM.FindByNameAsync("staff1");
                 if (result2 == null)
                 {
-                    var NewStaff = new UserIdentity()
-                    {
-                        UserName = "staff1",
-                        Email = "staff1@gmail.com"
-                    };
-                    await UM.CreateAsync(NewStaff, "123456");
-                    await UM.AddToRoleAsync(NewStaff, UserRole.Staff);
-                    //thêm vào tài khoản một thông tin về admin nữa
                     Account DetailStaff = new Account()
                     {
                         AccName = "staff1",
@@ -64,6 +56,14 @@ namespace PBL3.Data
                     };
                     db.Accounts.Add(DetailStaff);
                     db.SaveChanges();
+                    var NewStaff = new UserIdentity()
+                    {
+                        UserName = "staff1",
+                        Email = "staff1@gmail.com"
+                    };
+                    await UM.CreateAsync(NewStaff, "123456");
+                    await UM.AddToRoleAsync(NewStaff, UserRole.Staff);
+                    //thêm vào tài khoản một thông tin về admin nữa
                 }
 
             }

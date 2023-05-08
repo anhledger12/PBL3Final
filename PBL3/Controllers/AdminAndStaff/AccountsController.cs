@@ -29,19 +29,18 @@ namespace PBL3.Controllers.Admin
             // cũng sẽ làm phân trang một chút
             // chỉnh sửa lại view 
             ViewBag.PageCount = (_context.Accounts.Count() + 9) / 10;
-            ViewBag.CurrentPage = page;
+            ViewBag.CurrentPage = page; 
             var res = await _context.Accounts.Skip(page * 10 - 10).Take(5).ToListAsync();
             return View(res);
-        }
-
+        } 
         // Thủ thư cũng được quyền xem danh sách và xem chi tiết đơn mượn của những người này
-        // Sau khi xem cấu trúc code của team thì sửa thêm vào
+        // thêm nút xem chi tiết đơn mượn?
         public async Task<IActionResult> Details(string id)
         {
-            // Sửa lại hết, không có phương thức detail nào ở đây, mà là redirect đến cái view đó
             return Redirect("/Account/Detail/" + id);
         }
 
+        [Authorize(Roles = UserRole.Admin)]     
         public IActionResult Create()
         {
             // Cái create phải làm khác này

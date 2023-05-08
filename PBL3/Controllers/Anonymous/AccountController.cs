@@ -233,7 +233,7 @@ namespace PBL3.Controllers.Anonymus
 
         bool UserOrAdmin(string id)
         {
-            if (id != User.Identity.Name && !User.IsInRole(UserRole.Admin))// khác người dùng và k phải admin
+            if (id != User.Identity.Name && !User.IsInRole(UserRole.Admin) && !User.IsInRole(UserRole.Staff))// khác người dùng và k phải admin
             {
                 return false;
             }
