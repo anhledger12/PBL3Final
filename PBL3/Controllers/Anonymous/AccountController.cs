@@ -203,7 +203,7 @@ namespace PBL3.Controllers.Anonymus
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Account model, string id)
         {
-            if (id != User.Identity.Name )
+            if (!UserOrAdmin(id))
             {
                 return View("NotFound");
             }

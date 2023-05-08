@@ -1,58 +1,69 @@
-﻿@model PBL3.Models.Entities.Account
+﻿@model PBL3.Data.ViewModel.AdminAccountVM;
 
-@{
-    ViewData["Title"] = "Create";
+@{ 
+    ViewData["Title"] = "Sign up";
 }
 
-<h1>Create</h1>
-
-<h4>Account</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="AccName" class="control-label"></label>
-                <input asp-for="AccName" class="form-control" />
-                <span asp-validation-for="AccName" class="text-danger"></span>
+    <div class="col-md-6 offset-3">
+        <div class = "text-center mt-5 mb-5">            
+            <h2>Tạo tài khoản mới</h2>
+        </div>
+        <div class="row">
+            <div class="col-md-8 offset-2">
+                <form asp-action="Create">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group mt-1">
+                        <label class="control-label">Tên tài khoản</label>
+                        <input asp-for="Account.AccName" class="form-control" />
+                        <span asp-validation-for="Account.AccName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-1">
+                        <label class="control-label">Tên đầy đủ</label>
+                        <input asp-for="Account.FullName" class="form-control" />
+                        <span asp-validation-for="Account.FullName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-1">
+                        <label class="control-label">Email</label>
+                        <input asp-for="Account.Email" class="form-control" />
+                        <span asp-validation-for="Account.Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-1">
+                        <label class="control-label">Ngày sinh</label>
+                        <input asp-for="Account.DateOfBirth" type="date" class= "form-control" value="2003-01-01">
+                        <span asp-validation-for="Account.DateOfBirth" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-1">
+                        <label class="control-label">Số điện thoại</label>
+                        <input asp-for="Account.Phone" class="form-control" />
+                        <span asp-validation-for="Account.Phone" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mt-1">
+                        <label class="control-label">MSSV(bỏ trống nếu là Thủ thư)</label>
+                        <input asp-for="Account.Mssv" class="form-control" />
+                        <span asp-validation-for="Account.Mssv" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-1">
+                        <label class="control-label">Vai trò</label>
+                        <br />
+                        <select asp-for="Role" class = "form-control">
+                            <option value="User">Độc giả</option>
+                            <option value="Staff">Thủ thư</option>
+                        </select>
+                        <span asp-validation-for="Account.Mssv" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-1">
+                        <label class="control-label">Mật khẩu</label>
+                        <input asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-3">
+                        <input class="btn btn-outline-success float-right" type="submit" value="Sign up" />
+                        <a class="btn btn-outline-secondary ms-2" asp-controller="Home" asp-action="Index">Cancel</a>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="FullName" class="control-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateOfBirth" class="control-label"></label>
-                <input asp-for="DateOfBirth" class="form-control" />
-                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Mssv" class="control-label"></label>
-                <input asp-for="Mssv" class="form-control" />
-                <span asp-validation-for="Mssv" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using PBL3.Data;
+using PBL3.Data.ViewModel;
 using PBL3.Models;
 using PBL3.Models.Entities;
 
@@ -28,6 +30,7 @@ namespace PBL3.Controllers.Admin
         {
             // cũng sẽ làm phân trang một chút
             // chỉnh sửa lại view 
+            // thêm nút đơn mượn
             ViewBag.PageCount = (_context.Accounts.Count() + 9) / 10;
             ViewBag.CurrentPage = page; 
             var res = await _context.Accounts.Skip(page * 10 - 10).Take(5).ToListAsync();
@@ -49,38 +52,38 @@ namespace PBL3.Controllers.Admin
         [Authorize(Roles = UserRole.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Account account)
+        public async Task<IActionResult> Create(AdminAccountVM model)
         {
-            // tối về chỉnh sửa lại cái create này
+            // xíu làm
+            if (!ValidUserName(model.Account.AccName))
+            {
+                ModelState.AddModelError("", "Tên tài khoản chỉ chứa các chữ số và chữ cái");
+                return View(model);
+            }
             if (ModelState.IsValid)
             {
-                _context.Add(account);
-                await _context.SaveChangesAsync();
-                var f = new UserIdentity()
-                {
-                    UserName = account.AccName,
-                    Email = account.Email
-                };
-                if (f != null)
-                {
-                    await usermanager.CreateAsync(f, "123456");
-                    await usermanager.AddToRoleAsync(f, UserRole.User);
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(account);
+                if (ExistAccount(model.Account.AccName,model.Account.Email)) return View("Error");
+                if (!ExistRole(model.Role)) return View("Error");
+                await CreateAccount(model);
+                Console.WriteLine(GetRole(model.Account.AccName));
+                return RedirectToAction("Index");
+            }            
+            
+            return Create();
         }
 
-        // GET: Accounts/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
             // edit là tới view của Account, redirct
+            //-- Chưa thêm return url 
             return Redirect("/Account/Edit/" + id);
         }
 
         public async Task<IActionResult> Delete(string id)
         {
             // Cần xem xét delete đầy đủ này, delete trong database trước hay sao
+            // Ép buộc xóa tất cả các đơn mượn liên quan 
+            // 
             if (id == null || _context.Accounts == null)
             {
                 return NotFound();
@@ -95,8 +98,6 @@ namespace PBL3.Controllers.Admin
 
             return View(account);
         }
-
-        // POST: Accounts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
@@ -120,10 +121,65 @@ namespace PBL3.Controllers.Admin
             }
             return RedirectToAction(nameof(Index));
         }
-
-        private bool AccountExists(string id)
+        #region Method
+        // Kiểm tra trùng Tên email với tên tài khoản
+        bool ExistAccount(string name, string email)
         {
-            return (_context.Accounts?.Any(e => e.AccName == id)).GetValueOrDefault();
+            return _context.Accounts.Any(p => p.AccName == name)|_context.Accounts.Any(p=>p.Email == email);
         }
+        // Kiểm tra vai trò có hợp lệ không (hoặc staff hoặc user)
+        bool ExistRole(string role)
+        {
+            return _context.Roles.Any(p => p.Name == role);
+        }
+        bool ValidUserName(string a)
+        {
+            foreach(char x in a)
+            {
+                if ((x <= 'Z' && x >= 'A') || (x <= 'z' && x >= 'a') || (x <= '9' && x >= '0')) continue;
+                else return false;
+            }
+            return true;
+        }
+        //Hàm tạo account với thông tin trên giao diện
+        private async Task CreateAccount(AdminAccountVM model)
+        {
+            // chắc chắn mọi thứ hợp lệ
+            _context.Accounts.Add(model.Account);
+            await _context.SaveChangesAsync();
+            var NewUser = new UserIdentity
+            {
+                Email = model.Account.Email,
+                UserName = model.Account.AccName
+            };
+            await usermanager.CreateAsync(NewUser, model.Password);
+            await usermanager.AddToRoleAsync(NewUser, model.Role);
+        }
+        // delete all BookRentalDetail relate to BookRentalID
+        private async Task DeleteBRDByID(string BRid)
+        {
+
+        }
+
+        // Delete All BookRental relate to UserName
+        private async Task DeleteBRbyName(string username)
+        {
+            
+            //var delItem = _context.BookRentals.Where(p => p.AccSending )
+        }
+        // get role with username
+        private async Task<string?> GetRole(string username)
+        {
+            var acc = _context.Users.Where(p => p.UserName == username).First();
+            if (acc != null)
+            {
+                var tmp = _context.UserRoles.Where(p => p.UserId == acc.Id).FirstOrDefault();
+                IdentityRole? Role = _context.Roles.Where(p => p.Id == tmp.RoleId).FirstOrDefault();
+                Console.WriteLine(Role.Name);
+                return Role.Name;
+            }
+            return null;
+        }
+        #endregion
     }
 }
