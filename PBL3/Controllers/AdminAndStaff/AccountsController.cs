@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Markdig.Syntax;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using PBL3.Data;
 using PBL3.Data.ViewModel;
 using PBL3.Models;
 using PBL3.Models.Entities;
+using System.ComponentModel;
 
 namespace PBL3.Controllers.Admin
 {
@@ -134,7 +136,7 @@ namespace PBL3.Controllers.Admin
             string role = await GetRole(username);
             if (role == UserRole.Staff)
             {
-                IList<BookRental> delItem = _context.BookRentals.Where(p => p.AccApprove == username).ToList();
+                var delItem = _context.BookRentals.Where(p => p.AccApprove == username).ToList();
                 foreach(BookRental b in delItem)
                 {
                     await DeleteBRDbyId(b.Id);
@@ -143,7 +145,7 @@ namespace PBL3.Controllers.Admin
             }
             else if (role == UserRole.User)
             {
-                IList<BookRental> delItem = _context.BookRentals.Where(p => p.AccSending == username).ToList();
+                var delItem = _context.BookRentals.Where(p => p.AccSending == username).ToList();
                 foreach (BookRental b in delItem)
                 {
                     await DeleteBRDbyId(b.Id);
@@ -174,11 +176,26 @@ namespace PBL3.Controllers.Admin
             if (acc != null)
             {
                 var tmp = _context.UserRoles.Where(p => p.UserId == acc.Id).FirstOrDefault();
-                IdentityRole? Role = _context.Roles.Where(p => p.Id == tmp.RoleId).FirstOrDefault();
-                Console.WriteLine(Role.Name);
+                IdentityRole? Role = _context.Roles.Where(p => p.Id == tmp.RoleId).FirstOrDefault();    
                 return Role.Name;
             }
             return null;
+        }
+
+        private async Task<List<string>> GetUserByRole(string role)
+        {
+            List<string> res = new List<string>();
+
+            var tmp = _context.Roles.Where(p => p.Name == role).FirstOrDefault();// role
+            if (tmp == null) return res;
+            var iduser = _context.UserRoles.Where(p => p.RoleId == tmp.Id).ToList();
+            foreach(var b in iduser)
+            {
+                UserIdentity? user = _context.Users.Where(p => p.Id == b.UserId).FirstOrDefault();
+                if (user!=null ) res.Add(user.UserName);
+            }
+
+            return res;
         }
         #endregion
     }

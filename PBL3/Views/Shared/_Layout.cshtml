@@ -16,89 +16,64 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid ">
-                <a class="navbar-brand text-dark" asp-area="" asp-controller="Home" asp-action="Index">UNILIB</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between parent-div">
-                    <ul class="navbar-nav flex-grow-1">
-
-
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
-                        </li>
-
-                        <!-- đoạn này là if else mấy cái taskbar của người dùng và thủ thư-->
+                <!---->
+                <div class="dropdown">
+                        <a class="navbar-brand text-dark" asp-controller="Home" asp-action="Index" >UNILIB</a>
+                        <div class="dropdown-content">
                         @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="Index">QL độc giả</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Titles" asp-action="Index">QL sách</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Notificates" asp-action="">Thông báo</a>
-                            </li>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="Index">QL độc giả</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Titles" asp-action="Index">QL sách</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="BookRentals" asp-action="Index">QL đơn mượn</a>
+                              
                         }
                         else
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Search" asp-action="Index" >Tra cứu</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Notificates" asp-action="Index">Thông báo</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="RentBook" asp-action="UserRentals">Mượn sách</a>
-                            </li>
+                            <a class="nav-link text-dark" asp-controller="Search" asp-action="Index" >Tra cứu</a> 
+                            <a class="nav-link text-dark" asp-area="" asp-controller="RentBook" asp-action="UserRentals">Mượn sách</a>                                
                         }
                         @if (User.IsInRole(UserRole.Admin))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="NewsFeeds" asp-action="Index">QL Bài đăng</a>
-                            </li>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="NewsFeeds" asp-action="Index">QL Bài đăng</a> 
                         }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Notificates" asp-action="">Thông báo</a>
 
-
-
-                    </ul>
-                    <form class = "Search" asp-controller="Search" asp-action="Index" method = "get">
-                        <p>
-                            <input class = "search-hover" type="text" id = "name" name="name"/>   <!--disabled textbox-->
-                            @*<input class = "btn-style" type="submit" value="Filter"/>*@
-                            <button type="submit" class = "btn-style"><i class="fa fa-search"></i></button>
-                        </p>
-                    </form>
-                    @if (!User.Identity.IsAuthenticated)
-                    {                        
-                            <form class = "form-inline my-2 my-lg-0" style="padding-right: 25px;">
-                                <a class="btn btn-outline-primary" asp-controller="Account" asp-action="Login">Đăng nhập</a>
-                                <a class="btn btn-outline-secondary" asp-controller="Account" asp-action="Register">Đăng ký</a>
-                            </form>
-                    }
-                    else
-                    {
-                            <form class = "form-inline my-2 my-lg-0" style="padding-right: 25px;">
-                            @*<a class="btn btn-outline-primary" asp-controller = "Account">Xin chào, @User.Identity.Name </a>*@
-                                    <div class="dropdown">
-                                           <button class="btn btn-outline-primary" asp-controller="Account" asp-action="Detail" asp-route-id = "@User.Identity.Name">Xin chào, @User.Identity.Name</button>
-                                        <div class="dropdown-content">
-                                            <a asp-controller="Account" asp-action="Detail" asp-route-id = "@User.Identity.Name">Tài khoản</a>
-                                    @if (User.IsInRole(UserRole.User))
-                                    {
-                                        <a asp-controller="RentBook" asp-action="ViewCart"> Giỏ hàng</a>
-                                        <a asp-controller="RentBook" asp-action = "UserRentals"> Đơn mượn</a>
-                                    }
-                                </div>
+                        </div>
+                    </div>
+                    <!---->
+              
+                <form class = "Search" asp-controller="Search" asp-action="Index" method = "get">
+                    <p>
+                        <input class = "search-hover" type="text" id = "name" name="name"/>   <!--disabled textbox-->
+                        @*<input class = "btn-style" type="submit" value="Filter"/>*@
+                        <button type="submit" class = "btn-style"><i class="fa fa-search"></i></button>
+                    </p>
+                </form>
+                @if (!User.Identity.IsAuthenticated)
+                {                        
+                        <form class = "form-inline my-2 my-lg-0" style="padding-right: 25px;">
+                            <a class="btn btn-outline-primary" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                            <a class="btn btn-outline-secondary" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                        </form>
+                }
+                else
+                {
+                        <form class = "form-inline my-2 my-lg-0" style="padding-right: 25px;">
+                        @*<a class="btn btn-outline-primary" asp-controller = "Account">Xin chào, @User.Identity.Name </a>*@
+                                <div class="dropdown">
+                                        <button class="btn btn-outline-primary" asp-controller="Account" asp-action="Detail" asp-route-id = "@User.Identity.Name">Xin chào, @User.Identity.Name</button>
+                                    <div class="dropdown-content">
+                                        <a asp-controller="Account" asp-action="Detail" asp-route-id = "@User.Identity.Name">Tài khoản</a>
+                                        @if (User.IsInRole(UserRole.User))
+                                        {
+                                            <a asp-controller="RentBook" asp-action="ViewCart"> Giỏ hàng</a>
+                                            <a asp-controller="RentBook" asp-action = "UserRentals"> Đơn mượn</a>
+                                        }
                                     </div>
-                                <a class="btn btn-outline-secondary" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
-                            </form>
-                    }
+                                </div>
+                            <a class="btn btn-outline-secondary" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
+                        </form>
+                }
 
                 </div>
             </div>
