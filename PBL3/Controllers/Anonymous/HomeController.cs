@@ -19,20 +19,14 @@ namespace PBL3.Controllers.Anonymous
             _logger = logger;
             this.context = context;
         }
-        
-        public async Task<IActionResult> Index(string name)
+
+        public async Task<IActionResult> Index(int page = 1)
         {
-            if (context.Titles == null)
-            {
-                return Problem("Không có table Titles");
-            }
-            var title = from m in context.Titles
-                        select m;
-            if (!string.IsNullOrEmpty(name))
-            {
-                title = title.Where(m => m.NameBook!.Contains(name));
-            }
-            return View(await title.ToListAsync());
+            // code phân trang
+            ViewBag.PageCount = (context.NewsFeeds.Count() + 4) / 5;
+            ViewBag.CurrentPage = page;
+            var res = await context.NewsFeeds.OrderByDescending(p => p.Id).Skip(page * 5 - 5).Take(5).ToListAsync();
+            return View(res);
         }
         [Authorize]
         public IActionResult Privacy()
