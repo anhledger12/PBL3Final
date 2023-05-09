@@ -174,7 +174,6 @@ else if (ViewBag.Status == "WaitingReturn" && User.Identity.IsAuthenticated && !
 }
 else if (ViewBag.Status == "UserView" && User.Identity.IsAuthenticated && User.IsInRole(UserRole.User))
 {
-    //nút xác nhận độc giả đến lấy đơn
     @if (ViewBag.BookRent.StateApprove == true)
     {
         <p>Đơn này được phê duyệt vào ngày @ViewBag.BookRent.TimeApprove</p>
@@ -212,3 +211,41 @@ else if (ViewBag.Status == "UserView" && User.Identity.IsAuthenticated && User.I
     </table>
 }
 
+else if (ViewBag.Status == "UserView" && User.Identity.IsAuthenticated && !User.IsInRole(UserRole.User))
+{
+    @if (ViewBag.BookRent.StateApprove == true)
+    {
+        <p>Đơn này được phê duyệt vào ngày @ViewBag.BookRent.TimeApprove</p>
+    }
+    else
+    {
+        <p>Đơn đang chờ phê duyệt</p>
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Mã đầu sách</th>
+                <th>Tên sách</th>
+                <th>Tên tác giả</th>
+                <th>Vị trí kệ</th>
+                <th>Ngày tới hạn</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ViewTitle v in ViewBag.Details)
+            {
+                <tr>
+                    <td>@v.IdTitle</td>
+                    <td>@v.NameBook</td>
+                    <td>@v.NameWriter</td>
+                    <td>@v.NameBookshelf</td>
+                    <td>@v.ReturnDue</td>
+                    <td>
+                        <a asp-action="Details" asp-controller="Titles" asp-route-id="@v.IdTitle">Chi tiết</a>
+                        <a asp-action="ExtendRent" asp-controller="RentBook" asp-route-id="@v.IdTitle" asp-route-idBookRent="@ViewBag.BookRent.Id"> Gia hạn </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

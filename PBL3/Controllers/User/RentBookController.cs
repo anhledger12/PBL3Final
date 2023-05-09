@@ -13,7 +13,7 @@ using static System.Reflection.Metadata.BlobBuilder;
 
 namespace PBL3.Controllers.User
 {
-    [Authorize(Roles = UserRole.User)]
+    //[Authorize(Roles = UserRole.User)]
     public class RentBookController : Controller
     {
         /*
@@ -120,21 +120,24 @@ namespace PBL3.Controllers.User
             //return id.ToString();
         }
 
-        [Authorize(Roles = UserRole.User)]
-        public async Task<IActionResult> UserRentals()
+        [Authorize(Roles = UserRole.All)]
+        public async Task<IActionResult> UserRentals(string? accName = null)
         {
-            List<BookRental> s = QueryTitle(true);
+            List<BookRental> s = QueryTitle(true, accName);
             ViewBag.Approve = s;
-            List<BookRental> s1 = QueryTitle(false);
+            List<BookRental> s1 = QueryTitle(false, accName);
             ViewBag.NotApprove = s1;
-            ViewBag.AccName = User.Identity.Name;
+            if (accName == null)
+                ViewBag.AccName = User.Identity.Name;
+            else ViewBag.AccName = accName;
             return View();
         }
         
-        private List<BookRental> QueryTitle(bool stateApprove)
+        private List<BookRental> QueryTitle(bool stateApprove, string? accName = null)
         {
+            if (accName == null) accName = User.Identity.Name;
             var s = (from br in _context.BookRentals
-                     where br.AccSending == User.Identity.Name && br.StateSend == true && br.StateApprove == stateApprove
+                     where br.AccSending == accName && br.StateSend == true && br.StateApprove == stateApprove
                      select br).ToList();
             return s;
         }

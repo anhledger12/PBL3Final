@@ -95,6 +95,7 @@
                             <td>
                                 <a asp-controller = "Accounts" asp-action="Edit" asp-route-id="@Account.AccName">Edit</a> |
                                 <a asp-controller="Accounts" asp-action="Details" asp-route-id="@Account.AccName">Details</a> |
+                                <a asp-controller="RentBook" asp-action="UserRentals" asp-route-accName="@Account.AccName">Rentals</a> |
                                 <a asp-controller="Accounts" asp-action="Delete" asp-route-id="@Account.AccName">Delete</a>
                             </td>
                         </tr>
