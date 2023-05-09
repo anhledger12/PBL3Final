@@ -241,7 +241,8 @@ namespace PBL3.Controllers.Anonymous
                 p.NameBook == title.NameBook &&
                 p.NameWriter == title.NameWriter &&
                 p.ReleaseYear == title.ReleaseYear &&
-                p.Publisher == title.Publisher).FirstOrDefaultAsync(); 
+                p.Publisher == title.Publisher &&
+                p.IdTitle != id).FirstOrDefaultAsync(); 
 
                 if (query != null)
                 {
