@@ -18,15 +18,14 @@ namespace PBL3.Controllers.Anonymus
     {
         private UserManager<UserIdentity> userManager;
         private SignInManager<UserIdentity> signInManager;
-        private LibraryManagementContext libraryManagementContext;
         private QL ql;
         public AccountController(UserManager<UserIdentity> userMgr,
             SignInManager<UserIdentity> signinMgr,
-            LibraryManagementContext lb)
+            QL _ql)
         {
             userManager = userMgr;
             signInManager = signinMgr;
-            ql = new QL(lb);
+            ql = _ql;
         }
         // allow anonymous
         public IActionResult Login(string ReturnUrl = "/")

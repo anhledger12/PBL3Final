@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<LibraryManagementContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("Account")));
+builder.Services.AddScoped<QL>();
 builder.Services.AddIdentity<UserIdentity, IdentityRole>(opts =>
 {
     opts.User.RequireUniqueEmail= true;
