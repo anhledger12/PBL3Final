@@ -62,6 +62,11 @@ namespace PBL3.Controllers.Admin
                 ModelState.AddModelError("", "Tên tài khoản chỉ chứa các chữ số và chữ cái");
                 return View(model);
             }
+            if (model.Account.Email == null)
+            {
+                ModelState.AddModelError("", "Không được bỏ trống Email");
+                return View(model);
+            }
             if (ModelState.IsValid)
             {
                 if (db.ExistAccount(model.Account.AccName,model.Account.Email)) return View("Error");
