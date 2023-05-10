@@ -161,6 +161,8 @@ else if (ViewBag.Status == "WaitingReturn" && User.Identity.IsAuthenticated && !
                         <td>@v.ReturnDue</td>
                         <td>
                             <a asp-action="Return" asp-route-id="@ViewBag.BookRent.Id" asp-route-idDetail="@v.IdBook">Trả sách</a>
+                            <p>|</p>
+                            <a asp-action="ConfirmLost" asp-route-idDetail ="@v.IdBook">Báo mất</a>
                         </td>
                     }
                 </tr>
