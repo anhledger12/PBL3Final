@@ -40,17 +40,26 @@ namespace PBL3.Controllers.Anonymus
             if (ModelState.IsValid)
             {
                 UserIdentity? user = await userManager.FindByEmailAsync(details.Email);
-                if (user!=null)
+                var tmp = db.GetAccountByEmail(details.Email);
+                if (tmp!=null)
                 {
-                    await signInManager.SignOutAsync();
-                    var result = await signInManager.
-                     PasswordSignInAsync(user, details.Password, false, false);
-                    if (result.Succeeded)
+                    if (tmp.Active == false)
                     {
-                        return Redirect(ReturnUrl ?? "/");
+                        ModelState.AddModelError("", "Tài khoản này đã bị chặn do vi phạm");
+                        return Login(ReturnUrl);
+                    }
+                    else
+                    {
+                        await signInManager.SignOutAsync();
+                        var result = await signInManager.
+                         PasswordSignInAsync(user, details.Password, false, false);
+                        if (result.Succeeded)
+                        {
+                            return Redirect(ReturnUrl ?? "/");
+                        }
                     }
                 }
-                ModelState.AddModelError("", "Invalid user or password");
+                ModelState.AddModelError("", "Email hoặc mật khẩu không chính xác");
             }
             return Login(ReturnUrl);
         }
