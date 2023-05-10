@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using PBL3.Models.Entities;
 using PBL3.Data;
 using Microsoft.AspNetCore.Authorization;
-using PBL3.Models;
+using PBL3.Data.ViewModel;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace PBL3.Controllers.Anonymous
 {
@@ -35,99 +36,29 @@ namespace PBL3.Controllers.Anonymous
      */
     public class TitlesController : Controller
     {
-        private readonly LibraryManagementContext _context;
+        private QL _ql;
 
-        public TitlesController(LibraryManagementContext context)
+        public TitlesController(QL ql)
         {
-            _context = context;
+            _ql = ql;
         }
 
         // GET: Titles
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var libraryManagementContext = _context.Titles.Select(t => t);
-            return View(await libraryManagementContext.ToListAsync());
+            return View(_ql.GetAllTitles());
         }
 
         // GET: Titles/Details/5
-        public async Task<IActionResult> Details(string id)
+        public IActionResult Details(string id)
         {
-            if (id == null || _context.Titles == null)
-            {
-                return NotFound();
-            }
-
-            Title title = await _context.Titles
-                .Where(t => t.IdTitle == id)
-                .FirstOrDefaultAsync();
+            Title? title = _ql.GetTitleById(id);
             if (title == null)
             {
                 return NotFound();
             }
-            
             return View(title);
         }
-
-        //[Authorize(Roles = UserRole.All)]
-        //public async Task<IActionResult> AddToRental(string id)
-        //{
-        //    string accName = User.Identity.Name;
-        //    //lấy đơn mượn tạm -> tempBookRental
-        //    BookRental? tempBookRental = await _context.BookRentals.Where(p => p.AccSending == accName
-        //    && p.StateSend == false).FirstOrDefaultAsync();
-        //    if (tempBookRental == null)
-        //    {
-        //        tempBookRental = new BookRental
-        //        {
-        //            StateSend = false,
-        //            AccApprove = null,
-        //            AccSending = accName,
-        //            StateApprove = false,
-        //            TimeCreate = DateTime.Now
-        //        };
-        //        await _context.BookRentals.AddAsync(tempBookRental);
-        //        _context.SaveChanges();
-        //    }
-
-        //    bool ableToAdd = true;
-
-        //    //kiểm tra tất cả các đơn mượn của accName này, xem có đơn nào có tồn tại bookrentdetail:
-        //    //bookId = id và stateReturn = false
-        //    List<BookRental> thisAccRental = _context.BookRentals.Where(p => p.AccSending == accName).ToList();
-        //    foreach (BookRental item in thisAccRental)
-        //    {
-        //        ableToAdd = !_context.BookRentDetails.Where(p => p.IdBookRental == item.Id &&
-        //        p.IdBook.Contains(id) && p.StateReturn == false).Any();
-        //        if (ableToAdd == false) break;
-        //    }
-
-
-        //    if (ableToAdd == false)
-        //    {
-        //        //báo lỗi, không thể thêm sách trùng
-        //        ViewData["AlertType"] = "alert-warning";
-        //        ViewData["AlertMessage"] = "Trong đơn mượn tạm của bạn, hoặc trong đơn mượn đang xử lí đã có sách này, không thể mượn thêm.";
-        //    }
-        //    else
-        //    {
-        //        string tempBookId = _context.Books.Where(p => p.IdTitle == id &&
-        //        p.StateRent == false).Select(p => p.IdBook).First();
-        //        _context.BookRentDetails.Add(new BookRentDetail
-        //        {
-        //            IdBookRental = tempBookRental.Id,
-        //            IdBook = tempBookId,
-        //            StateReturn = false,
-        //            StateTake = false,
-        //            ReturnDate = null
-        //        });
-        //        _context.SaveChanges();
-        //        //báo thêm thành công
-        //        ViewData["AlertType"] = "alert-success";
-        //        ViewData["AlertMessage"] = "Thêm sách vào đơn mượn tạm thành công.";
-        //    }
-        //    Title title = _context.Titles.Where(p => p.IdTitle == id).FirstOrDefault();
-        //    return View("Details", title);
-        //}
 
         // GET: Titles/Create
         [Authorize(Roles = UserRole.AdminOrStaff)]
@@ -137,84 +68,36 @@ namespace PBL3.Controllers.Anonymous
         }
 
         // POST: Titles/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> Create([Bind("NameBook,NameWriter,ReleaseYear,Publisher,NameBookshelf,Amount")] InputTitle inputTitle)
+        public IActionResult Create([Bind("NameBook,NameWriter,ReleaseYear,Publisher,NameBookshelf,Amount")] InputTitle inputTitle)
         {
             if (ModelState.IsValid)
             {
-                Title title = await _context.Titles.Where(p => 
-                p.NameBook == inputTitle.NameBook &&
-                p.NameWriter == inputTitle.NameWriter &&
-                p.ReleaseYear == inputTitle.ReleaseYear &&
-                p.Publisher == inputTitle.Publisher).FirstOrDefaultAsync();
-                
-                if (title == null)
+                switch (_ql.AddTitle(inputTitle))
                 {
-                    string newID = GetAbbreviation(inputTitle.NameBook) + "_"
-                        + GetAbbreviation(inputTitle.Publisher) + inputTitle.ReleaseYear.ToString() + "_"
-                        + GetRandomKey(4);
-
-                    title = new Title
-                    {
-                        IdTitle = newID,
-                        NameBook = inputTitle.NameBook,
-                        ReleaseYear = inputTitle.ReleaseYear,
-                        Publisher = inputTitle.Publisher,
-                        NameWriter = inputTitle.NameWriter,
-                        NameBookshelf = inputTitle.NameBookshelf
-                    };
-
-                    await _context.AddAsync(title);
-
+                    case true:
+                        {
+                            //code báo thêm đầu sách mới
+                            break;
+                        }
+                    case false:
+                        {
+                            //code báo thêm vào đầu sách có sẵn
+                            break;
+                        }
                 }
-
-                //lấy max ID của sách, thêm vào số lượng từ ID+1
-                string maxBookId = _context.Books.Where(p => p.IdTitle == title.IdTitle)
-                    .OrderByDescending(p => p.SubId).Select(p => p.SubId).FirstOrDefault();
-                string addId;
-                if (maxBookId == null)
-                {
-                    //start from 0001, 4 digits
-                    addId = "0001";
-                }
-                else
-                {
-                    addId = IDIncrement(maxBookId);
-                }
-                List<Book> addList = new List<Book>();
-                for (int i = 0; i < inputTitle.Amount; i++)
-                {
-                    addList.Add(new Book
-                    {
-                        IdBook = title.IdTitle + "." + addId,
-                        IdTitle = title.IdTitle,
-                        SubId = addId,
-                        StateRent = false
-                    });
-                    addId = IDIncrement(addId);
-                }
-                await _context.AddRangeAsync(addList);
-
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
             return View(inputTitle);
         }
 
         // GET: Titles/Edit/5
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> Edit(string id)
+        public IActionResult Edit(string id)
         {
-            if (id == null || _context.Titles == null)
-            {
-                return NotFound();
-            }
-
-            var title = await _context.Titles.FindAsync(id);
+            Title? title = _ql.GetTitleById(id);
             if (title == null)
             {
                 return NotFound();
@@ -223,12 +106,10 @@ namespace PBL3.Controllers.Anonymous
         }
 
         // POST: Titles/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> Edit(string id, [Bind("IdTitle,NameBook,NameWriter,ReleaseYear,Publisher,NameBookshelf")] Title title)
+        public IActionResult Edit(string id, [Bind("IdTitle,NameBook,NameWriter,ReleaseYear,Publisher,NameBookshelf")] Title title)
         {
             if (id != title.IdTitle)
             {
@@ -237,35 +118,7 @@ namespace PBL3.Controllers.Anonymous
 
             if (ModelState.IsValid)
             {
-                Title query = await _context.Titles.Where(p =>
-                p.NameBook == title.NameBook &&
-                p.NameWriter == title.NameWriter &&
-                p.ReleaseYear == title.ReleaseYear &&
-                p.Publisher == title.Publisher &&
-                p.IdTitle != id).FirstOrDefaultAsync(); 
-
-                if (query != null)
-                {
-                    //exception: tìm thấy bản ghi trùng trong dữ liệu
-                    ModelState.AddModelError("", "Thông tin đầu sách sau khi đổi bị trùng với đầu sách khác. Vui lòng thử lại.");
-                    return View(query);
-                }
-                try
-                {
-                    _context.Update(title);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TitleExists(title.IdTitle))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _ql.UpdateTitle(id, title);
                 return RedirectToAction(nameof(Index));
             }
             return View(title);
@@ -273,21 +126,13 @@ namespace PBL3.Controllers.Anonymous
 
         // GET: Titles/Delete/5
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> Delete(string id)
+        public IActionResult Delete(string id)
         {
-            if (id == null || _context.Titles == null)
-            {
-                return NotFound();
-            }
-
-            var title = await _context.Titles
-                .Select(t => t)
-                .FirstOrDefaultAsync(m => m.IdTitle == id);
+            Title? title = _ql.GetTitleById(id);
             if (title == null)
             {
                 return NotFound();
             }
-
             return View(title);
         }
 
@@ -295,82 +140,22 @@ namespace PBL3.Controllers.Anonymous
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public IActionResult DeleteConfirmed(string id)
         {
-            if (_context.Titles == null)
+            switch (_ql.DeleteTitle(id))
             {
-                return Problem("Entity set 'LibraryManagementContext.Titles'  is null.");
-            }
-            Title title = await _context.Titles.FindAsync(id);
-            if (title != null)
-            {
-                bool ableToDelete = true;
-                
-                List<Book> booksOfTitle = _context.Books.Where(p => p.IdTitle == id).ToList();
-                foreach (Book book in booksOfTitle)
-                {
-                    if (book.StateRent == true)
+                case true:
                     {
-                        ableToDelete = false;
+                        //code báo xoá thành công
                         break;
                     }
-                }
-                if (!ableToDelete)
-                {
-                    ModelState.AddModelError("", "Các sách của đầu sách này chưa được thu hồi hết, " +
-                        "cần thu hồi toàn bộ trước khi xoá.");
-                    return View(title);
-                }
-                else
-                {
-                    foreach (Book book in booksOfTitle)
+                case false:
                     {
-                        List<BookRentDetail> relatedDetail = _context.BookRentDetails.Where(p =>
-                        p.IdBook == book.IdBook).ToList();
-                        _context.BookRentDetails.RemoveRange(relatedDetail);
+                        //code báo xoá thất bại
+                        break;
                     }
-                    _context.Books.RemoveRange(booksOfTitle);
-                    _context.Titles.Remove(title);
-                    await _context.SaveChangesAsync();
-                }
             }
-
-            
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool TitleExists(string id)
-        {
-            return (_context.Titles?.Any(e => e.IdTitle == id)).GetValueOrDefault();
-        }
-
-        private string GetAbbreviation(string text)
-        {
-            string abrr = string.Empty;
-            string[] words = text.Split(' ',StringSplitOptions.TrimEntries|StringSplitOptions.RemoveEmptyEntries);
-            foreach (string word in words)
-            {
-                abrr += word[0];
-            }
-            return abrr;
-        }
-
-        private string GetRandomKey(int digits)
-        {
-            Random random = new Random();
-            string r = string.Empty;    
-            for (int i = 0; i < digits; i++)
-            {
-                r += random.Next(0, 10).ToString();
-            }
-            return r;
-        }
-
-        private string IDIncrement(string id)
-        {
-            int length = id.Length;
-            string digit = "D" + length.ToString();
-            return (Convert.ToInt16(id) + 1).ToString(digit);
+            return RedirectToAction("Index");
         }
     }
 }
