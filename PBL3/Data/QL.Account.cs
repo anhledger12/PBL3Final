@@ -92,7 +92,7 @@ namespace PBL3.Data
         // Delete All BookRental relate to UserName
         public async Task DeleteBRbyName(string username)
         {
-            string role = await GetRoleByUserName(username);
+            string? role = GetRoleByUserName(username);
             if (role == UserRole.Staff)
             {
                 var delItem = _context.BookRentals.Where(p => p.AccApprove == username).ToList();
@@ -130,7 +130,7 @@ namespace PBL3.Data
             else return;
         }
         // get role with username
-        public async Task<string?> GetRoleByUserName(string username)
+        public string? GetRoleByUserName(string username)
         {
             var acc = _context.Users.Where(p => p.UserName == username).First();
             if (acc != null)
