@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PBL3.Controllers.Anonymous;
 using PBL3.Data;
+using PBL3.Data.ViewModel;
 using PBL3.Models;
 using PBL3.Models.Entities;
 using System.Collections.Specialized;
@@ -16,6 +17,11 @@ namespace PBL3.Controllers.User
     //[Authorize(Roles = UserRole.User)]
     public class RentBookController : Controller
     {
+        public string Login(string ReturnUrl = "/")
+        {
+            ViewBag.ReturnUrl = ReturnUrl;
+            return "hello";
+        }
         /*
          * Đây là Controller thực hiện tác vụ khi điều hướng tới 
          * 
@@ -29,6 +35,70 @@ namespace PBL3.Controllers.User
         {
             return RedirectToAction("ViewCart");
         }
+
+        [Authorize(Roles = UserRole.All)]
+        public async Task<IActionResult> AddToRental(string id="0")
+        {
+            string accName = User.Identity.Name;
+            //lấy đơn mượn tạm -> tempBookRental
+            BookRental? tempBookRental = await _context.BookRentals.Where(p => p.AccSending == accName
+            && p.StateSend == false).FirstOrDefaultAsync();
+            if (tempBookRental == null)
+            {
+                tempBookRental = new BookRental
+                {
+                    StateSend = false,
+                    AccApprove = null,
+                    AccSending = accName,
+                    StateApprove = false,
+                    TimeCreate = DateTime.Now
+                };
+                await _context.BookRentals.AddAsync(tempBookRental);
+                _context.SaveChanges();
+            }
+
+            bool ableToAdd = true;
+
+            //kiểm tra tất cả các đơn mượn của accName này, xem có đơn nào có tồn tại bookrentdetail:
+            //bookId = id và stateReturn = false
+            List<BookRental> thisAccRental = _context.BookRentals.Where(p => p.AccSending == accName).ToList();
+            foreach (BookRental item in thisAccRental)
+            {
+                ableToAdd = !_context.BookRentDetails.Where(p => p.IdBookRental == item.Id &&
+                p.IdBook.Contains(id) && p.StateReturn == false).Any();
+                if (ableToAdd == false) break;
+            }
+
+
+            if (ableToAdd == false)
+            {
+                //báo lỗi, không thể thêm sách trùng
+                ViewData["AlertType"] = "alert-warning";
+                ViewData["AlertMessage"] = "Trong đơn mượn tạm của bạn, hoặc trong đơn mượn đang xử lí đã có sách này, không thể mượn thêm.";
+            }
+            else
+            {
+                string tempBookId = _context.Books.Where(p => p.IdTitle == id &&
+                p.StateRent == false).Select(p => p.IdBook).First();
+                _context.BookRentDetails.Add(new BookRentDetail
+                {
+                    IdBookRental = tempBookRental.Id,
+                    IdBook = tempBookId,
+                    StateReturn = false,
+                    StateTake = false,
+                    ReturnDate = null
+                });
+                _context.SaveChanges();
+                //báo thêm thành công
+                ViewData["AlertType"] = "alert-success";
+                ViewData["AlertMessage"] = "Thêm sách vào đơn mượn tạm thành công.";
+            }
+            Title title = _context.Titles.Where(p => p.IdTitle == id).FirstOrDefault();
+            return View("/Views/Titles/Details.cshtml", title);
+            //return id;
+        }
+
+
 
         //Xem giỏ hàng
 
@@ -191,6 +261,35 @@ namespace PBL3.Controllers.User
             SetAlert(message, 1);
             return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
         }
+
+        public async Task<IActionResult> UserView(BookRental bookRental, List<string> listIdBook)
+        {
+            List<ViewTitle> details = new List<ViewTitle>();
+
+            foreach (string b in listIdBook)
+            {
+                Title? title = _context.Titles
+                    .Where(p => b.Contains(p.IdTitle))
+                    .FirstOrDefault();
+                DateTime? dateTime = _context.BookRentDetails
+                                            .Where(p => p.IdBook == b && p.IdBookRental == bookRental.Id)
+                                            .Select(p => p.ReturnDate).FirstOrDefault();
+
+                details.Add(new ViewTitle
+                {
+                    IdTitle = title.IdTitle,
+                    NameBook = title.NameBook,
+                    NameWriter = title.NameWriter,
+                    NameBookshelf = title.NameBookshelf,
+                    ReturnDue = dateTime
+                });
+            }
+            ViewBag.Status = "UserView";
+            ViewBag.BookRent = bookRental;
+            ViewBag.Details = details;
+            return View("/Views/BookRentals/Details");
+        }
+
         protected void SetAlert(string message, int type)
         {
             TempData["AlertMessage"] = message;
