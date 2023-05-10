@@ -12,13 +12,12 @@ public partial class Account
 
     public DateTime? DateOfBirth { get; set; }
 
-    [DataType(DataType.PhoneNumber, ErrorMessage = "Sai định dạng số điện thoại")]
     public string? Phone { get; set; }
 
     public string? Email { get; set; }
 
     public string? Mssv { get; set; }
-
+    public bool Active { get; set; } = true;
     public virtual UserIdentity? UserIdentity { get; set; } 
 
     public virtual ICollection<ActionLog> ActionLogs { get; set; } = new List<ActionLog>();

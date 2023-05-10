@@ -51,6 +51,7 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.FullName).HasMaxLength(200);
+            entity.Property(e => e.Active).HasDefaultValueSql("((1))");
             entity.Property(e => e.Phone)
                 .HasMaxLength(20)
                 .IsUnicode(false);
@@ -96,7 +97,7 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.StateRent).HasDefaultValueSql("((0))");
-
+            entity.Property(e => e.Active).HasDefaultValueSql("((1))");
             entity.HasOne(d => d.IdTitleNavigation).WithMany(p => p.Books)
                 .HasForeignKey(d => d.IdTitle)
                 .HasConstraintName("FK__Book__IdTitle__5070F446");
@@ -203,7 +204,7 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
             entity.HasKey(e => e.IdTitle).HasName("PK__Title__2123011DEE7FEB85");
 
             entity.ToTable("Title");
-
+            entity.Property(e => e.Active).HasDefaultValueSql("((1))");
             entity.Property(e => e.IdTitle)
                 .HasMaxLength(50)
                 .IsUnicode(false);
