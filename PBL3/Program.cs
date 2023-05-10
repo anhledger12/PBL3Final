@@ -49,8 +49,9 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+// Seed Database
 await Seed.SeedRoleAndAdmin(app);
-// Hàm seed vai trò và tk admin
+await Seed.SeedHashtag(app);
 
 
 app.Run();

@@ -74,23 +74,22 @@ namespace PBL3.Data
             await _context.SaveChangesAsync();
         }
         //Delete All BookRentDetail relate to the BookRentID
-        public async Task DeleteBRDbyId(int id)
+        public async Task HardDeleteBRDbyId(int id)
         {
-            // Xóa chi tiết đơn mượn dựa trên 
-            var delitem = _context.BookRentDetails.Where(p => p.IdBookRental == id);
-            var Inactiveb = await delitem.ToListAsync();
+            // Xóa chi tiết đơn mượn
+            var Inactiveb = await _context.BookRentDetails.Where(p => p.IdBookRental == id).ToListAsync();
             foreach(var item in Inactiveb)
             {
                 var d = await _context.Books.FindAsync(item.IdBook);
                 d.Active = false;
                 _context.Books.Update(d);
             }
-            _context.BookRentDetails.RemoveRange(delitem);
+            _context.BookRentDetails.RemoveRange(Inactiveb);
             await _context.SaveChangesAsync();
         }
 
         // Delete All BookRental relate to UserName
-        public async Task DeleteBRbyName(string username)
+        public async Task HardDeleteBRbyName(string username)
         {
             string? role = GetRoleByUserName(username);
             if (role == UserRole.Staff)
@@ -98,7 +97,7 @@ namespace PBL3.Data
                 var delItem = _context.BookRentals.Where(p => p.AccApprove == username).ToList();
                 foreach (BookRental b in delItem)
                 {
-                    await DeleteBRDbyId(b.Id);
+                    await HardDeleteBRDbyId(b.Id);
                 }
                 _context.BookRentals.RemoveRange(delItem);
             }
@@ -107,7 +106,7 @@ namespace PBL3.Data
                 var delItem = _context.BookRentals.Where(p => p.AccSending == username).ToList();
                 foreach (BookRental b in delItem)
                 {
-                    await DeleteBRDbyId(b.Id);
+                    await HardDeleteBRDbyId(b.Id);
                 }
                 _context.BookRentals.RemoveRange(delItem);
             }
@@ -121,7 +120,7 @@ namespace PBL3.Data
 
             if (user != null)
             {
-                await DeleteBRbyName(username);
+                await HardDeleteBRbyName(username);
                 await usermanager.DeleteAsync(user);
                 var delItem = _context.Accounts.Where(p => p.AccName == user.UserName).FirstOrDefault();
                 if (delItem != null) delItem.Active = false;

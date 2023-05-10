@@ -68,6 +68,39 @@ namespace PBL3.Data
 
             }
         }
-       
+        public static async Task SeedHashtag(IApplicationBuilder init)
+        {
+            using (var service = init.ApplicationServices.CreateScope())
+            {
+                var db = service.ServiceProvider.GetService<LibraryManagementContext>();
+                if (db.Hashtags.Count() != 0) return;
+                List<Hashtag> hashtags = new List<Hashtag>{
+                    new Hashtag () {NameHashTag = "Giáo khoa"},
+                    new Hashtag () {NameHashTag = "Tài liệu tham khảo"},
+                    new Hashtag () {NameHashTag = "Tiểu thuyết"},
+                    new Hashtag () {NameHashTag = "Truyện ngắn"},
+                    new Hashtag () {NameHashTag = "Kinh doanh và tài chính"},
+                    new Hashtag () {NameHashTag = "Khoa học viễn tưởng"},
+                    new Hashtag () {NameHashTag = "Huyền bí và siêu nhiên"},
+                    new Hashtag () {NameHashTag = "Hài hước"},
+                    new Hashtag () {NameHashTag = "Lãng mạn"},
+                    new Hashtag () {NameHashTag = "Phiêu lưu"},
+                    new Hashtag () {NameHashTag = "Kỹ năng sống"},
+                    new Hashtag () {NameHashTag = "Kỹ năng quản lý và phát triển bản thân"},
+                    new Hashtag () {NameHashTag = "Lịch sử"},
+                    new Hashtag () {NameHashTag = "Tâm lý học"},
+                    new Hashtag () {NameHashTag = "Chính trị và xã hội"},
+                    new Hashtag () {NameHashTag = "Khoa học và tự nhiên"},
+                    new Hashtag () {NameHashTag = "Văn học cổ điển"},
+                    new Hashtag () {NameHashTag = "Văn học hiện đại"},
+                    new Hashtag () {NameHashTag = "Thể thao và thể dục"},
+                    new Hashtag () {NameHashTag = "Du lịch và phiêu lưu"},
+                    new Hashtag () {NameHashTag = "Nấu ăn và ẩm thực"},
+                    new Hashtag () {NameHashTag = "Y học và sức khỏe"}
+                };
+                db.Hashtags.AddRange(hashtags);
+                await db.SaveChangesAsync();
+            }
+        }
     }
 }
