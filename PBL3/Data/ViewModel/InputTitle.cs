@@ -1,4 +1,4 @@
-﻿namespace PBL3.Models
+﻿namespace PBL3.Data.ViewModel
 {
     //Model này dùng để nhập đầu sách mới vào thư viện
     public class InputTitle

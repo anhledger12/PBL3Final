@@ -16,7 +16,7 @@ public partial class BookRentDetail
     public bool? StateTake { get; set; }
 
     public DateTime? ReturnDate { get; set; }
-
+    
     public virtual Book IdBookNavigation { get; set; } = null!;
 
     public virtual BookRental IdBookRentalNavigation { get; set; } = null!;
