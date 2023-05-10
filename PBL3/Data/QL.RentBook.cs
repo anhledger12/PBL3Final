@@ -2,6 +2,6 @@
 {
     public partial class QL
     {
-        // Quản lý đơn mượn từ phía người dùng
+        // Quản lý đơn mượn từ phía người dùng, Nguyên Anh làm
     }
 }
