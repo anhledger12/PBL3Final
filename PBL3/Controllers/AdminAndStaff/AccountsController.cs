@@ -30,17 +30,14 @@ namespace PBL3.Controllers.Admin
 
         public async Task<IActionResult> Index(int page = 1)
         {
-            // cũng sẽ làm phân trang một chút
-            // chỉnh sửa lại view 
-            // thêm nút đơn mượn
+            // Phân trang, giữ lại code phân trang tay nà
             ViewBag.PageCount = (db.AccountsCount() + 9) / 10;
             ViewBag.CurrentPage = page;
             var res = await db.GetAccountsAsync(page, 10);
             return View(res);
         } 
         // Thủ thư cũng được quyền xem danh sách và xem chi tiết đơn mượn của những người này
-        // thêm nút xem chi tiết đơn mượn?
-        public async Task<IActionResult> Details(string id)
+        public IActionResult Details(string id)
         {
             return Redirect("/Account/Detail/" + id);
         }
@@ -80,8 +77,6 @@ namespace PBL3.Controllers.Admin
 
         public async Task<IActionResult> Edit(string id)
         {
-            // edit là tới view của Account, redirct
-            //-- Chưa thêm return url 
             return Redirect("/Account/Edit/" + id);
         }
 
@@ -102,8 +97,7 @@ namespace PBL3.Controllers.Admin
                 else return false;
             }
             return true;
-        }
-        
+        }        
         #endregion
     }
 }

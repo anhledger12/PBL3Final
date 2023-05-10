@@ -11,11 +11,11 @@ namespace PBL3.Data
         // Các method về quản lý account, Viết Sơn làm
         public Account? GetAccountByName(string name)
         {
-            return _context.Accounts.Where(p => p.AccName == name).FirstOrDefault();
+            return _context.Accounts.Where(p => p.AccName == name && p.Active == true).FirstOrDefault();
         }
         public Account? GetAccountByEmail(string email)
         {
-            return _context.Accounts.Where(p => p.Email == email).FirstOrDefault();
+            return _context.Accounts.Where(p => p.Email == email && p.Active == true).FirstOrDefault();
         }
         public bool ExistAccount(string name, string email)
         {
@@ -24,11 +24,11 @@ namespace PBL3.Data
 
         public async Task<List<Account>> GetAccountsAsync()
         {
-            return await _context.Accounts.ToListAsync();
+            return await _context.Accounts.Where(p=> p.Active ==true).ToListAsync();
         }
         public async Task<List<Account>> GetAccountsAsync(int page, int numperpage)
         {
-            return await _context.Accounts.Skip(page * numperpage - numperpage).Take(numperpage).ToListAsync();
+            return await _context.Accounts.Where(p=>p.Active== true).Skip(page * numperpage - numperpage).Take(numperpage).ToListAsync();
         }
         // Kiểm tra vai trò có hợp lệ không (hoặc staff hoặc user)
         public bool ExistRole(string role)
@@ -76,7 +76,15 @@ namespace PBL3.Data
         //Delete All BookRentDetail relate to the BookRentID
         public async Task DeleteBRDbyId(int id)
         {
+            // Xóa chi tiết đơn mượn dựa trên 
             var delitem = _context.BookRentDetails.Where(p => p.IdBookRental == id);
+            var Inactiveb = await delitem.ToListAsync();
+            foreach(var item in Inactiveb)
+            {
+                var d = await _context.Books.FindAsync(item.IdBook);
+                d.Active = false;
+                _context.Books.Update(d);
+            }
             _context.BookRentDetails.RemoveRange(delitem);
             await _context.SaveChangesAsync();
         }
@@ -84,7 +92,7 @@ namespace PBL3.Data
         // Delete All BookRental relate to UserName
         public async Task DeleteBRbyName(string username)
         {
-            string role = await GetRole(username);
+            string role = await GetRoleByUserName(username);
             if (role == UserRole.Staff)
             {
                 var delItem = _context.BookRentals.Where(p => p.AccApprove == username).ToList();
@@ -108,20 +116,21 @@ namespace PBL3.Data
         //Delete User and all related infomation
         public async Task DeleteUserByName(string username)
         {
+            // Gọi là delete, nhưng thực chất là đánh dấu user inactive
             var user = await usermanager.FindByNameAsync(username);
 
             if (user != null)
             {
                 await DeleteBRbyName(username);
                 await usermanager.DeleteAsync(user);
-                var delItem = _context.Accounts.Where(p => p.AccName == user.UserName);
-                _context.Accounts.RemoveRange(delItem);
+                var delItem = _context.Accounts.Where(p => p.AccName == user.UserName).FirstOrDefault();
+                if (delItem != null) delItem.Active = false;
                 await _context.SaveChangesAsync();
             }
             else return;
         }
         // get role with username
-        public async Task<string?> GetRole(string username)
+        public async Task<string?> GetRoleByUserName(string username)
         {
             var acc = _context.Users.Where(p => p.UserName == username).First();
             if (acc != null)
@@ -151,7 +160,7 @@ namespace PBL3.Data
 
         public int AccountsCount()
         {
-            return _context.Accounts.Count();
+            return _context.Accounts.Where(p=>p.Active==true).Count();
         }
     }
 }
