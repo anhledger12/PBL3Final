@@ -17,19 +17,16 @@ namespace PBL3.Controllers.User
     //[Authorize(Roles = UserRole.User)]
     public class RentBookController : Controller
     {
-        public string Login(string ReturnUrl = "/")
-        {
-            ViewBag.ReturnUrl = ReturnUrl;
-            return "hello";
-        }
         /*
          * Đây là Controller thực hiện tác vụ khi điều hướng tới 
          * 
          */
+        private QL db;
         LibraryManagementContext _context;
-        public RentBookController(LibraryManagementContext context)
+        public RentBookController(LibraryManagementContext _context, QL db)
         {
-            _context = context;
+            this._context = _context;
+            this.db = db;
         }
         public IActionResult Index()
         {
@@ -41,8 +38,7 @@ namespace PBL3.Controllers.User
         {
             string accName = User.Identity.Name;
             //lấy đơn mượn tạm -> tempBookRental
-            BookRental? tempBookRental = await _context.BookRentals.Where(p => p.AccSending == accName
-            && p.StateSend == false).FirstOrDefaultAsync();
+            BookRental? tempBookRental = db.GetBookRental(accName);
             if (tempBookRental == null)
             {
                 tempBookRental = new BookRental
@@ -57,17 +53,9 @@ namespace PBL3.Controllers.User
                 _context.SaveChanges();
             }
 
-            bool ableToAdd = true;
-
             //kiểm tra tất cả các đơn mượn của accName này, xem có đơn nào có tồn tại bookrentdetail:
             //bookId = id và stateReturn = false
-            List<BookRental> thisAccRental = _context.BookRentals.Where(p => p.AccSending == accName).ToList();
-            foreach (BookRental item in thisAccRental)
-            {
-                ableToAdd = !_context.BookRentDetails.Where(p => p.IdBookRental == item.Id &&
-                p.IdBook.Contains(id) && p.StateReturn == false).Any();
-                if (ableToAdd == false) break;
-            }
+            bool ableToAdd = db.CheckBookRentDetailExist(accName, false, id);
 
 
             if (ableToAdd == false)
@@ -78,8 +66,7 @@ namespace PBL3.Controllers.User
             }
             else
             {
-                string tempBookId = _context.Books.Where(p => p.IdTitle == id &&
-                p.StateRent == false).Select(p => p.IdBook).First();
+                string tempBookId = db.GetTempBookId(id, false);
                 _context.BookRentDetails.Add(new BookRentDetail
                 {
                     IdBookRental = tempBookRental.Id,
@@ -98,8 +85,6 @@ namespace PBL3.Controllers.User
             //return id;
         }
 
-
-
         //Xem giỏ hàng
 
         [Authorize(Roles = UserRole.User)]
@@ -108,22 +93,8 @@ namespace PBL3.Controllers.User
             string AccName = User.Identity.Name;
             try
             {
-                IEnumerable<BookRental> bookRentals = _context.BookRentals.ToList();
-                IEnumerable<BookRentDetail> bookRentDetails = _context.BookRentDetails.ToList();
-                IEnumerable<Book> books = _context.Books.ToList();
-                IEnumerable<Title> titles = _context.Titles.ToList();
-                var Cart = (from brd in bookRentDetails
-                            join br in bookRentals on brd.IdBookRental equals br.Id
-                            join b in books on brd.IdBook equals b.IdBook
-                            join Titles in titles on b.IdTitle equals Titles.IdTitle
-                            where br.AccSending == AccName && br.StateSend == false
-                            select new RentModel
-                            {
-                                bookRentDetail = brd,
-                                bookRental = br,
-                                book = b,
-                                title = Titles
-                            }).ToList();
+                //Lấy ra model gồm các bảng BookRental, BookRentDetail, Title, Book
+                var Cart = db.GetRentModel(AccName, false);
                 return View(Cart);
             }
             catch
@@ -135,130 +106,101 @@ namespace PBL3.Controllers.User
         [Authorize(Roles = UserRole.User)]
         public async Task<IActionResult> Delete(string id)
         {
-            string AccName = User.Identity.Name;
-            BookRentDetail s = await (from brd in _context.BookRentDetails
-                                      join br in _context.BookRentals on brd.IdBookRental equals br.Id
-                                      join b in _context.Books on brd.IdBook equals b.IdBook
-                                      where b.IdTitle == id && br.StateSend == false && br.AccSending == AccName
-                                      select new BookRentDetail
-                                      {
-                                          IdBookRental = brd.IdBookRental,
-                                          IdBook = brd.IdBook,
-                                          StateReturn = brd.StateReturn,
-                                          StateTake = brd.StateTake,
-                                          ReturnDate = brd.ReturnDate,
-                                          Id = brd.Id
-                                      }).FirstOrDefaultAsync();
+            string accName = User.Identity.Name;
+            BookRentDetail s = db.GetBookRentDetail(accName, false, id);
             if (s == null)
             {
                 return NotFound();
             }
             _context.BookRentDetails.Remove(s);
             _context.SaveChanges();
-            int numRentDetail = (from brd in _context.BookRentDetails
-                                 join br in _context.BookRentals on brd.IdBookRental equals br.Id
-                                 where br.StateSend == false && br.AccSending == AccName
-                                 select brd.IdBook
-                                         ).ToList().Count();
+            int numRentDetail = db.GetIdBook(accName, false);
             if (numRentDetail == 0)
             {
-                //xóa BookRental
-                BookRental bookRental = await (from br in _context.BookRentals
-                                               where br.StateSend == false && br.AccSending == AccName
-                                               select br).FirstOrDefaultAsync();
+                //xóa BookRental tạm khi BookRentDetail trong đơn mượn tạm về 0
+                BookRental bookRental = db.GetBookRental(accName);
                 _context.BookRentals.Remove(bookRental);
                 _context.SaveChanges();
             }
             return RedirectToAction("ViewCart");
         }
 
+        
         [Authorize(Roles = UserRole.User)]
+        //Hàm gửi đơn mượn tạm đi chờ phê duyệt
         public async Task<IActionResult> Sendrent()
         {
+            string accName = User.Identity.Name;
             if (!ModelState.IsValid)
             {
                 return NotFound();
             }
-            var check = (from br in _context.BookRentals
-                         where br.StateSend == false && br.AccSending == User.Identity.Name
-                         select br).FirstOrDefault();
+            var check = db.GetBookRental(accName);
             check.StateSend = true;
             check.TimeCreate = DateTime.Now;
             _context.Update<BookRental>(check);
             _context.SaveChanges();
             return RedirectToAction("UserRentals");
-            //return id.ToString();
         }
 
         [Authorize(Roles = UserRole.All)]
         public async Task<IActionResult> UserRentals(string? accName = null)
         {
-            List<BookRental> s = QueryTitle(true, accName);
-            ViewBag.Approve = s;
-            List<BookRental> s1 = QueryTitle(false, accName);
-            ViewBag.NotApprove = s1;
+            if (accName == null) accName = User.Identity.Name;
+            ViewBag.Approve = db.GetBookRentals(accName, true, true);
+            ViewBag.NotApprove = db.GetBookRentals(accName, true, false);
             if (accName == null)
                 ViewBag.AccName = User.Identity.Name;
             else ViewBag.AccName = accName;
             return View();
         }
-        
-        private List<BookRental> QueryTitle(bool stateApprove, string? accName = null)
-        {
-            if (accName == null) accName = User.Identity.Name;
-            var s = (from br in _context.BookRentals
-                     where br.AccSending == accName && br.StateSend == true && br.StateApprove == stateApprove
-                     select br).ToList();
-            return s;
-        }
 
         [Authorize(Roles = UserRole.User)]
+        //Gia hạn theo sách
         public async Task<IActionResult> ExtendRent(string id, string idBookRent)
         {
-            int idBookRent1 = Convert.ToInt16(idBookRent);
+            string accName = User.Identity.Name;
             string message = string.Empty;
-            var s = (from brd in _context.BookRentDetails
-                    join br in _context.BookRentals on brd.IdBookRental equals br.Id
-                    where br.Id == idBookRent1 && br.AccSending == User.Identity.Name && brd.IdBook == id
-                    select new {brd, br.TimeApprove, br.StateApprove}).FirstOrDefault();
+            var s = db.GetInfoForExtendRent(accName, id, idBookRent);
             DateTime a = DateTime.Now;
             TimeSpan timeSpan = a.Subtract(Convert.ToDateTime(s.TimeApprove));
+
             if (Convert.ToBoolean(s.StateApprove) == false)
             {
-                return Alert("Đơn chưa được duyệt, không thể gia hạn", 2, "/BookRentals/Details/" + idBookRent + "?type=4");
+                Alert("Đơn chưa được duyệt, không thể gia hạn", 2);
+                return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
             }
             if (timeSpan.Days > 180)
             {
-                return Alert("Quá 180 ngày kể từ ngày phê duyệt, không thể gia hạn", 2, "/BookRentals/Details/" + idBookRent + "?type=4");
-                //message = "Quá 180 ngày kể từ ngày phê duyệt, không thể gia hạn";
-                //SetAlert(message, 2);
-                //return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
+                Alert("Quá thời gian có thể gia hạn, không thể gia hạn", 2);
+                return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
             }
+
             if (Convert.ToDateTime(s.brd.ReturnDate) < a)
             {
-                return Alert("Đơn quá hạn, không thể gia hạn", 2, "/BookRentals/Details/" + idBookRent + "?type=4");
-                //message = "Đơn quá hạn, không thể gia hạn";
-                //SetAlert(message, 2);
-                //return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
+                Alert("Sách quá hạn, không thể gia hạn", 2);
+                return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
             }
+
             if (s.brd.StateTake == false)
             {
-                return Alert("Sách chưa được lấy, không thể gia hạn", 2, "/BookRentals/Details/" + idBookRent + "?type=4");
-                //message = "Sách chưa được lấy, không thể gia hạn";
-                //SetAlert(message, 2);
-                //return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
+                Alert("Sách chưa được lấy, không thể gia hạn", 2);
+                return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
             }
             timeSpan = Convert.ToDateTime(s.brd.ReturnDate).Subtract(DateTime.Now);
+            
             if (timeSpan.Days > 3)
             {
-                return Alert("Chưa tới thời gian có thể gia hạn", 2, "/BookRentals/Details/" + idBookRent + "?type=4");
+                Alert("Chưa tới thời gian có thể gia hạn, không thể gia hạn", 2);
+                return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
             }
+
             s.brd.ReturnDate = Convert.ToDateTime(s.brd.ReturnDate).AddDays(14);
             BookRentDetail bookRentDetail = s.brd;
             _context.Update<BookRentDetail>(bookRentDetail);
             _context.SaveChanges();
             message = "Gia hạn thành công";
-            SetAlert(message, 1);
+            Alert(message, 1);
             return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
         }
 
@@ -289,19 +231,18 @@ namespace PBL3.Controllers.User
             ViewBag.Details = details;
             return View("/Views/BookRentals/Details");
         }
-
-        protected void SetAlert(string message, int type)
+        public void Alert(string message, int alertType)
         {
             TempData["AlertMessage"] = message;
-            if (type == 1)
+            if (alertType == 1)
             {
                 TempData["AlertType"] = "alert-success";
             }
-            else if (type == 2)
+            else if (alertType == 2)
             {
                 TempData["AlertType"] = "alert-warning";
             }
-            else if (type == 3)
+            else if (alertType == 3)
             {
                 TempData["AlertType"] = "alert-danger";
             }
@@ -309,11 +250,6 @@ namespace PBL3.Controllers.User
             {
                 TempData["AlertType"] = "alert-info";
             }
-        }
-        public IActionResult Alert(string message, int alertType, string URL)
-        {
-            SetAlert(message, alertType);
-            return Redirect(URL);
         }
     }
 }
