@@ -23,9 +23,9 @@ namespace PBL3.Controllers.Anonymous
         public async Task<IActionResult> Index(int page = 1)
         {
             // code phân trang
-            ViewBag.PageCount = (context.NewsFeeds.Count() + 4) / 5;
+            ViewBag.PageCount = (context.NewsFeeds.Count() + 2) / 3;
             ViewBag.CurrentPage = page;
-            var res = await context.NewsFeeds.OrderByDescending(p => p.Id).Skip(page * 5 - 5).Take(5).ToListAsync();
+            var res = await context.NewsFeeds.OrderByDescending(p => p.Id).Skip(page * 3 - 3).Take(3).ToListAsync();
             return View(res);
         }
         [Authorize]
