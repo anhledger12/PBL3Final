@@ -16,223 +16,65 @@ namespace PBL3.Controllers.AdminAndStaff
 {
     public class BookRentalsController : Controller
     {
-        private readonly LibraryManagementContext _context;
+        private QL _ql;
 
         /*
          * Nơi Xét duyệt đơn mượn cho độc giả  
          * 
          */
-        public BookRentalsController(LibraryManagementContext context)
+        public BookRentalsController(QL ql)
         {
-            _context = context;
+            _ql = ql;
         }
 
         // GET: BookRentals
         [Authorize(Roles = UserRole.AdminOrStaff)]
         public async Task<IActionResult> Index()
-        {
-            //ViewBag gồm 1 danh sách đơn đang mượn, 1 danh sách đơn chờ duyệt, 1 danh sách đơn chờ lấy
-            //Duyệt hoặc không duyệt nằm trong detail
-            
-            //chờ duyệt: tất cả đơn có statesend = true & stateapprove = false
-            List<BookRental> pending = await _context.BookRentals.Where(p => p.StateSend == true
-            && p.StateApprove == false).OrderBy(p => p.TimeCreate).ToListAsync();
-            ViewBag.Pending = pending;
-            
-            //chờ lấy: tất cả đơn có stateapprove = true & không có bất cứ detail nào có statetake = true
-            List<BookRental> waitingTake = await _context.BookRentals.
-                Where(p => p.StateApprove == true && 
-                _context.BookRentDetails
-                .Where(b => b.IdBookRental == p.Id &&
-                b.StateTake == true).Any() == false)
-                .ToListAsync();
-            //kiểm tra xem có đơn nào đã quá 3 ngày mà không được nhận => bỏ và xem như đóng đơn
-            List<BookRental> outDue = new List<BookRental> ();
-            foreach (BookRental b in waitingTake)
-            {
-                if (b.TimeApprove < DateTime.Now.AddDays(-3))
-                {
-                    //thêm vào outDue chờ đóng
-                    outDue.Add(b);
-                }
-            }
-            foreach (BookRental b in outDue)
-            {
-                waitingTake.Remove(b);
-            }
-                
-            //gọi xử lí list outDue ở đây
-            string deleteOutDue = DeleteOutDue(outDue);
-
-            ViewBag.WaitingTake = waitingTake;
-
-            //chờ trả: tất cả đơn có stateapprove = true, 
-            //có tất cả detail có statetake = true và state return = false
-            List<BookRental> waitingReturn = await _context.BookRentals.
-                Where(p => p.StateApprove == true &&
-                _context.BookRentDetails
-                .Where(b => b.IdBookRental == p.Id)
-                .All(b => b.StateTake == true) == true)
-                .ToListAsync();
-
-            ViewBag.WaitingReturn = waitingReturn;
-
+        {           
+            ViewBag.Pending = _ql.PendingApproveList();
+            ViewBag.WaitingTake = _ql.WaitingTakeList();
+            ViewBag.WaitingReturn = _ql.WaitingReturnList();
+            //còn có cập nhật tự đóng đơn quá hạn, có cần thông báo?
             return View();
         }
 
         // GET: BookRentals/Details/5
-        
-        public async Task<IActionResult> Pending(BookRental bookRental, List<string> listIdBook)
-        {
-            List<ViewTitle> details = new List<ViewTitle>();
-
-            foreach (string b in listIdBook)
-            {
-                Title? title = _context.Titles
-                    .Where(p => b.Contains(p.IdTitle))
-                    .FirstOrDefault();
-                
-                int amount = _context.Books
-                    .Where(p => p.IdTitle == title.IdTitle &&
-                    p.StateRent == false)
-                    .Count();
-
-                details.Add(new ViewTitle
-                {
-                    IdTitle = title.IdTitle,
-                    NameBook = title.NameBook,
-                    NameWriter = title.NameWriter,
-                    NameBookshelf = title.NameBookshelf,
-                    AmountLeft = amount
-                });
-            }
-            ViewBag.Status = "Pending";
-            ViewBag.BookRent = bookRental;
-            ViewBag.Details = details;
-            return View("Details");
-        }
-
-        public async Task<IActionResult> WaitingTake(BookRental bookRental, List<string> listIdBook)
-        {
-            List<ViewTitle> details = new List<ViewTitle>();
-
-            foreach (string b in listIdBook)
-            {
-                Title? title = _context.Titles
-                    .Where(p => b.Contains(p.IdTitle))
-                    .FirstOrDefault();
-                
-                details.Add(new ViewTitle
-                {
-                    IdTitle = title.IdTitle,
-                    NameBook = title.NameBook,
-                    NameWriter = title.NameWriter,
-                    NameBookshelf = title.NameBookshelf,
-                    IdBook = b
-                });
-            }
-            ViewBag.Status = "WaitingTake";
-            ViewBag.BookRent = bookRental;
-            ViewBag.Details = details;
-            return View("Details");
-        }
-
-        public async Task<IActionResult> WaitingReturn(BookRental bookRental, List<string> listIdBook)
-        {
-            List<ViewTitle> details = new List<ViewTitle>();
-
-            foreach (string b in listIdBook)
-            {
-                Title? title = _context.Titles
-                    .Where(p => b.Contains(p.IdTitle))
-                    .FirstOrDefault();
-
-                details.Add(new ViewTitle
-                {
-                    IdTitle = title.IdTitle,
-                    NameBook = title.NameBook,
-                    NameWriter = title.NameWriter,
-                    NameBookshelf = title.NameBookshelf,
-                    IdBook = b,
-                    StateReturn = _context.BookRentDetails
-                        .Where(p => p.IdBookRental == bookRental.Id &&
-                        p.IdBook == b).FirstOrDefault().StateReturn,
-                    ReturnDue = _context.BookRentDetails
-                        .Where(p => p.IdBookRental == bookRental.Id &&
-                        p.IdBook == b).FirstOrDefault().ReturnDate
-                });
-            }
-            ViewBag.Status = "WaitingReturn";
-            ViewBag.BookRent = bookRental;
-            ViewBag.Details = details;
-            return View("Details");
-        }
-
-        public async Task<IActionResult> UserView(BookRental bookRental, List<string> listIdBook)
-        {
-            List<ViewTitle> details = new List<ViewTitle>();
-
-            foreach (string b in listIdBook)
-            {
-                Title? title = _context.Titles
-                    .Where(p => b.Contains(p.IdTitle))
-                    .FirstOrDefault();
-                DateTime? dateTime = _context.BookRentDetails
-                                            .Where(p => p.IdBook == b && p.IdBookRental == bookRental.Id)
-                                            .Select(p => p.ReturnDate).FirstOrDefault();
-
-                details.Add(new ViewTitle
-                {
-                    IdTitle = title.IdTitle,
-                    NameBook = title.NameBook,
-                    NameWriter = title.NameWriter,
-                    NameBookshelf = title.NameBookshelf,
-                    ReturnDue = dateTime
-                });
-            }
-            ViewBag.Status = "UserView";
-            ViewBag.BookRent = bookRental;
-            ViewBag.Details = details;
-            return View("Details");
-        }
 
         [Authorize(Roles = UserRole.All)]
-        public async Task<IActionResult> Details(int? id, int? type = 1)
+        public async Task<IActionResult> Details(int id, int type = 1)
         {
-            if (id == null || _context.BookRentals == null)
-            {
-                return NotFound();
-            }
-
-            BookRental? bookRental = await _context.BookRentals
-                .Where(p => p.Id == id)
-                .FirstOrDefaultAsync();    
+            BookRental? bookRental = _ql.GetBookRentalById(id);    
             if (bookRental == null)
             {
                 return NotFound();
             }
-            List<string> listIdBook = await _context.BookRentDetails
-                .Where(p => p.IdBookRental == id)
-                .Select(p => p.IdBook)
-                .ToListAsync();
-            
+            List<string> listIdBook = _ql.GetIdRentalDetailById(id);
+            ViewBag.BookRent = bookRental;
             switch (type)
             {
                 case 1:
                     {
-                        return await Pending(bookRental, listIdBook);
+                        ViewBag.Details = _ql.PendingDetails(bookRental, listIdBook);
+                        ViewBag.Status = "Pending";
+                        break;
                     }
                 case 2:
                     {
-                        return await WaitingTake(bookRental, listIdBook);
+                        ViewBag.Details = _ql.WaitingTakeDetail(bookRental, listIdBook);
+                        ViewBag.Status = "WaitingTake";
+                        break;
                     }
                 case 3:
                     {
-                        return await WaitingReturn(bookRental, listIdBook);
+                        ViewBag.Details = _ql.WaitingReturnDetail(bookRental, listIdBook);
+                        ViewBag.Status = "WaitingReturn";
+                        break;
                     }
                 case 4:
                     {
-                        return await UserView(bookRental, listIdBook);
+                        ViewBag.Details = _ql.UserViewDetail(bookRental, listIdBook);
+                        ViewBag.Status = "UserView";
+                        break;
                     }
             }
             return View();
@@ -240,18 +82,10 @@ namespace PBL3.Controllers.AdminAndStaff
 
         //xoá đơn mượn khỏi hệ thống - kiểm tra xem stateReturn đã true hết chưa
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> Delete (int? id)
+        public async Task<IActionResult> Delete (int id)
         {
-            if (_context.BookRentDetails.Where(p => p.IdBookRental == id)
-                .All(p => p.StateTake == true && p.StateReturn == true))
+            if (_ql.DeleteBookRental(id))
             {
-                //cho phép xoá
-                _context.BookRentDetails.RemoveRange(
-                    _context.BookRentDetails.Where(p => p.IdBookRental == id).ToArray());
-                _context.BookRentals.Remove(
-                    _context.BookRentals.Where(p => p.Id == id).First());
-                await _context.SaveChangesAsync();
-
                 //thông báo xoá xong
             }
             else
@@ -261,100 +95,18 @@ namespace PBL3.Controllers.AdminAndStaff
             return RedirectToAction("Index");
         }
 
-        public string DeleteOutDue(List<BookRental> outDue)
-        {
-            //trả về một string lưu các id đơn quá hạn
-            string result = string.Empty;
-            foreach (BookRental bookRental in outDue)
-            {
-                _context.BookRentDetails.RemoveRange(
-                    _context.BookRentDetails.Where(p => p.IdBookRental == bookRental.Id).ToArray());
-                _context.BookRentals.Remove(bookRental);
-                result += "Mã đơn: " + bookRental.Id.ToString() + ", người gửi: " + bookRental.AccSending; 
-            }
-            _context.SaveChanges();
-            return result;
-        }
-
-        //phê duyệt đơn mượn
-        //kiểm tra từng detail, check availability, nếu false => tìm book id khác sửa vào detail, với id mới sửa staterent thành true
-        //lưu riêng những bookrentdetail không thể chuyển => báo lỗi và xoá
-        //=> với bookrental chuyển trạng thái StateApprove thành true, set TimeApprove
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> Approve (int? id, DateTime timeApprove)
+        public async Task<IActionResult> Approve (int id, DateTime timeApprove)
         {
-            BookRental tempUpdate = _context.BookRentals.Where(p => p.Id == id).First();
-            if (tempUpdate != null)
-            {
-                List<BookRentDetail> pendingApprove = _context.BookRentDetails.Where(p => p.IdBookRental == id).ToList();
-                List<BookRentDetail> notApprovable = new List<BookRentDetail>();
-
-                foreach (BookRentDetail detail in pendingApprove)
-                {
-                    if (_context.Books.Where(p => p.IdBook == detail.IdBook).First().StateRent == true)
-                    {
-                        //cần lựa cuốn khác
-                        string titleId = detail.IdBook.Split('.')[0];
-                        string? newId = _context.Books.Where(p => p.IdBook.Contains(titleId) && p.StateRent == false)
-                            .OrderBy(p => p.IdBook)
-                            .Select(p => p.IdBook).FirstOrDefault();
-                        if (newId == null)
-                        {
-                            //không có cuốn nào khác => không thể mượn
-                            notApprovable.Add(detail);
-                        }
-                        else
-                        {
-                            //khả thi
-                            detail.IdBook = newId;
-                        }
-                    }
-                }
-
-                //Update các record trong pendingApprove
-                //Xoá các record trong notApprovable
-                foreach (BookRentDetail detail in notApprovable)
-                {
-                    pendingApprove.Remove(detail);
-                    _context.Remove(detail);
-                }
-
-                foreach (BookRentDetail detail in pendingApprove)
-                {
-                    Book getBook = _context.Books.Where(p => p.IdBook == detail.IdBook).First();
-                    getBook.StateRent = true;
-                    _context.Update(getBook);
-                }
-                tempUpdate.StateApprove = true;
-                tempUpdate.AccApprove = User.Identity.Name;
-                tempUpdate.TimeApprove = timeApprove;
-                _context.Update(tempUpdate);
-                await _context.SaveChangesAsync();  
-
-                //thông báo phê duyệt xong
-            }
-            else
-            {
-                return NotFound();
-            }
+            string? result = _ql.ApproveRental(id, timeApprove, User.Identity.Name);
+            //result lưu các đầu sách không thể duyệt => đề phòng cần hiển thị thông báo
             return RedirectToAction("Index");
         }
 
-        //xem xét từ chối = xoá khỏi hệ thống => delete cứng, trả stateRent về false
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> Refuse (int? id)
+        public async Task<IActionResult> Refuse (int id)
         {
-            List<BookRentDetail> tempDelete = _context.BookRentDetails.Where(p => p.IdBookRental == id).ToList();
-            foreach (BookRentDetail detail in tempDelete)
-            {
-                Book getBook = _context.Books.Where(p => p.IdBook == detail.IdBook).First();
-                getBook.StateRent = false;
-                _context.Update(getBook);
-            }
-            _context.Remove(tempDelete);
-            _context.Remove(
-                _context.BookRentals.Where(p => p.Id == id).First());
-            await _context.SaveChangesAsync();
+            _ql.RefuseRental(id);
             return RedirectToAction("Index");
         }
 
@@ -362,36 +114,22 @@ namespace PBL3.Controllers.AdminAndStaff
         [Authorize(Roles = UserRole.AdminOrStaff)]
         public async Task<IActionResult> ReaderTake (int id, DateTime timeTake)
         {
-            List<BookRentDetail> tempUpdate = _context.BookRentDetails.Where(p => p.IdBookRental == id).ToList();
-            foreach (BookRentDetail detail in tempUpdate)
-            {
-                detail.StateTake = true;
-                detail.ReturnDate = timeTake.AddDays(90);
-            }
-            _context.UpdateRange(tempUpdate);
-
-            await _context.SaveChangesAsync();
-            //code báo thành công
-
+            _ql.ReaderTake(id, timeTake);
             return RedirectToAction("Index");
         }
 
         //chuyển stateReturn của một sách cụ thể trong rental thành true
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> Return (int? id, string? idDetail)
+        public async Task<IActionResult> Return (int id, string idDetail)
         {
-            BookRentDetail tempUpdate = _context.BookRentDetails.Where(p => 
-            p.IdBookRental == id &&
-            p.IdBook == idDetail).First();
-            tempUpdate.StateReturn = true;
-            _context.Update(tempUpdate);
-
-            Book getBook = _context.Books.Where(p => p.IdBook == idDetail).First();
-            getBook.StateRent = false;
-            _context.Update(getBook);
-            await _context.SaveChangesAsync();
+            _ql.ReturnDetail(id, idDetail);
             //code báo thành công
+            return RedirectToAction("Index");
+        }
 
+        public async Task<IActionResult> ConfirmLost(int id, string? idDetail)
+        {
+            _ql.ConfirmLost(idDetail);
             return RedirectToAction("Index");
         }
     }
