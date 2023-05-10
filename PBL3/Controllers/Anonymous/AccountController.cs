@@ -18,14 +18,14 @@ namespace PBL3.Controllers.Anonymus
     {
         private UserManager<UserIdentity> userManager;
         private SignInManager<UserIdentity> signInManager;
-        private QL ql;
+        private QL db;
         public AccountController(UserManager<UserIdentity> userMgr,
             SignInManager<UserIdentity> signinMgr,
             QL _ql)
         {
             userManager = userMgr;
             signInManager = signinMgr;
-            ql = _ql;
+            db = _ql;
         }
         // allow anonymous
         public IActionResult Login(string ReturnUrl = "/")
@@ -39,8 +39,8 @@ namespace PBL3.Controllers.Anonymus
         {
             if (ModelState.IsValid)
             {
-                UserIdentity user = await userManager.FindByEmailAsync(details.Email);
-                if (user != null)
+                UserIdentity? user = await userManager.FindByEmailAsync(details.Email);
+                if (user!=null)
                 {
                     await signInManager.SignOutAsync();
                     var result = await signInManager.
@@ -68,14 +68,14 @@ namespace PBL3.Controllers.Anonymus
         public async Task<IActionResult> Register(RegisterVM result)
         {
             if (!ModelState.IsValid) return View(result);
-            var checkmail = await userManager.FindByEmailAsync(result.Email);
-            if (checkmail != null)
+            
+            if (db.ExistAccount("",result.Email))
             {
                 ModelState.AddModelError("", "Địa chỉ email đã được sử dụng, vui lòng sử dụng email khác");
                 return View(result);
             }
-            var checkname = await userManager.FindByNameAsync(result.UserName);
-            if (checkname != null)
+            //var checkname = await userManager.FindByNameAsync(result.UserName);
+            if (db.ExistAccount(result.UserName,""))
             {
                 ModelState.AddModelError("", "Tên đăng nhập đã được sử dụng, vui lòng sử dụng tên khác");
                 return View(result);
@@ -90,11 +90,7 @@ namespace PBL3.Controllers.Anonymus
                 AccName = result.UserName,
                 Email = result.Email
             };
-            libraryManagementContext.Accounts.Add(Account);
-            await libraryManagementContext.SaveChangesAsync();
-            await userManager.CreateAsync(newUser, result.Password);
-            await userManager.AddToRoleAsync(newUser, UserRole.User);
-
+            await db.CreateAccount(Account, newUser, result.Password);
             return View("RegisterSuccess");
         }
         [Authorize]
@@ -110,13 +106,13 @@ namespace PBL3.Controllers.Anonymus
             {
                 return View("NotFound");
             }
-            var model = libraryManagementContext.Accounts.Where(p => p.AccName == id);
+            var model = db.GetAccountByName(id);
 
             ViewBag.id = id;
 
-            if (model != null && model.Count()!=0)
+            if (model != null)
             {
-                return View(model.FirstOrDefault());
+                return View(model);
             }
             return View("NotFound");
         }
@@ -188,13 +184,13 @@ namespace PBL3.Controllers.Anonymus
             {
                 return View("NotFound");
             }
-            var model = libraryManagementContext.Accounts.Where(p => p.AccName == id);
+            var model = db.GetAccountByName(id);
 
             ViewBag.id = id;
 
             if (model != null)
             {
-                return View(model.FirstOrDefault());
+                return View(model);
             }
             return View("NotFound");
         }
@@ -211,8 +207,7 @@ namespace PBL3.Controllers.Anonymus
             {
                 return await Edit(id);
             }
-            libraryManagementContext.Accounts.Update(model);
-            await libraryManagementContext.SaveChangesAsync();
+            await db.UpdateAccount(model);
             return Redirect("/Account/Detail/"+id);
         }
 

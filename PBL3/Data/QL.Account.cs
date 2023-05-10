@@ -2,15 +2,33 @@
 using PBL3.Data.ViewModel;
 using PBL3.Models.Entities;
 using PBL3.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace PBL3.Data
 {
     public partial class QL
     {
         // Các method về quản lý account, Viết Sơn làm
+        public Account? GetAccountByName(string name)
+        {
+            return _context.Accounts.Where(p => p.AccName == name).FirstOrDefault();
+        }
+        public Account? GetAccountByEmail(string email)
+        {
+            return _context.Accounts.Where(p => p.Email == email).FirstOrDefault();
+        }
         public bool ExistAccount(string name, string email)
         {
             return _context.Accounts.Any(p => p.AccName == name) | _context.Accounts.Any(p => p.Email == email);
+        }
+
+        public async Task<List<Account>> GetAccountsAsync()
+        {
+            return await _context.Accounts.ToListAsync();
+        }
+        public async Task<List<Account>> GetAccountsAsync(int page, int numperpage)
+        {
+            return await _context.Accounts.Skip(page * numperpage - numperpage).Take(numperpage).ToListAsync();
         }
         // Kiểm tra vai trò có hợp lệ không (hoặc staff hoặc user)
         public bool ExistRole(string role)
@@ -26,7 +44,7 @@ namespace PBL3.Data
             }
             return true;
         }
-        //Hàm tạo account với thông tin trên giao diện
+        //Hàm tạo account với thông tin từ admin
         public async Task CreateAccount(AdminAccountVM model)
         {
             // chắc chắn mọi thứ hợp lệ
@@ -40,7 +58,21 @@ namespace PBL3.Data
             await usermanager.CreateAsync(NewUser, model.Password);
             await usermanager.AddToRoleAsync(NewUser, model.Role);
         }
-
+        // Hàm tạo account với thông tin từ user
+        public async Task CreateAccount(Account account, UserIdentity userIdentity, string password)
+        {
+            // chắc chắn mọi thứ hợp lệ
+            _context.Accounts.Add(account);
+            await _context.SaveChangesAsync();
+            await usermanager.CreateAsync(userIdentity, password);
+            await usermanager.AddToRoleAsync(userIdentity, UserRole.User);
+        }
+        //Update 
+        public async Task UpdateAccount(Account account)
+        {
+            _context.Accounts.Update(account);
+            await _context.SaveChangesAsync();
+        }
         //Delete All BookRentDetail relate to the BookRentID
         public async Task DeleteBRDbyId(int id)
         {
@@ -101,7 +133,7 @@ namespace PBL3.Data
             return null;
         }
 
-        private async Task<List<string>> GetUserByRole(string role)
+        public async Task<List<string>> GetUserByRole(string role)
         {
             List<string> res = new List<string>();
 
@@ -115,6 +147,11 @@ namespace PBL3.Data
             }
 
             return res;
+        }
+
+        public int AccountsCount()
+        {
+            return _context.Accounts.Count();
         }
     }
 }
