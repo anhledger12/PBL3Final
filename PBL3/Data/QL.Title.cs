@@ -24,7 +24,7 @@ namespace PBL3.Data
             {
                 return null;
             }
-            return _context.Titles.Where(p => p.IdTitle == id && p.Active == true).FirstOrDefault();
+            return _context.Titles.Where(p => p.IdTitle == id && p.Active == true).Include(p => p.IdHashtags).FirstOrDefault();
         }
 
         //Create()_Post
