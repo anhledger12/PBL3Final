@@ -8,18 +8,16 @@ namespace PBL3.Controllers.Anonymous
 {
     public class SearchController : Controller
     {
-        private LibraryManagementContext _context;
-        QL db;
-        public SearchController(QL db, LibraryManagementContext context)
+        private QL db;
+        public SearchController(QL db)
         {
             this.db = db;
-            _context = context;
         }
 
         public IActionResult Index(string name = "")
         {
             var accounts = db.GetAccounts(name);
-            var titles = db.GetTitles(name);
+            var titles = db.GetTitlesByName(name);
             ViewBag.Name = name;
             var tables = new SearchViewModel
             {
@@ -38,7 +36,7 @@ namespace PBL3.Controllers.Anonymous
             string sortName = db.GetNameBook(sortOrder);
             ViewBag.Name = sortName;
             var accounts = db.GetAccounts(sortName);
-            var titles = db.GetTitles(sortName);
+            var titles = db.GetTitlesByName(sortName);
             switch (sortType)
             {
                 case "1":

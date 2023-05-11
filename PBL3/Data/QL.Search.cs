@@ -10,7 +10,7 @@ namespace PBL3.Data
                         .Select(x => x)
                         .Where(x => x.AccName.Contains(name) && x.Active == stateActive).ToList();
         }
-        public List<Title> GetTitles(string name, bool stateActive = true)
+        public List<Title> GetTitlesByName(string name, bool stateActive = true)
         {
             return _context.Titles
                          .Select(x => x)

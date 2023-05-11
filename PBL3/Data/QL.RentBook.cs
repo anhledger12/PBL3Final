@@ -18,7 +18,7 @@ namespace PBL3.Data
            && p.StateSend == stateSend && p.StateApprove == stateApprove).ToList();
         }
 
-        public bool CheckBookRentDetailExist(string accName, bool stateReturn, string id) 
+        public bool CheckBookRentDetailExist(string accName, string id) 
         {
             bool ableToAdd = true;
 
@@ -27,8 +27,8 @@ namespace PBL3.Data
             List<BookRental> thisAccRental = _context.BookRentals.Where(p => p.AccSending == accName).ToList();
             foreach (BookRental item in thisAccRental)
             {
-                ableToAdd = !_context.BookRentDetails.Where(p => p.IdBookRental == item.Id &&
-                p.IdBook == id && p.StateReturn == false).Any();
+                ableToAdd = !_context.BookRentDetails
+                                .Where(p => p.IdBookRental == item.Id && p.IdBook == id && p.StateReturn == false).Any();
                 if (ableToAdd == false) break;
             }
             return ableToAdd;
@@ -36,8 +36,8 @@ namespace PBL3.Data
 
         public string GetTempBookId(string id, bool StateRent)
         {
-            return _context.Books.Where(p => p.IdTitle == id &&
-               p.StateRent == StateRent).Select(p => p.IdBook).First();
+            return _context.Books
+                           .Where(p => p.IdTitle == id && p.StateRent == StateRent).Select(p => p.IdBook).First();
         }
         public List<RentModel> GetRentModel(string accName, bool stateSend)
         {
@@ -45,52 +45,73 @@ namespace PBL3.Data
             IEnumerable<BookRentDetail> bookRentDetails = _context.BookRentDetails.ToList();
             IEnumerable<Book> books = _context.Books.ToList();
             IEnumerable<Title> titles = _context.Titles.ToList();
-            return (from brd in bookRentDetails
-                     join br in bookRentals on brd.IdBookRental equals br.Id
-                     join b in books on brd.IdBook equals b.IdBook
-                     join Titles in titles on b.IdTitle equals Titles.IdTitle
-                     where br.AccSending == accName && br.StateSend == stateSend
-                     select new RentModel
-                     {
-                         bookRentDetail = brd,
-                         bookRental = br,
-                         book = b,
-                         title = Titles
-                     }).ToList();
+            return bookRentDetails.Join(bookRentals, brd => brd.IdBookRental, br => br.Id, (brd, br) => new { brd, br })
+                                   .Join(books, x => x.brd.IdBook, b => b.IdBook, (x, b) => new { x.brd, x.br, b })
+                                   .Join(titles, x => x.b.IdTitle, Titles => Titles.IdTitle, (x, Titles) => new RentModel
+                                   {
+                                       bookRentDetail = x.brd,
+                                       bookRental = x.br,
+                                       book = x.b,
+                                       title = Titles
+                                   })
+                                   .Where(x => x.bookRental.AccSending == accName && x.bookRental.StateSend == stateSend)
+                                   .ToList();
         }
-        
+        //Lấy ra BookRentDetail đầu tiên trong các BookRental theo stateSend, accName và idTitle
         public BookRentDetail GetBookRentDetail(string accName, bool stateSend, string id) 
         {
-            return (from brd in _context.BookRentDetails
-                         join br in _context.BookRentals on brd.IdBookRental equals br.Id
-                         join b in _context.Books on brd.IdBook equals b.IdBook
-                         where b.IdTitle == id && br.StateSend == stateSend && br.AccSending == accName
-                         select new BookRentDetail
-                         {
-                             IdBookRental = brd.IdBookRental,
-                             IdBook = brd.IdBook,
-                             StateReturn = brd.StateReturn,
-                             StateTake = brd.StateTake,
-                             ReturnDate = brd.ReturnDate,
-                             Id = brd.Id
-                         }).FirstOrDefault();
+            return _context.BookRentDetails
+                            .Join(_context.BookRentals, brd => brd.IdBookRental, br => br.Id, (brd, br) => new { brd, br })
+                            .Join(_context.Books, x => x.brd.IdBook, b => b.IdBook, (x, b) => new { x.brd, x.br, b })
+                            .Where(x => x.b.IdTitle == id && x.br.StateSend == stateSend && x.br.AccSending == accName)
+                            .Select(x => new BookRentDetail
+                            {
+                                IdBookRental = x.brd.IdBookRental,
+                                IdBook = x.brd.IdBook,
+                                StateReturn = x.brd.StateReturn,
+                                StateTake = x.brd.StateTake,
+                                ReturnDate = x.brd.ReturnDate,
+                                Id = x.brd.Id
+                            })
+                            .FirstOrDefault();
+
         }
-        public int GetIdBook(string accName, bool stateSend)
+        //Lấy ra số sách có trong đơn mượn theo statSend và accName
+        public int GetNumBookInBookRental(string accName, bool stateSend)
         {
-            return (from brd in _context.BookRentDetails
-                    join br in _context.BookRentals on brd.IdBookRental equals br.Id
-                    where br.StateSend == stateSend && br.AccSending == accName
-                    select brd.IdBook
-                    ).ToList().Count();
+            return _context.BookRentDetails
+                            .Join(_context.BookRentals, brd => brd.IdBookRental, br => br.Id, (brd, br) => new { brd, br })
+                            .Where(x => x.br.StateSend == stateSend && x.br.AccSending == accName)
+                            .Select(x => x.brd.IdBook)
+                            .ToList()
+                            .Count();
         }
 
+        //Lấy thông tin sách cần gia hạn, truyền vào idbook và idBookRental
         public dynamic GetInfoForExtendRent(string accName, string id, string idBookRent)
         {
             int idBookRent1 = Convert.ToInt16(idBookRent);
-            return (from brd in _context.BookRentDetails
-                     join br in _context.BookRentals on brd.IdBookRental equals br.Id
-                     where br.Id == idBookRent1 && br.AccSending == accName && brd.IdBook == id
-                     select new { brd, br.TimeApprove, br.StateApprove }).FirstOrDefault();
+            return _context.BookRentDetails
+                        .Join(_context.BookRentals, brd => brd.IdBookRental, br => br.Id, (brd, br) => new { brd, br })
+                        .Where(x => x.br.Id == idBookRent1 && x.br.AccSending == accName && x.brd.IdBook == id)
+                        .Select(x => new { x.brd, x.br.TimeApprove, x.br.StateApprove })
+                        .FirstOrDefault();
+        }
+
+        public void AddRecord<T>(ref T addObject)
+        {
+            _context.Add(addObject);
+            _context.SaveChanges();
+        }
+        public void DeleteRecord<T>(ref T deleteObject)
+        {
+            _context.Remove(deleteObject);
+            _context.SaveChanges();
+        }
+        public void UpdateDB<T>(ref T updateObject)
+        {
+            _context.Update(updateObject);
+            _context.SaveChanges();
         }
     }
 }
