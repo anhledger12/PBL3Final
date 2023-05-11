@@ -28,7 +28,7 @@ namespace PBL3.Data
             foreach (BookRental item in thisAccRental)
             {
                 ableToAdd = !_context.BookRentDetails.Where(p => p.IdBookRental == item.Id &&
-                p.IdBook.Contains(id) && p.StateReturn == false).Any();
+                p.IdBook == id && p.StateReturn == false).Any();
                 if (ableToAdd == false) break;
             }
             return ableToAdd;

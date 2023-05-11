@@ -4,11 +4,13 @@
 // Write your JavaScript code.
 
 
-function Enable1(id1, id2, id3, id4) {
+function Enable1(id1, id2, id3, id4, id5, id6) {
     $(id1).addClass("active");
     $(id2).removeClass("active");
     $(id3).removeClass("fade").addClass("active");
     $(id4).removeClass("active").addClass("fade");
+    $(id5).addClass("active").removeClass("fade");
+    $(id6).addClass("fade").removeClass("active");
 }
 
 function On1() {

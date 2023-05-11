@@ -4,6 +4,12 @@
 *@
 @{
     ViewData["Title"] = "Search Page";
+    var sort1 = ViewBag.Name + "1";
+    var sort2 = ViewBag.Name + "2";
+    var sort3 = ViewBag.Name + "3";
+    var sort4 = ViewBag.Name + "4";
+    var sort5 = ViewBag.Name + "5";
+    var sort6 = ViewBag.Name + "6";
 }
 
 @model SearchViewModel;
@@ -12,27 +18,28 @@
  {
     <ul class="nav nav-pills"> 
         <li class="nav-item ">
-            <a class="nav-link active rounded-0" id="Titles" data-toggle="pill" href="#home" onclick="Enable1('#Titles','#AccNames','#home','#menu1')">Titles</a>
+            <a class="nav-link active rounded-0" id="Titles" data-toggle="pill" href="#home" onclick="Enable1('#Titles','#AccNames','#home','#menu1','#Title','Accounts')">Titles</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link rounded-0" id="AccNames" data-toggle="pill" href="#menu1" onclick="Enable1('#AccNames','#Titles','#menu1','#home')">AccNames</a>
+            <a class="nav-link rounded-0" id="AccNames" data-toggle="pill" href="#menu1" onclick="Enable1('#AccNames','#Titles','#menu1','#home','#Accounts', '#Title')">AccNames</a>
         </li>     
     </ul>  
  }
  <label>Sắp xếp theo</label>
- <div class="dropdown">
-    <select name="sortOrder" class="" title="Tiêu chí"></select>
-        <div class="dropdown-content">
-           <a id = "TitlesSearch" asp-action = "Index" asp-route-name="@ViewBag.Name" asp-route-sortOrder="asc" asp-route-sortType="name"><option>Tăng dần theo tên sách</option></a>
-           <a id="TitlesSearch" asp-action="Index" asp-route-name="@ViewBag.Name" asp-route-sortOrder="desc" asp-route-sortType="name">Giảm dần theo tên sách</a>
-           <a id="TitlesSearch" asp-action="Index" asp-route-name="@ViewBag.Name" asp-route-sortOrder="asc" asp-route-sortType="date">Tăng dần theo năm xuất bản</a>
-           <a id="TitlesSearch" asp-action="Index" asp-route-name="@ViewBag.Name" asp-route-sortOrder="desc" asp-route-sortType="date">Giảm dần theo năm xuất bản</a>
-           <a id="AccountsSearch" asp-action="Index" asp-route-name="@ViewBag.Name" asp-route-sortOrder="asc" asp-route-sortType="name">Tăng dần theo tên tài khoản</a>
-           <a id="AccountsSearch" asp-action="Index" asp-route-name="@ViewBag.Name" asp-route-sortOrder="desc" asp-route-sortType="name">Giảm dần theo tên tài khoản</a>
-           <a id="AccountsSearch" asp-action="Index" asp-route-name="@ViewBag.Name" asp-route-sortOrder="asc" asp-route-sortType="date">Tăng dần theo ngày sinh</a>
-           <a id="AccountsSearch" asp-action="Index" asp-route-name="@ViewBag.Name" asp-route-sortOrder="desc" asp-route-sortType="date">Giảm dần theo ngày sinh</a>
-        </div>
-</div>
+ <form method="post" asp-action="Sort">
+    <select name="sortOrder" class="" title="Tiêu chí">
+        <option id="Title" class="active" value= "@sort1">Tăng dần theo tên sách</option>
+        <option id="Title" class="active" value= "@sort2">Giảm dần theo tên sách</option>
+        <option id="Title" class="active"value= "@sort3">Tăng dần theo năm xuất bản</option>
+        <option id="Title" class="active" value= "@sort4">Giảm dần theo năm xuất bản</option>
+        @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
+        {
+            <option id ="Accounts" class ="fade" value= "@sort5">Tăng dần theo năm sinh</option>
+            <option id = "Accounts" class="fade" value= "@sort6">Giảm dần theo năm sinh</option>
+        }
+    </select>
+    <button type="submit" class = "btn btn-outline-primary">Sort</button>
+</form>
  
 <div class="tab-content">  
     <div class="tab-pane container active p-0" id="home">  
