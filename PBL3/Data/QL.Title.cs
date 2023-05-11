@@ -57,7 +57,7 @@ namespace PBL3.Data
                     NameBookshelf = inputTitle.NameBookshelf
                 };
 
-                _context.Add(title);
+                _context.Titles.Add(title);
                 _context.SaveChanges();
                 resultType = true;
             }
@@ -86,7 +86,7 @@ namespace PBL3.Data
                 });
                 addId = IDIncrement(addId);
             }
-            _context.AddRangeAsync(addList);
+            _context.Books.AddRange(addList);
             _context.SaveChanges();
 
             return resultType;
@@ -110,7 +110,7 @@ namespace PBL3.Data
                 {
                     return false;
                 }
-                _context.Update(title);
+                _context.Titles.Update(title);
                 _context.SaveChanges();
                 return true;
             }

@@ -243,7 +243,7 @@ namespace PBL3.Data
                 foreach (BookRentDetail detail in notApprovable)
                 {
                     pendingApprove.Remove(detail);
-                    _context.Remove(detail);
+                    _context.BookRentDetails.Remove(detail);
                     result += "Mã đầu sách: " + detail.IdBook.ToString();
                 }
 
@@ -251,12 +251,12 @@ namespace PBL3.Data
                 {
                     Book getBook = _context.Books.Where(p => p.IdBook == detail.IdBook).First();
                     getBook.StateRent = true;
-                    _context.Update(getBook);
+                    _context.Books.Update(getBook);
                 }
                 tempUpdate.StateApprove = true;
                 tempUpdate.AccApprove = accApprove;
                 tempUpdate.TimeApprove = timeApprove;
-                _context.Update(tempUpdate);
+                _context.BookRentals.Update(tempUpdate);
                 _context.SaveChanges();
                 return result;
             }
@@ -272,8 +272,8 @@ namespace PBL3.Data
                 getBook.StateRent = false;
                 _context.Update(getBook);
             }
-            _context.Remove(tempDelete);
-            _context.Remove(
+            _context.BookRentDetails.RemoveRange(tempDelete);
+            _context.BookRentals.Remove(
                 _context.BookRentals.Where(p => p.Id == id).First());
             _context.SaveChangesAsync();
         }
@@ -286,7 +286,7 @@ namespace PBL3.Data
                 detail.StateTake = true;
                 detail.ReturnDate = timeTake.AddDays(90);
             }
-            _context.UpdateRange(tempUpdate);
+            _context.BookRentDetails.UpdateRange(tempUpdate);
 
             _context.SaveChanges();
         }
@@ -297,11 +297,11 @@ namespace PBL3.Data
             p.IdBookRental == id &&
             p.IdBook == idDetail).First();
             tempUpdate.StateReturn = true;
-            _context.Update(tempUpdate);
+            _context.BookRentDetails.Update(tempUpdate);
 
             Book getBook = _context.Books.Where(p => p.IdBook == idDetail).First();
             getBook.StateRent = false;
-            _context.Update(getBook);
+            _context.Books.Update(getBook);
             _context.SaveChanges();
         }
         
@@ -311,9 +311,9 @@ namespace PBL3.Data
             if (lost != null)
             {
                 lost.Active = false;
+                _context.Books.Update(lost);
+                _context.SaveChanges();
             }
-            _context.Books.Update(lost);
-            _context.SaveChanges();
         }
     }
 }
