@@ -2,39 +2,216 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-</hr>
-<div class="text-center">
-    <h2 class="display-4">QUẢN LÝ THƯ VIỆN TRƯỜNG ĐẠI HỌC</h2>
-</div>
-</hr>
-</br>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Trang @ViewBag.CurrentPage
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            var html = Markdig.Markdown.ToHtml(item.Content);
-                <tr>
-                <div class = "card md-4">
+<section id="hero" class="d-flex align-items-center">
+    <div class="container text-center position-relative" data-aos="fade-in" data-aos-delay="200">
+        <h1>UNILIB</h1>
+        <h2></h2>
+        <a id ="#get" href="#about" class="btn-get-started scrollto" onclick="myf()">Get Started</a>
+    </div>
+</section>
 
-                <div class = "row">
-                    <div class = "col-md-10 ms-4 mt-4">
-                        @Html.Raw(html)
+<!-- ======= About Section ======= -->
+<section id="about" class="about">
+    <div class="container">
+
+        <div class="row content">
+            <div class="col-lg-6" data-aos="fade-right" data-aos-delay="100">
+                <h2>Thư viện số hóa</h2>
+                <h3>Dành cho các trường Đại học</h3>
+            </div>
+            <div class="col-lg-6 pt-4 pt-lg-0" data-aos="fade-left" data-aos-delay="200">
+                <p>
+                    Nền tảng quản lý thư viện và đặt mượn sách trực tuyến dành cho thủ thư và bạn đọc. Các thủ thư 
+                    có thể quản lý các đầu sách, các đơn đặt mượn và các bạn đọc có tài khoản trên hệ thống.......
+                    Nghĩ giùm toi với các huynh đài
+                </p>
+                <ul>
+                    <li><i class="ri-check-double-line"></i>Nhanh chóng</li>
+                    <li><i class="ri-check-double-line"></i> Tiện lợi</li>
+                    <li><i class="ri-check-double-line"></i> Dễ dàng</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</section><!-- End About Section 
+
+<!-- ======= Testimonials Section ======= -->
+<section id="testimonials" class="testimonials section-bg">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="section-title" data-aos="fade-right">
+                    <h2>Testimonials</h2>
+                    <p>Magnam dolores commodi suscipit uisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.</p>
+                </div>
+            </div>
+            <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+
+                <div class="testimonials-slider swiper" data-aos="fade-up" data-aos-delay="100">
+                    <div class="swiper-wrapper">
+
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <p>
+                                    <i class="bx bxs-quote-alt-left quote-icon-left"></i>
+                                    Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.
+                                    <i class="bx bxs-quote-alt-right quote-icon-right"></i>
+                                </p>
+                                <img src="assets/img/testimonials/testimonials-1.jpg" class="testimonial-img" alt="">
+                                <h3>Saul Goodman</h3>
+                                <h4>Ceo &amp; Founder</h4>
+                            </div>
+                        </div><!-- End testimonial item -->
+
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <p>
+                                    <i class="bx bxs-quote-alt-left quote-icon-left"></i>
+                                    Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.
+                                    <i class="bx bxs-quote-alt-right quote-icon-right"></i>
+                                </p>
+                                <img src="assets/img/testimonials/testimonials-2.jpg" class="testimonial-img" alt="">
+                                <h3>Sara Wilsson</h3>
+                                <h4>Designer</h4>
+                            </div>
+                        </div><!-- End testimonial item -->
+
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <p>
+                                    <i class="bx bxs-quote-alt-left quote-icon-left"></i>
+                                    Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.
+                                    <i class="bx bxs-quote-alt-right quote-icon-right"></i>
+                                </p>
+                                <img src="assets/img/testimonials/testimonials-3.jpg" class="testimonial-img" alt="">
+                                <h3>Jena Karlis</h3>
+                                <h4>Store Owner</h4>
+                            </div>
+                        </div><!-- End testimonial item -->
+
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <p>
+                                    <i class="bx bxs-quote-alt-left quote-icon-left"></i>
+                                    Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.
+                                    <i class="bx bxs-quote-alt-right quote-icon-right"></i>
+                                </p>
+                                <img src="assets/img/testimonials/testimonials-4.jpg" class="testimonial-img" alt="">
+                                <h3>Matt Brandon</h3>
+                                <h4>Freelancer</h4>
+                            </div>
+                        </div><!-- End testimonial item -->
+
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <p>
+                                    <i class="bx bxs-quote-alt-left quote-icon-left"></i>
+                                    Quis quorum aliqua sint quem legam fore sunt eram irure aliqua veniam tempor noster veniam enim culpa labore duis sunt culpa nulla illum cillum fugiat legam esse veniam culpa fore nisi cillum quid.
+                                    <i class="bx bxs-quote-alt-right quote-icon-right"></i>
+                                </p>
+                                <img src="assets/img/testimonials/testimonials-5.jpg" class="testimonial-img" alt="">
+                                <h3>John Larson</h3>
+                                <h4>Entrepreneur</h4>
+                            </div>
+                        </div><!-- End testimonial item -->
+
                     </div>
+                    <div class="swiper-pagination"></div>
                 </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- ======= Team Section ======= -->
+<section id="team" class="team">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="section-title" data-aos="fade-right">
+                    <h2>Team</h2>
+                    <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem.</p>
                 </div>
-                <hr>
-            </tr>
-        }
-    </tbody>
-</table>
-<!--Page-->
-@Html.Partial("Paging")
+            </div>
+            <div class="col-lg-8">
+                <div class="row">
+
+                    <div class="col-lg-6">
+                        <div class="member" data-aos="zoom-in" data-aos-delay="100">
+                            <div class="pic"><img src="~/img/VINH1606-2.jpg" class="img-fluid" alt=""></div>
+                            <div class="member-info">
+                                <h4>Nguyễn Nguyên Anh</h4>
+                                <span>UI Leader</span>
+                                <p>Đẹp trai có gì sai??????????????????????????????????????????</p>
+                                <div class="social">
+                                    <a href=""><i class="ri-twitter-fill"></i></a>
+                                    <a href=""><i class="ri-facebook-fill"></i></a>
+                                    <a href=""><i class="ri-instagram-fill"></i></a>
+                                    <a href=""> <i class="ri-linkedin-box-fill"></i> </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 mt-4 mt-lg-0">
+                        <div class="member" data-aos="zoom-in" data-aos-delay="200">
+                            <div class="pic"><img src="~/img/team-2.jpg" class="img-fluid" alt=""></div>
+                            <div class="member-info">
+                                <h4>Trương Tấn Cường</h4>
+                                <span>BE Leader</span>
+                                <p>Aut maiores voluptates amet et quis praesentium qui senda para</p>
+                                <div class="social">
+                                    <a href=""><i class="ri-twitter-fill"></i></a>
+                                    <a href=""><i class="ri-facebook-fill"></i></a>
+                                    <a href=""><i class="ri-instagram-fill"></i></a>
+                                    <a href=""> <i class="ri-linkedin-box-fill"></i> </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                   @* <div class="col-lg-6 mt-4">
+                        <div class="member" data-aos="zoom-in" data-aos-delay="300">
+                            <div class="pic"><img src="~/img/team-3.jpg" class="img-fluid" alt=""></div>
+                            <div class="member-info">
+                                <h4>William Anderson</h4>
+                                <span>CTO</span>
+                                <p>Quisquam facilis cum velit laborum corrupti fuga rerum quia</p>
+                                <div class="social">
+                                    <a href=""><i class="ri-twitter-fill"></i></a>
+                                    <a href=""><i class="ri-facebook-fill"></i></a>
+                                    <a href=""><i class="ri-instagram-fill"></i></a>
+                                    <a href=""> <i class="ri-linkedin-box-fill"></i> </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+
+                    <div class="col-lg-6 mt-4">
+                        <div class="member" data-aos="zoom-in" data-aos-delay="400">
+                            <div class="pic"><img src="~/img/team-4.jpg" class="img-fluid" alt=""></div>
+                            <div class="member-info">
+                                <h4>Trần Viết Sơn</h4>
+                                <span>DB Leader</span>
+                                <p>Dolorum tempora officiis odit laborum officiis et et accusamus</p>
+                                <div class="social">
+                                    <a href=""><i class="ri-twitter-fill"></i></a>
+                                    <a href=""><i class="ri-facebook-fill"></i></a>
+                                    <a href=""><i class="ri-instagram-fill"></i></a>
+                                    <a href=""> <i class="ri-linkedin-box-fill"></i> </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section><!-- End Team Section -->
