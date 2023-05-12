@@ -1,60 +1,77 @@
 ﻿@model IEnumerable<PBL3.Models.Entities.Account>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Quản lý tài khoản";
 }
 
-<h1>Index</h1>
+<h1>Quản lý tài khoản</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
+<div class="row">
+    <a asp-action="Create" class="btn btn-success btn-icon-split ml-2">
+        <span class="icon text-white-50">
+            <i class="fas fa-plus"></i>
+        </span>
+        <span class="text">Tạo tài khoản mới</span>
+    </a>
+</div>
+
+<h3 class="text-uppercase p-2 text-center">@ViewBag.Head</h3>
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark text-dark">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FullName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateOfBirth)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Phone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Mssv)
-            </th>
+            <th>Tên tài khoản</th>
+            <th>Tên đầy đủ</th>
+            <th>Ngày sinh</th>
+            <th>Số điện thoại</th>
+            <th>Email</th>
+            @if (ViewBag.Type == "User")
+            {
+                <th>Mã sinh viên</th>
+            }           
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateOfBirth)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.Mssv)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.AccName">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.AccName">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.AccName">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var acc in Model)
+        {
+            <tr>
+                <td><a asp-controller="Account" asp-action="Detail" asp-route-id="@acc.AccName">@acc.AccName</a></td>
+                <td>@acc.FullName</td>
+                @if (acc.DateOfBirth != null)
+                {
+                <td>@(((DateTime)acc.DateOfBirth).ToString("dd/MM/yyyy"))</td>                    
+                }
+                else {<td></td>}
+                <td>@acc.Phone</td>
+                <td>@acc.Email</td>
+                @if (ViewBag.Type == "User")
+                {
+                    <th>@acc.Mssv</th>
+                }
+                <td>
+                    @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
+                    {
+                        <a asp-controller="Account" asp-action="Edit" asp-route-id="@acc.AccName">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        @if (acc.Active == true)
+                        {                            
+                        <span>|</span>
+                            <a style="color: red" asp-controller="Accounts" asp-action="Delete" asp-route-id="@acc.AccName">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                            @if (ViewBag.Type == "User")
+                            {                                
+                                <span>|</span>
+                                <a asp-controller="RentBook" asp-action="UserRentals" asp-route-accName="@acc.AccName">
+                                    <i class="fas fa-book"></i>
+                                </a>
+                            }
+                        }
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
