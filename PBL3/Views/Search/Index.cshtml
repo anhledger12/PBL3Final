@@ -4,12 +4,6 @@
 *@
 @{
     ViewData["Title"] = "Search Page";
-    var sort1 = ViewBag.Name + "1";
-    var sort2 = ViewBag.Name + "2";
-    var sort3 = ViewBag.Name + "3";
-    var sort4 = ViewBag.Name + "4";
-    var sort5 = ViewBag.Name + "5";
-    var sort6 = ViewBag.Name + "6";
 }
 
 @model SearchViewModel;
@@ -25,28 +19,29 @@
         </li>     
     </ul>  
  }
- <form method="post" asp-action="Sort">
-    <div style = "width: 30%">
-        <div class="mb-3">
-            <select style="width:70%; display:inline" class="form-control" name="sortOrder" title="Tiêu chí">
-                <option id="Title" class="active" value= "@sort1">Tăng dần theo tên sách</option>
-                <option id="Title" class="active" value= "@sort2">Giảm dần theo tên sách</option>
-                <option id="Title" class="active"value= "@sort3">Tăng dần theo năm xuất bản</option>
-                <option id="Title" class="active" value= "@sort4">Giảm dần theo năm xuất bản</option>
-                @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
-                {
-                    <option id ="Accounts" class ="fade" value= "@sort5">Tăng dần theo năm sinh</option>
-                    <option id = "Accounts" class="fade" value= "@sort6">Giảm dần theo năm sinh</option>
-                }
-            </select>
-            <button type="submit" class="btn btn-outline-primary"><i class="fas fa-sort"></i></button>
-        </div>
-    </div>
-</form>
  
 <div class="tab-content">  
     <div class="tab-pane container active p-0" id="home">  
-        <h5 class="text-uppercase p-2 text-center">List of Books</h5>  
+        <h5 class="text-uppercase p-2 text-center">List of Books</h5>
+        <form method="get" asp-action="Index">
+            <div style="width: 30%; float:right">
+                <div class="mb-3">
+                    <input type="hidden" name="name" value="@ViewBag.Name" data-bind="text: hiddnBasketRefNumber" />
+                    <select style="width:70%; display:inline" class="form-control" name="sortOrder" title="Tiêu chí">
+                        <option id="Title" class="active" value="1">Tăng dần theo tên sách</option>
+                        <option id="Title" class="active" value="2">Giảm dần theo tên sách</option>
+                        <option id="Title" class="active" value="3">Tăng dần theo năm xuất bản</option>
+                        <option id="Title" class="active" value="4">Giảm dần theo năm xuất bản</option>
+                        @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
+                        {
+                            <option id="Accounts" class="fade" value="5">Tăng dần theo năm sinh</option>
+                            <option id="Accounts" class="fade" value="6">Giảm dần theo năm sinh</option>
+                        }
+                    </select>
+                    <button type="submit" class="btn btn-outline-primary"><i class="fas fa-sort"></i></button>
+                </div>
+            </div>
+        </form>
         <table class="table table-bordered table-striped">  
             <thead class="thead-dark text-dark">  
                 <tr>  
@@ -89,7 +84,22 @@
     @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
     {
         <div class="tab-pane container fade p-0" id="menu1">  
-            <h5 class="text-uppercase p-2 text-center">List of Accounts</h5>  
+            <h5 class="text-uppercase p-2 text-center">List of Accounts</h5>
+            <form method="get" asp-action="Index">
+                <div style="width: 30%; float:right">
+                    <div class="mb-3">
+                        <input type="hidden" name="name" value="@ViewBag.Name" data-bind="text: hiddnBasketRefNumber" />
+                        <select style="width:70%; display:inline" class="form-control" name="sortOrder" title="Tiêu chí">
+                            @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
+                            {
+                                <option id="Accounts" class="fade" value="5">Tăng dần theo năm sinh</option>
+                                <option id="Accounts" class="fade" value="6">Giảm dần theo năm sinh</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-outline-primary"><i class="fas fa-sort"></i></button>
+                    </div>
+                </div>
+            </form>
             <table class="table table-bordered table-striped">  
                 <thead class="thead-dark text-dark">  
                     <tr>  
