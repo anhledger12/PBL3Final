@@ -28,12 +28,16 @@
                         @Html.DisplayFor(modelItem => item.title.IdTitle)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.title.NameBook)
+                        <a asp-action="Details" asp-route-id="@item.title.IdTitle">
+                            @Html.DisplayFor(modelItem => item.title.NameBook)
+                        </a>
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.title.IdTitle">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.title.IdTitle">Details</a> |
-                        <a asp-controller = "RentBook" asp-action="Delete" asp-route-id="@item.title.IdTitle">Delete</a>
+                        <form asp-controller="RentBook" asp-action="Delete" asp-route-id ="@item.title.IdTitle" method="get">
+                            <button style="border:none; background-color:#f8f9fc; color: red" type="submit">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
             }
@@ -41,7 +45,12 @@
     </table>
     @*<input class = "btn-style" type="submit" value="Filter"/>*@
     <div class="form-group mt-3">
-        <a class="btn btn-outline-secondary ms-5" asp-controller="RentBook" asp-action="SendRent">Submit</a>
+        <form asp-controller="RentBook" asp-action="SendRent" method="post">
+            <button class="btn btn-outline-secondary ms-5" type="submit">
+                submit
+            </button>
+        </form>
+        
     </div>
 }
 else

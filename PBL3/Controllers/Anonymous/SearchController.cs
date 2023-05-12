@@ -14,30 +14,12 @@ namespace PBL3.Controllers.Anonymous
             this.db = db;
         }
 
-        public IActionResult Index(string name = "")
+        public IActionResult Index(string name = "", string sortOrder = "1")
         {
             var accounts = db.GetAccounts(name);
             var titles = db.GetTitlesByName(name);
             ViewBag.Name = name;
-            var tables = new SearchViewModel
-            {
-                Accounts = accounts,
-                Titles = titles,
-            };
-            return View(tables);
-        }
-        
-
-        [HttpPost]
-        public async Task<IActionResult> Sort(string sortOrder)
-        {
-            string sortType = sortOrder[sortOrder.Length - 1].ToString();
-            //Cắt chuỗi để lấy ra tên sách trong sortOrder
-            string sortName = db.GetNameBook(sortOrder);
-            ViewBag.Name = sortName;
-            var accounts = db.GetAccounts(sortName);
-            var titles = db.GetTitlesByName(sortName);
-            switch (sortType)
+            switch (sortOrder)
             {
                 case "1":
                     {
@@ -75,8 +57,7 @@ namespace PBL3.Controllers.Anonymous
                 Accounts = accounts,
                 Titles = titles,
             };
-            return View("Index", tables);
+            return View(tables);
         }
-        
     }
 }

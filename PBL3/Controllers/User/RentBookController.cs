@@ -31,6 +31,8 @@ namespace PBL3.Controllers.User
             return RedirectToAction("ViewCart");
         }
 
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
         [Authorize(Roles = UserRole.All)]
         public async Task<IActionResult> AddToRental(string id="0")
         {
@@ -100,7 +102,8 @@ namespace PBL3.Controllers.User
                 return NotFound();
             }
         }
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Authorize(Roles = UserRole.User)]
         public async Task<IActionResult> Delete(string id)
         {
@@ -122,7 +125,8 @@ namespace PBL3.Controllers.User
             return RedirectToAction("ViewCart");
         }
 
-        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Authorize(Roles = UserRole.User)]
         //Hàm gửi đơn mượn tạm đi chờ phê duyệt
         public async Task<IActionResult> Sendrent()

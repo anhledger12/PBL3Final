@@ -64,21 +64,21 @@
             <div class="text-center">
                 @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
                 {
-                    <a asp-action="Edit" asp-route-id="@Model.IdTitle" class="btn btn-primary" style="width:150px">
+                    <a asp-action="Edit" asp-route-id="@Model.IdTitle" class="btn btn-primary" style="width:200px">
                         <i class="text-white-50 fas fa-edit fa-align-left"></i>
                         Chỉnh sửa
                     </a>
                 }
                 else
                 {
-                    <a asp-controller="RentBook" asp-action="AddToRental" asp-route-id="@Model.IdTitle" class="btn btn-primary" style="width:150px">
-                        <i class="text-white-50 fas fa-archive fa-align-left"></i>>
+                    <a asp-controller="RentBook" asp-action="AddToRental" asp-route-id="@Model.IdTitle" class="btn btn-primary" style="width:200px">
+                        <i class="text-white-50 fas fa-address-book fa-align-left"></i>
                         Thêm vào đơn mượn
                     </a>
                 }
                 <br />
                 <br />
-                <a asp-action="Index" class="btn btn-light text-center" style="width:150px">
+                <a asp-action="Index" class="btn btn-light text-center" style="width:200px">
                     <i class="fas fa-arrow-left fa-fw"></i>
                     Quay lại
                 </a>

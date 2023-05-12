@@ -6,48 +6,53 @@
 
 <h4 class="text-uppercase p-2 text-center">Thư viện</h4>
 
-<table class="table table-bordered table-striped">
-    <thead class="thead-dark text-dark">
-        <tr>
-            <th>Id</th>
-            <th>Tên đầu sách</th>
-            <th>Tên tác giả</th>
-            <th>Kệ sách</th>
-            <th>Năm xuất bản</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var title in Model) {
-        <tr>
-            <td>@title.IdTitle</td>
-            <td>
-                <a asp-controller="Titles" asp-action="Details" asp-route-id="@title.IdTitle">@title.NameBook</a>
-            </td>
-            <td>@title.NameWriter</td>
-            <td>@title.NameBookshelf</td>
-            <td>@title.ReleaseYear</td>
-            <td>
-                @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
-                {
-                    <a asp-action="Edit" asp-route-id="@title.IdTitle">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <span>|</span>
-                    <a style="color: red" asp-action="Delete" asp-route-id="@title.IdTitle">
-                        <i class="fas fa-trash"></i>
-                    </a>
-                }
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+<div class="container p-0">
 
-<div class="text-center">
-    @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
-    {
-        <br />
-        <a class="btn btn-primary" asp-action="Create">Tạo đầu sách mới</a>
-    }
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark text-dark">
+            <tr>
+                <th>Id</th>
+                <th>Tên đầu sách</th>
+                <th>Tên tác giả</th>
+                <th>Kệ sách</th>
+                <th>Năm xuất bản</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var title in Model)
+            {
+                <tr>
+                    <td>@title.IdTitle</td>
+                    <td>
+                        <a asp-controller="Titles" asp-action="Details" asp-route-id="@title.IdTitle">@title.NameBook</a>
+                    </td>
+                    <td>@title.NameWriter</td>
+                    <td>@title.NameBookshelf</td>
+                    <td>@title.ReleaseYear</td>
+                    <td>
+                        @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
+                        {
+                            <a asp-action="Edit" asp-route-id="@title.IdTitle">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <span>|</span>
+                            <a style="color: red" asp-action="Delete" asp-route-id="@title.IdTitle">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-center">
+        @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
+        {
+            <br />
+            <a class="btn btn-primary" asp-action="Create">Tạo đầu sách mới</a>
+        }
+    </div>
+
 </div>
