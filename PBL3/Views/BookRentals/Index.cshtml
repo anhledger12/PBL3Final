@@ -3,43 +3,47 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Danh sách các đơn mượn của hệ thống</h1>
 
-<ul class="nav nav-pills">
-    <li class="nav-item ">
-        <a class="nav-link active rounded-0" id="Pending" data-toggle="pill" href="#Pending-Table" onclick="On1()">Chờ phê duyệt</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link rounded-0" id="WaitingTake" data-toggle="pill" href="#WaitingTake-Table" onclick="On2()">Đang chờ lấy</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link rounded-0" id="WaitingReturn" data-toggle="pill" href="#WaitingReturn-Table" onclick="On3()">Đang diễn ra</a>
-    </li>
-</ul>
+<div class="container p-0">
+    <h4>Danh sách các đơn mượn của hệ thống</h4>
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            <a class="nav-link active rounded-0" id="Pending" data-toggle="pill" href="#Pending-Table" onclick="On1()">Chờ phê duyệt</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-0" id="WaitingTake" data-toggle="pill" href="#WaitingTake-Table" onclick="On2()">Đang chờ lấy</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-0" id="WaitingReturn" data-toggle="pill" href="#WaitingReturn-Table" onclick="On3()">Đang diễn ra</a>
+        </li>
+    </ul>
+</div>
 
 <div class="tab-content">
 
     <div class="tab-pane container active p-0" id="Pending-Table">
         <h5 class="text-uppercase p-2 text-center">Danh sách chờ duyệt</h5>
-        <table class="table">
-            <thead>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark text-dark">
                 <tr>
+                    <th></th>
                     <th>Mã đơn mượn</th>
                     <th>Người gửi</th>
                     <th>Thời gian gửi</th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (BookRental bookRental in ViewBag.Pending)
                 {
-                    <tr>
-                        <td>@bookRental.Id</td>
-                        <td>@bookRental.AccSending</td>
-                        <td>@bookRental.TimeCreate</td>
+                    <tr class="align-content-center">
                         <td>
-                            <a asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="1">Chi tiết</a>
+                            <a asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="1" class="btn btn-outline-secondary btn-circle">
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
                         </td>
+                        <td style="padding:20px">@bookRental.Id</td>
+                        <td style="padding:20px">@bookRental.AccSending</td>
+                        <td style="padding:20px">@bookRental.TimeCreate</td>
                     </tr>
                 }
             </tbody>
@@ -48,27 +52,29 @@
 
     <div class="tab-pane container fade p-0" id="WaitingTake-Table">
         <h5 class="text-uppercase p-2 text-center">Danh sách chờ lấy đơn</h5>
-        <table class="table">
-            <thead>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark text-dark">
                 <tr>
+                    <th></th>
                     <th>Mã đơn mượn</th>
                     <th>Người gửi</th>
                     <th>Người phê duyệt</th>
                     <th>Thời gian duyệt</th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (BookRental bookRental in ViewBag.WaitingTake)
                 {
                     <tr>
-                        <td>@bookRental.Id</td>
-                        <td>@bookRental.AccSending</td>
-                        <td>@bookRental.AccApprove</td>
-                        <td>@bookRental.TimeApprove</td>
                         <td>
-                            <a asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="2">Chi tiết</a>
+                            <a asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="2" class="btn btn-outline-secondary btn-circle">
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
                         </td>
+                        <td style="padding:20px">@bookRental.Id</td>
+                        <td style="padding:20px">@bookRental.AccSending</td>
+                        <td style="padding:20px">@bookRental.AccApprove</td>
+                        <td style="padding:20px">@bookRental.TimeApprove</td>
                     </tr>
                 }
             </tbody>
@@ -77,29 +83,30 @@
 
     <div class="tab-pane container fade p-0" id="WaitingReturn-Table">
         <h5 class="text-uppercase p-2 text-center">Danh sách đơn đang diễn ra</h5>
-        <table class="table">
-            <thead>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark text-dark">
                 <tr>
+                    <th></th>
                     <th>Mã đơn mượn</th>
                     <th>Người gửi</th>
                     <th>Người phê duyệt</th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (BookRental bookRental in ViewBag.WaitingReturn)
                 {
                     <tr>
-                        <td>@bookRental.Id</td>
-                        <td>@bookRental.AccSending</td>
-                        <td>@bookRental.AccApprove</td>
                         <td>
-                            <a asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="3">Chi tiết</a>
+                            <a asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="3" class="btn btn-outline-secondary btn-circle">
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
                         </td>
+                        <td style="padding:20px">@bookRental.Id</td>
+                        <td style="padding:20px">@bookRental.AccSending</td>
+                        <td style="padding:20px">@bookRental.AccApprove</td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-
 </div>
