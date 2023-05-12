@@ -25,20 +25,23 @@
         </li>     
     </ul>  
  }
- <label>Sắp xếp theo</label>
  <form method="post" asp-action="Sort">
-    <select name="sortOrder" class="" title="Tiêu chí">
-        <option id="Title" class="active" value= "@sort1">Tăng dần theo tên sách</option>
-        <option id="Title" class="active" value= "@sort2">Giảm dần theo tên sách</option>
-        <option id="Title" class="active"value= "@sort3">Tăng dần theo năm xuất bản</option>
-        <option id="Title" class="active" value= "@sort4">Giảm dần theo năm xuất bản</option>
-        @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
-        {
-            <option id ="Accounts" class ="fade" value= "@sort5">Tăng dần theo năm sinh</option>
-            <option id = "Accounts" class="fade" value= "@sort6">Giảm dần theo năm sinh</option>
-        }
-    </select>
-    <button type="submit" class = "btn btn-outline-primary">Sort</button>
+    <div style = "width: 30%">
+        <div class="mb-3">
+            <select style="width:70%; display:inline" class="form-control" name="sortOrder" title="Tiêu chí">
+                <option id="Title" class="active" value= "@sort1">Tăng dần theo tên sách</option>
+                <option id="Title" class="active" value= "@sort2">Giảm dần theo tên sách</option>
+                <option id="Title" class="active"value= "@sort3">Tăng dần theo năm xuất bản</option>
+                <option id="Title" class="active" value= "@sort4">Giảm dần theo năm xuất bản</option>
+                @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
+                {
+                    <option id ="Accounts" class ="fade" value= "@sort5">Tăng dần theo năm sinh</option>
+                    <option id = "Accounts" class="fade" value= "@sort6">Giảm dần theo năm sinh</option>
+                }
+            </select>
+            <button type="submit" class="btn btn-outline-primary"><i class="fas fa-sort"></i></button>
+        </div>
+    </div>
 </form>
  
 <div class="tab-content">  
@@ -51,7 +54,8 @@
                     <th>Tên đầu sách</th>  
                     <th>Tên tác giả</th>  
                     <th>Kệ sách</th>  
-                    <th>Năm xuất bản</th>  
+                    <th>Năm xuất bản</th>
+                    <th></th>
                 </tr>  
             </thead>  
             <tbody>  
@@ -59,16 +63,22 @@
                 {  
                         <tr>  
                             <td>@title.IdTitle</td>  
-                            <td>@title.NameBook</td>  
+                            <td> 
+                                <a asp-controller="Titles" asp-action="Details" asp-route-id="@title.IdTitle">@title.NameBook</a>
+                            </td>  
                             <td>@title.NameWriter</td>  
                             <td>@title.NameBookshelf</td>  
                             <td>@title.ReleaseYear</td>
                             <td>
-                                <a asp-controller="Titles" asp-action="Details" asp-route-id="@title.IdTitle">Detail</a>
                                 @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
-                                {                     
-                                    <a asp-controller = "Titles" asp-action="Edit" asp-route-id="@title.IdTitle">Edit</a>
-                                    <a asp-controller = "Titles" asp-action="Delete" asp-route-id="@title.IdTitle">Delete</a>
+                                {                   
+                                    <a asp-controller = "Titles" asp-action="Edit" asp-route-id="@title.IdTitle">
+                                        <i class = "fas fa-edit"></i>
+                                    </a>
+                                    <span>|</span>
+                                    <a style="color: red" asp-controller="Titles" asp-action="Delete" asp-route-id="@title.IdTitle">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
                                 }
                             </td>
                         </tr>  
@@ -87,23 +97,31 @@
                         <th>Tên tài khoản</th>  
                         <th>Số điện thoại</th>
                         <th>Email</th> 
-                        <th>Ngày sinh</th> 
+                        <th>Ngày sinh</th>
+                        <th></th>
                     </tr>  
                 </thead>  
                 <tbody>  
                     @foreach (var Account in Model.Accounts)
                     {
                         <tr>  
-                            <td>@Account.Mssv</td>  
-                            <td>@Account.AccName</td>  
+                            <td>@Account.Mssv</td>
+                            <td>
+                                <a asp-controller="Accounts" asp-action="Details" asp-route-id="@Account.AccName">@Account.AccName</a>
+                            </td>
                             <td>@Account.Phone</td> 
                             <td>@Account.Email</td>
                             <td>@Account.DateOfBirth</td>
                             <td>
-                                <a asp-controller = "Accounts" asp-action="Edit" asp-route-id="@Account.AccName">Edit</a> |
-                                <a asp-controller="Accounts" asp-action="Details" asp-route-id="@Account.AccName">Details</a> |
-                                <a asp-controller="RentBook" asp-action="UserRentals" asp-route-accName="@Account.AccName">Rentals</a> |
-                                <a asp-controller="Accounts" asp-action="Delete" asp-route-id="@Account.AccName">Delete</a>
+                                <a asp-controller="Accounts" asp-action="Edit" asp-route-id="@Account.AccName">
+                                    <i class="fas fa-edit"></i>
+                                </a> |
+                                <a style="color: red" asp-controller="Titles" asp-action="Delete" asp-route-id="@Account.AccName">
+                                    <i class="fas fa-trash"></i>
+                                </a> |
+                                <a asp-controller="RentBook" asp-action="UserRentals" asp-route-accName="@Account.AccName">
+                                    <i class="fas fa-book"></i>
+                                </a>
                             </td>
                         </tr>
                     }  
