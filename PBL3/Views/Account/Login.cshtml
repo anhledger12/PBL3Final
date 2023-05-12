@@ -3,6 +3,7 @@
 
 @{
     Layout = null;
+    ViewData["Title"] = "Đăng nhập";
 }
 
 
@@ -31,7 +32,7 @@
 
 <body class="bg-gradient-primary">  
 
-    <div class="container">
+    <div class="container py-5">
 
         <!-- Outer Row -->
         <div class="row justify-content-center">
@@ -46,7 +47,7 @@
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">Chào mừng quay trở lại!</h1>
                                     </div>
                                     @if (TempData["Error"] != null)
                                     {
@@ -55,25 +56,23 @@
                                         </div>
                                     }
                                     <form class="user" asp-action="Login" asp-route-ReturnUrl="@ViewBag.ReturnUrl">
-                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                        <div asp-validation-summary="All" class="text-danger"></div>
                                         <div class="form-group">
                                             <input class="form-control form-control-user" asp-for="Email"
                                                    id="exampleInputEmail" aria-describedby="emailHelp"
-                                                   placeholder="Enter Email Address...">
-                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                                   placeholder="Nhập địa chỉ Email ...">
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user" asp-for="Password"
-                                                   id="exampleInputPassword" placeholder="Password">
-                                            <span asp-validation-for="Password" class="text-danger"></span>
+                                                   id="exampleInputPassword" placeholder="Nhập mật khẩu ...">
                                         </div>
-                                        <input type="submit" value="Log in" class="btn btn-primary btn-user btn-block"/>
-                                        <a class="btn btn-secondary btn-user btn-block" asp-controller="Home" asp-action="Index">Cancel</a>
+                                        <input type="submit" value="Đăng nhập" class="btn btn-primary btn-user btn-block"/>
+                                        <a class="btn btn-secondary btn-user btn-block" asp-controller="Home" asp-action="Index">Hủy</a>
                                         <hr>
 
                                     </form>
                                     <div class="text-center">
-                                        <a class="small" asp-action="Register">Create an Account!</a>
+                                        <a class="small" asp-action="Register">Tạo tài khoản mới!</a>
                                     </div>
                                 </div>
                             </div>

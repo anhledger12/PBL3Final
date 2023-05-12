@@ -16,13 +16,5 @@ namespace PBL3.Data
                          .Select(x => x)
                          .Where(x => x.NameBook.Contains(name) && x.Active == stateActive).ToList();
         }
-
-        public string GetNameBook(string a)
-        {
-            if (a.Length == 1)
-                return "";
-            a = a.Remove(a.Length - 1);
-            return a;
-        }
     }
 }
