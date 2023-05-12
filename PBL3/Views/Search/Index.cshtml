@@ -25,20 +25,23 @@
         </li>     
     </ul>  
  }
- <label>Sắp xếp theo</label>
  <form method="post" asp-action="Sort">
-    <select name="sortOrder" class="" title="Tiêu chí">
-        <option id="Title" class="active" value= "@sort1">Tăng dần theo tên sách</option>
-        <option id="Title" class="active" value= "@sort2">Giảm dần theo tên sách</option>
-        <option id="Title" class="active"value= "@sort3">Tăng dần theo năm xuất bản</option>
-        <option id="Title" class="active" value= "@sort4">Giảm dần theo năm xuất bản</option>
-        @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
-        {
-            <option id ="Accounts" class ="fade" value= "@sort5">Tăng dần theo năm sinh</option>
-            <option id = "Accounts" class="fade" value= "@sort6">Giảm dần theo năm sinh</option>
-        }
-    </select>
-    <button type="submit" class = "btn btn-outline-primary">Sort</button>
+    <div style = "width: 30%">
+        <div class="mb-3">
+            <select style="width:70%; display:inline" class="form-control" name="sortOrder" title="Tiêu chí">
+                <option id="Title" class="active" value= "@sort1">Tăng dần theo tên sách</option>
+                <option id="Title" class="active" value= "@sort2">Giảm dần theo tên sách</option>
+                <option id="Title" class="active"value= "@sort3">Tăng dần theo năm xuất bản</option>
+                <option id="Title" class="active" value= "@sort4">Giảm dần theo năm xuất bản</option>
+                @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
+                {
+                    <option id ="Accounts" class ="fade" value= "@sort5">Tăng dần theo năm sinh</option>
+                    <option id = "Accounts" class="fade" value= "@sort6">Giảm dần theo năm sinh</option>
+                }
+            </select>
+            <button type="submit" class="btn btn-outline-primary"><i class="fas fa-sort"></i></button>
+        </div>
+    </div>
 </form>
  
 <div class="tab-content">  
