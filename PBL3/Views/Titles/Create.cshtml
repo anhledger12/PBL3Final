@@ -3,55 +3,63 @@
 @{
     ViewData["Title"] = "Create";
 }
-
-<h1>Thêm đầu sách</h1>
-
-<h4>Thêm đầu sách với số lượng cụ thể</h4>
-<p>Nếu một sách đã tồn tại trong hệ thống, sẽ thêm số lượng vào đầu sách tương ứng</p>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="NameBook" class="control-label">Tên đầu sách:</label>
-                <input asp-for="NameBook" class="form-control" />
-                <span asp-validation-for="NameBook" class="text-danger"></span>
+    <div class="col-lg-4"></div>
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Thêm đầu sách với số lượng cụ thể</h4>
+                <p>Nếu một sách đã tồn tại trong hệ thống, sẽ thêm số lượng vào đầu sách tương ứng</p>
             </div>
-            <div class="form-group">
-                <label asp-for="NameWriter" class="control-label">Tên tác giả:</label>
-                <input asp-for="NameWriter" class="form-control" />
-                <span asp-validation-for="NameWriter" class="text-danger"></span>
+            <div class="card-body">
+                <div>
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="NameBook" class="control-label">Tên đầu sách:</label>
+                            <input asp-for="NameBook" class="form-control" />
+                            <span asp-validation-for="NameBook" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="NameWriter" class="control-label">Tên tác giả:</label>
+                            <input asp-for="NameWriter" class="form-control" />
+                            <span asp-validation-for="NameWriter" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ReleaseYear" class="control-label">Năm xuất bản</label>
+                            <input asp-for="ReleaseYear" class="form-control" />
+                            <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Publisher" class="control-label">Nhà xuất bản:</label>
+                            <input asp-for="Publisher" class="form-control" />
+                            <span asp-validation-for="Publisher" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="NameBookshelf" class="control-label">Mã kệ sách chứa:</label>
+                            <input asp-for="NameBookshelf" class="form-control" />
+                            <span asp-validation-for="NameBookshelf" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Amount" class="control-label">Số lượng thêm vào:</label>
+                            <input asp-for="Amount" class="form-control" />
+                            <span asp-validation-for="Amount" class="text-danger"></span>
+                        </div>
+                        <div class="form-group text-center">
+                            <input type="submit" value="Thêm đầu sách" class="btn btn-primary" style="width:150px" />
+                        </div>
+                    </form>
+                </div>
+                <div class="text-center">
+                    <a asp-action="Index" class="btn btn-light text-center" style="width:150px">
+                        <i class="fas fa-arrow-left fa-fw"></i>
+                        Quay lại
+                    </a>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="ReleaseYear" class="control-label">Năm xuất bản</label>
-                <input asp-for="ReleaseYear" class="form-control" />
-                <span asp-validation-for="ReleaseYear" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Publisher" class="control-label">Nhà xuất bản:</label>
-                <input asp-for="Publisher" class="form-control" />
-                <span asp-validation-for="Publisher" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NameBookshelf" class="control-label">Mã kệ sách chứa:</label>
-                <input asp-for="NameBookshelf" class="form-control" />
-                <span asp-validation-for="NameBookshelf" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Amount" class="control-label">Số lượng thêm vào:</label>
-                <input asp-for="Amount" class="form-control" />
-                <span asp-validation-for="Amount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Thêm đầu sách" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+    <div class="col-lg-4"></div>
 </div>
 
 @section Scripts {
