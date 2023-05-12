@@ -14,7 +14,7 @@
     <link href="~/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
           rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Custom styles for this template-->
     <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
 
@@ -30,8 +30,8 @@
 
             <!-- Sidebar - Brand - Thanh biểu tượng ở góc trái trên-->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" asp-controller="Home" asp-action="Index">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="http://dut.udn.vn/Files/admin/images/Tin_tuc/Khac/2020/LogoDUT/image002.jpg" width="40"/>
                 </div>
                 <div class="sidebar-brand-text mx-3">UNILIB</div>
             </a>
@@ -42,7 +42,7 @@
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
                 <a class="nav-link" asp-action="Index" asp-controller="Home">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <i class="bi bi-house"></i>
                     <span>Trang chủ</span>
                 </a>
             </li>
@@ -56,20 +56,20 @@
             {
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Accounts" asp-action="Index">
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <i class="bi bi-people-fill"></i>
                         <span>Quản lý tài khoản</span>
                     </a>
                 </li>
                 <!-- Nav Item - Dashboard -->
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Titles" asp-action="Index">
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <i class="bi bi-book-half"></i>
                         <span>Quản lý sách</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="BookRentals" asp-action="Index">
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <i class="bi bi-journal-plus"></i>
                         <span>Quản lý đơn mượn</span>
                     </a>
                 </li>
@@ -78,13 +78,13 @@
             {
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Search" asp-action="Index">
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <i class="fas fa-search fa-sm"></i>
                         <span>Tra cứu</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="RentBook" asp-action="UserRentals">
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <i class="bi bi-journal-plus"></i>
                         <span>Mượn sách</span>
                     </a>
                 </li>
@@ -93,7 +93,7 @@
             {
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="NewsFeeds" asp-action="Index">
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <i class="bi bi-newspaper"></i>
                         <span>Quản lý bài đăng</span>
                     </a>
                 </li>
@@ -285,9 +285,6 @@
     </div>
     <!-- End of Page Wrapper -->
     <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
 
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -295,15 +292,15 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Bạn chắc chắn muốn đăng xuất?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-body">Bấm đăng xuất nếu như bạn chắc chắn với lựa chọn này</div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" asp-action="Logout" asp-controller="Account">Logout</a>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Không</button>
+                    <a class="btn btn-primary" asp-action="Logout" asp-controller="Account">Đăng xuất</a>
                 </div>
             </div>
         </div>
