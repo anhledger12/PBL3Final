@@ -28,13 +28,34 @@ namespace PBL3.Controllers.Admin
             usermanager = um;
         }
 
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, string type= "", string keyw ="")
         {
-            // Phân trang, giữ lại code phân trang tay nà
-            ViewBag.PageCount = (db.AccountsCount() + 9) / 10;
-            ViewBag.CurrentPage = page;
-            var res = await db.GetAccountsAsync(page, 10);
-            return View(res);
+            ViewBag.Type = "All";
+            if (type == UserRole.Staff)
+            {
+                IQueryable<Account> res = await db.GetAccountsByRole(UserRole.Staff, keyw);
+                ViewBag.PageCount = (res.Count() + 9) / 10;
+                ViewBag.CurrentPage = page;
+                ViewBag.Head = "Danh sách Thủ thư";            
+                return View(await res.Skip(page*10-10).Take(10).ToListAsync());
+            }
+            else if (type == UserRole.User)
+            {
+                IQueryable<Account> res = await db.GetAccountsByRole(UserRole.User, keyw);
+                ViewBag.PageCount = (res.Count() + 9) / 10;
+                ViewBag.CurrentPage = page;
+                ViewBag.Head = "Danh sách Độc giả";
+                ViewBag.Type = "User";
+                return View(await res.Skip(page * 10 - 10).Take(10).ToListAsync());
+            }
+            else
+            {
+                ViewBag.Head = "Danh sách các tài khoản";
+                ViewBag.PageCount = (db.AccountsCount() + 9) / 10;
+                ViewBag.CurrentPage = page;
+                var res = await db.GetAccountsAsync(page, 10);
+                return View(res);
+            }
         } 
         // Thủ thư cũng được quyền xem danh sách và xem chi tiết đơn mượn của những người này
         public IActionResult Details(string id)
@@ -45,7 +66,6 @@ namespace PBL3.Controllers.Admin
         [Authorize(Roles = UserRole.Admin)]     
         public IActionResult Create()
         {
-            // Cái create phải làm khác này
             return View();
         }
         [Authorize(Roles = UserRole.Admin)]
@@ -83,8 +103,7 @@ namespace PBL3.Controllers.Admin
         public async Task<IActionResult> Delete(string id)
         {
             if (!db.ExistAccount(id,"")) return View("NotFound");
-            await db.DeleteUserByName(id);
-            
+            await db.DeleteUserByName(id);            
             return RedirectToAction("Index");
         }
         #region Method

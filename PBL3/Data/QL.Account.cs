@@ -9,6 +9,8 @@ namespace PBL3.Data
     public partial class QL
     {
         // Các method về quản lý account, Viết Sơn làm
+
+        // Lấy thông tin từng người
         public Account? GetAccountByName(string name)
         {
             return _context.Accounts.Where(p => p.AccName == name && p.Active == true).FirstOrDefault();
@@ -17,10 +19,11 @@ namespace PBL3.Data
         {
             return _context.Accounts.Where(p => p.Email == email && p.Active == true).FirstOrDefault();
         }
-        public bool ExistAccount(string name, string email)
-        {
-            return _context.Accounts.Any(p => p.AccName == name) | _context.Accounts.Any(p => p.Email == email);
-        }
+
+        //Kết thúc
+
+
+        // Lấy danh sách
 
         public async Task<List<Account>> GetAccountsAsync()
         {
@@ -30,7 +33,22 @@ namespace PBL3.Data
         {
             return await _context.Accounts.Where(p=>p.Active== true).Skip(page * numperpage - numperpage).Take(numperpage).ToListAsync();
         }
-        // Kiểm tra vai trò có hợp lệ không (hoặc staff hoặc user)
+        public async Task<IQueryable<Account>> GetAccountsByRole(string role, string keyw="")
+        {
+            List<Account> res = new List<Account>();
+            IdentityRole Irole = _context.Roles.Where(p => p.Name == role).FirstOrDefault();
+            var list = _context.UserRoles.Where(p => p.RoleId == Irole.Id).Select(p => p.UserId);
+            var accounts = _context.Users.Where(p => list.Contains(p.Id)).Select(p=>p.UserName);
+            var filt = _context.Accounts.Where(p => accounts.Contains(p.AccName) && (p.AccName.Contains(keyw) || p.FullName.Contains(keyw)));
+            return filt;
+        }
+
+        // Kiểm tra tính hợp lệ của thông tin
+        public bool ExistAccount(string name, string email)
+        {
+            return _context.Accounts.Any(p => p.AccName == name && p.Active==true) 
+                | _context.Accounts.Any(p => p.Email == email && p.Active == true);
+        }
         public bool ExistRole(string role)
         {
             return _context.Roles.Any(p => p.Name == role);
@@ -44,7 +62,10 @@ namespace PBL3.Data
             }
             return true;
         }
-        //Hàm tạo account với thông tin từ admin
+        //Kết thúc tính hợp lệ thông tin
+
+
+        //Hàm tạo account với thông tin (phía admin)
         public async Task CreateAccount(AdminAccountVM model)
         {
             // chắc chắn mọi thứ hợp lệ
@@ -58,7 +79,7 @@ namespace PBL3.Data
             await usermanager.CreateAsync(NewUser, model.Password);
             await usermanager.AddToRoleAsync(NewUser, model.Role);
         }
-        // Hàm tạo account với thông tin từ user
+        // Hàm tạo account với thông tin (phía user)
         public async Task CreateAccount(Account account, UserIdentity userIdentity, string password)
         {
             // chắc chắn mọi thứ hợp lệ
@@ -67,13 +88,15 @@ namespace PBL3.Data
             await usermanager.CreateAsync(userIdentity, password);
             await usermanager.AddToRoleAsync(userIdentity, UserRole.User);
         }
+
         //Update 
         public async Task UpdateAccount(Account account)
         {
             _context.Accounts.Update(account);
             await _context.SaveChangesAsync();
         }
-        //Delete All BookRentDetail relate to the BookRentID
+        
+        // Xóa cứng các chi tiết đơn mượn khi khóa tài khoản
         public async Task HardDeleteBRDbyId(int id)
         {
             // Xóa chi tiết đơn mượn
@@ -88,7 +111,7 @@ namespace PBL3.Data
             await _context.SaveChangesAsync();
         }
 
-        // Delete All BookRental relate to UserName
+        // Xóa cứng các đơn mượn khi khóa tài khoản
         public async Task HardDeleteBRbyName(string username)
         {
             string? role = GetRoleByUserName(username);
@@ -112,7 +135,8 @@ namespace PBL3.Data
             }
             await _context.SaveChangesAsync();
         }
-        //Delete User and all related infomation
+
+        //Khóa tài khoản và những thông tin liên quan tới tài khoản (trừ actionlog)
         public async Task DeleteUserByName(string username)
         {
             // Gọi là delete, nhưng thực chất là đánh dấu user inactive
@@ -128,7 +152,7 @@ namespace PBL3.Data
             }
             else return;
         }
-        // get role with username
+        // Lấy vai trò với tên người dùng
         public string? GetRoleByUserName(string username)
         {
             var acc = _context.Users.Where(p => p.UserName == username).First();
@@ -141,21 +165,7 @@ namespace PBL3.Data
             return null;
         }
 
-        public async Task<List<string>> GetUserByRole(string role)
-        {
-            List<string> res = new List<string>();
 
-            var tmp = _context.Roles.Where(p => p.Name == role).FirstOrDefault();// role
-            if (tmp == null) return res;
-            var iduser = _context.UserRoles.Where(p => p.RoleId == tmp.Id).ToList();
-            foreach (var b in iduser)
-            {
-                UserIdentity? user = _context.Users.Where(p => p.Id == b.UserId).FirstOrDefault();
-                if (user != null) res.Add(user.UserName);
-            }
-
-            return res;
-        }
 
         public int AccountsCount()
         {

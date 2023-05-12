@@ -56,11 +56,22 @@
             <!-- Nav Item - Dashboard -->
             @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
             {
+
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Accounts" asp-action="Index">
+                    <a class="nav-link collapsed" asp-controller="Accounts" asp-action="Index" data-toggle="collapse" data-target="#collapseTwo"
+                       aria-expanded="true" aria-controls="collapseTwo">
                         <i class="bi bi-people-fill"></i>
                         <span>Quản lý tài khoản</span>
                     </a>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <h6 class="collapse-header">Loại tài khoản</h6>
+                            <!--Chưa điền thông tin type-->
+                            <a class="collapse-item" asp-controller="Accounts" asp-action="Index" >Tất cả</a>
+                            <a class="collapse-item" asp-controller="Accounts" asp-action="Index" asp-route-type="User">Độc giả</a>
+                            <a class="collapse-item" asp-controller="Accounts" asp-action="Index" asp-route-type="Staff">Thủ thư</a>
+                        </div>
+                    </div>
                 </li>
                 <!-- Nav Item - Dashboard -->
                 <li class="nav-item">
@@ -236,16 +247,19 @@
                                         <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                         Thông tin cá nhân
                                     </a>
-                                    <!--Khúc này là giỏ hàng/đơn tạm -->
-                                    <a class="dropdown-item" asp-controller="RentBook" asp-action="ViewCart" asp-route-id="@User.Identity.Name">
-                                        <i class="fas fa-bookmark fa-sm fa-fw mr-2 text-gray-400"></i>
-                                        Đơn tạm
-                                    </a>
-                                    <!--Khúc này là đơn mượn -->
-                                    <a class="dropdown-item" asp-controller="RentBook" asp-action="UserRentals" asp-route-id="@User.Identity.Name">
-                                        <i class="fas fa-journal-whills fa-sm fa-fw mr-2 text-gray-400"></i>
-                                        Đơn mượn
-                                    </a>
+                                    @if (User.IsInRole(UserRole.User))
+                                    {                                        
+                                        <!--Khúc này là giỏ hàng/đơn tạm -->
+                                        <a class="dropdown-item" asp-controller="RentBook" asp-action="ViewCart" asp-route-id="@User.Identity.Name">
+                                            <i class="fas fa-bookmark fa-sm fa-fw mr-2 text-gray-400"></i>
+                                            Đơn tạm
+                                        </a>
+                                        <!--Khúc này là đơn mượn -->
+                                        <a class="dropdown-item" asp-controller="RentBook" asp-action="UserRentals" asp-route-id="@User.Identity.Name">
+                                            <i class="fas fa-journal-whills fa-sm fa-fw mr-2 text-gray-400"></i>
+                                            Đơn mượn
+                                        </a>
+                                    }
                                     <!--Khúc này là dành cho lưu actionlog của người -->
                                     <a class="dropdown-item" href="#">
                                         <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>

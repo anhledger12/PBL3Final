@@ -6,7 +6,7 @@
 @{
     ViewData["Title"] = "Đơn mượn";
 }
-<h1>Danh sách các đơn mượn của @ViewBag.AccName</h1>
+<h1 class="text-center">Danh sách các đơn mượn của @ViewBag.AccName</h1>
 
 <ul class="nav nav-pills">
     <li class="nav-item ">
@@ -21,32 +21,32 @@
 
     <div class="tab-pane container active p-0" id="Approve-Table">
         <h5 class="text-uppercase p-2 text-center">Danh sách đã duyệt</h5>
-        <p>@User.Identity.Name</p>
-        <table class="table">
-            <thead>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark text-dark">
                 <tr>
                     <th>Id</th>
                     <th>Ngày gửi đơn</th>
                     <th>Duyệt lúc</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (BookRental bookRental in ViewBag.Approve)
                 {
                     <tr>
-                        <td>@bookRental.Id</td>
-                        <td>@bookRental.TimeCreate</td>
-                        <td>@bookRental.TimeApprove</td>
+                        <td style="padding:20px">@bookRental.Id</td>
+                        <td style="padding:20px">@bookRental.TimeCreate</td>
+                        <td style="padding:20px">@bookRental.TimeApprove</td>
                         @if (User.IsInRole(UserRole.User) && User.Identity.IsAuthenticated)
                         {
-                            <td>
-                                <a asp-controller="BookRentals" asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="4">Chi tiết</a>
+                            <td class="text-center">
+                                <a class="btn btn-outline-primary" asp-controller="BookRentals" asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="4">Chi tiết</a>
                             </td>
                         }
                         @if (!User.IsInRole(UserRole.User) && User.Identity.IsAuthenticated)
                         {
-                            <td>
-                                <a asp-controller="BookRentals" asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="2">Chi tiết</a>
+                            <td class="text-center">
+                                <a class="btn btn-outline-primary" asp-controller="BookRentals" asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="2">Chi tiết</a>
                             </td>
                         }
                     </tr>
@@ -58,29 +58,30 @@
     <div class="tab-pane container fade p-0" id="NotApprove-Table">
         <h5 class="text-uppercase p-2 text-center">Danh sách chờ duyệt</h5>
         <p>@User.Identity.Name</p>
-        <table class="table">
-            <thead>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark text-dark">
                 <tr> 
                     <th>Id</th>
                     <th>Ngày gửi đơn</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (BookRental bookRental in ViewBag.NotApprove)
                 {
                     <tr>
-                        <td>@bookRental.Id</td>
-                        <td>@bookRental.TimeCreate</td>
+                        <td style="padding:20px">@bookRental.Id</td>
+                        <td style="padding:20px">@bookRental.TimeCreate</td>
                         @if (User.IsInRole(UserRole.User) && User.Identity.IsAuthenticated)
                         {
-                            <td>
-                                <a asp-controller="BookRentals" asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="4">Chi tiết</a>
+                            <td class="text-center">
+                                <a class="btn btn-outline-primary" asp-controller="BookRentals" asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="4">Chi tiết</a>
                             </td>
                         }
                         @if (!User.IsInRole(UserRole.User) && User.Identity.IsAuthenticated)
                         {
-                            <td>
-                                <a asp-controller="BookRentals" asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="1">Chi tiết</a>
+                            <td class="text-center">
+                                <a class="btn btn-outline-primary" asp-controller="BookRentals" asp-action="Details" asp-route-id="@bookRental.Id" asp-route-type="1">Chi tiết</a>
                             </td>
                         }
                     </tr>
