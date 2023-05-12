@@ -13,57 +13,78 @@
     </script>
 }
 
-<h1>Thông tin chi tiết đầu sách</h1>
-
 @if (ViewData["AlertMessage"] != null)
 {
     <div id="AlertBox" class="alert @ViewData["AlertType"] hide" role="alert">
         @ViewData["AlertMessage"]
     </div>
 }
+<div class="row">
+    <div class="col-lg-4"></div>
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                Thông tin chi tiết đầu sách
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-6 text-right">
+                        Tên sách:
+                    </dt>
+                    <dd class="col-sm-6">
+                        @Html.DisplayFor(model => model.NameBook)
+                    </dd>
+                    <dt class="col-sm-6 text-right">
+                        Tên tác giả:
+                    </dt>
+                    <dd class="col-sm-6">
+                        @Html.DisplayFor(model => model.NameWriter)
+                    </dd>
+                    <dt class="col-sm-6 text-right">
+                        Năm xuất bản:
+                    </dt>
+                    <dd class="col-sm-6">
+                        @Html.DisplayFor(model => model.ReleaseYear)
+                    </dd>
+                    <dt class="col-sm-6 text-right">
+                        Nhà xuất bản:
+                    </dt>
+                    <dd class="col-sm-6">
+                        @Html.DisplayFor(model => model.Publisher)
+                    </dd>
+                    <dt class="col-sm-6 text-right">
+                        Kệ sách:
+                    </dt>
+                    <dd class="col-sm-6">
+                        @Html.DisplayFor(model => model.NameBookshelf)
+                    </dd>
+                </dl>
+            </div>
 
-<div>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NameBook)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NameBook)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NameWriter)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NameWriter)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ReleaseYear)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ReleaseYear)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Publisher)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Publisher)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NameBookshelf)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NameBookshelf)
-        </dd>
-    </dl>
-</div>
-<div>
-    @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
-    {
-        <a asp-action="Edit" asp-route-id="@Model.IdTitle">Edit</a>
-    } else
-    {
-        <a asp-controller = "RentBook" asp-action="AddToRental" asp-route-id ="@Model.IdTitle">Thêm vào đơn mượn</a>
-    }
-    <a asp-action="Index">Back to List</a>
+            <div class="text-center">
+                @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.IdTitle" class="btn btn-primary" style="width:150px">
+                        <i class="text-white-50 fas fa-edit fa-align-left"></i>
+                        Chỉnh sửa
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="RentBook" asp-action="AddToRental" asp-route-id="@Model.IdTitle" class="btn btn-primary" style="width:150px">
+                        <i class="text-white-50 fas fa-archive fa-align-left"></i>>
+                        Thêm vào đơn mượn
+                    </a>
+                }
+                <br />
+                <br />
+                <a asp-action="Index" class="btn btn-light text-center" style="width:150px">
+                    <i class="fas fa-arrow-left fa-fw"></i>
+                    Quay lại
+                </a>
+            </div>
+            <br />
+        </div>
+    </div>
+    <div class="col-lg-4"></div>
 </div>

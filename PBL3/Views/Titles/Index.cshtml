@@ -4,63 +4,50 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h4 class="text-uppercase p-2 text-center">Thư viện</h4>
 
-<p>
-    @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
-    {
-        <a asp-action="Create">Tạo đầu sách mới</a>
-    }
-</p>
-<table class="table">
-    <thead>
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark text-dark">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NameBook)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NameWriter)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReleaseYear)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Publisher)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NameBookshelf)
-            </th>
+            <th>Id</th>
+            <th>Tên đầu sách</th>
+            <th>Tên tác giả</th>
+            <th>Kệ sách</th>
+            <th>Năm xuất bản</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var title in Model) {
         <tr>
+            <td>@title.IdTitle</td>
             <td>
-                @Html.DisplayFor(modelItem => item.NameBook)
+                <a asp-controller="Titles" asp-action="Details" asp-route-id="@title.IdTitle">@title.NameBook</a>
             </td>
+            <td>@title.NameWriter</td>
+            <td>@title.NameBookshelf</td>
+            <td>@title.ReleaseYear</td>
             <td>
-                @Html.DisplayFor(modelItem => item.NameWriter)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReleaseYear)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Publisher)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NameBookshelf)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.IdTitle">Details</a> 
-
-                    @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
-                    {                        
-                        <a asp-action="Edit" asp-route-id="@item.IdTitle">Edit</a> 
-                        <a asp-action="Delete" asp-route-id="@item.IdTitle">Delete</a>
-                    }
+                @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
+                {
+                    <a asp-action="Edit" asp-route-id="@title.IdTitle">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <span>|</span>
+                    <a style="color: red" asp-action="Delete" asp-route-id="@title.IdTitle">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                }
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>
+
+<div class="text-center">
+    @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
+    {
+        <br />
+        <a class="btn btn-primary" asp-action="Create">Tạo đầu sách mới</a>
+    }
+</div>
