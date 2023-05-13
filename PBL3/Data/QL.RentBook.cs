@@ -37,7 +37,7 @@ namespace PBL3.Data
         public string GetTempBookId(string id, bool StateRent)
         {
             return _context.Books
-                           .Where(p => p.IdTitle == id && p.StateRent == StateRent).Select(p => p.IdBook).First();
+                           .Where(p => p.IdTitle == id && p.StateRent == StateRent && p.Active == true).Select(p => p.IdBook).First();
         }
         public List<RentModel> GetRentModel(string accName, bool stateSend)
         {

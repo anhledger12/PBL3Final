@@ -121,7 +121,14 @@
                             </td>
                             <td>@Account.Phone</td> 
                             <td>@Account.Email</td>
-                            <td>@Account.DateOfBirth</td>
+                            @if (Account.DateOfBirth != null)
+                            {
+                                <td>@(((DateTime)Account.DateOfBirth).ToString("dd/MM/yyyy"))</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
                             <td>
                                 <a asp-controller="Accounts" asp-action="Edit" asp-route-id="@Account.AccName">
                                     <i class="fas fa-edit"></i>

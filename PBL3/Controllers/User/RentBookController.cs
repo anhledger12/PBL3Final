@@ -155,6 +155,8 @@ namespace PBL3.Controllers.User
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Authorize(Roles = UserRole.User)]
         //Gia hạn theo sách
         public async Task<IActionResult> ExtendRent(string id, string idBookRent)
