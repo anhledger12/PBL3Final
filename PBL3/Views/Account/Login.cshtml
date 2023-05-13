@@ -58,9 +58,9 @@
                                     <form class="user" asp-action="Login" asp-route-ReturnUrl="@ViewBag.ReturnUrl">
                                         <div asp-validation-summary="All" class="text-danger"></div>
                                         <div class="form-group">
-                                            <input class="form-control form-control-user" asp-for="Email"
+                                            <input class="form-control form-control-user" asp-for="EmailOrUsername"
                                                    id="exampleInputEmail" aria-describedby="emailHelp"
-                                                   placeholder="Nhập địa chỉ Email ...">
+                                                   placeholder="Nhập email hoặc tên đăng nhập...">
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user" asp-for="Password"

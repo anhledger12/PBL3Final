@@ -39,10 +39,11 @@ namespace PBL3.Controllers.Anonymus
         {
             if (ModelState.IsValid)
             {
-                UserIdentity? user = await userManager.FindByEmailAsync(details.Email);
-                var tmp = db.GetAccountByEmail(details.Email);
-                if (tmp!=null)
+                UserIdentity? user = await userManager.FindByEmailAsync(details.EmailOrUsername);
+                if (user == null) user = await userManager.FindByNameAsync(details.EmailOrUsername);                
+                if (user!=null)
                 {
+                    var tmp = db.GetAccountByName(user.UserName);
                     if (tmp.Active == false)
                     {
                         ModelState.AddModelError("", "Tài khoản này đã bị chặn do vi phạm");
@@ -52,7 +53,7 @@ namespace PBL3.Controllers.Anonymus
                     {
                         await signInManager.SignOutAsync();
                         var result = await signInManager.
-                         PasswordSignInAsync(user, details.Password, false, false);
+                        PasswordSignInAsync(user, details.Password, false, false);
                         if (result.Succeeded)
                         {
                             return Redirect(ReturnUrl ?? "/");
