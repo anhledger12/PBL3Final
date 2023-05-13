@@ -98,6 +98,7 @@ namespace PBL3.Controllers.AdminAndStaff
         [Authorize(Roles = UserRole.AdminOrStaff)]
         public IActionResult Approve (int id, DateTime timeApprove)
         {
+            timeApprove = DateTime.Now;
             string? result = _ql.ApproveRental(id, timeApprove, User.Identity.Name);
             //result lưu các đầu sách không thể duyệt => đề phòng cần hiển thị thông báo
             return RedirectToAction("Index");
