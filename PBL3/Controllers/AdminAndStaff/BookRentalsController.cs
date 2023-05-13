@@ -115,6 +115,7 @@ namespace PBL3.Controllers.AdminAndStaff
         [Authorize(Roles = UserRole.AdminOrStaff)]
         public IActionResult ReaderTake (int id, DateTime timeTake)
         {
+            timeTake = DateTime.Now;
             _ql.ReaderTake(id, timeTake);
             return RedirectToAction("Index");
         }
