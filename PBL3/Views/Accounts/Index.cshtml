@@ -1,4 +1,5 @@
-﻿@model IEnumerable<PBL3.Models.Entities.Account>
+﻿@using PBL3.Data;
+@model IEnumerable<PBL3.Models.Entities.Account>
 
 @{
     ViewData["Title"] = "Quản lý tài khoản";
@@ -6,13 +7,26 @@
 
 <h1>Quản lý tài khoản</h1>
 
+
 <div class="row">
-    <a asp-action="Create" class="btn btn-success btn-icon-split ml-2">
+    @if (User.IsInRole(UserRole.Admin))
+    {        
+    <a asp-action="Create" class="btn btn-success btn-icon-split ml-2" >
         <span class="icon text-white-50">
             <i class="fas fa-plus"></i>
         </span>
         <span class="text">Tạo tài khoản mới</span>
-    </a>
+        </a>
+    }
+    else
+    {
+        <a asp-action="Create" class="btn btn-success btn-icon-split ml-2" style="pointer-events:none;cursor:default;">
+            <span class="icon text-white-50">
+                <i class="fas fa-plus"></i>
+            </span>
+            <span class="text">Tạo tài khoản mới</span>
+        </a>
+    }
 </div>
 
 <h3 class="text-uppercase p-2 text-center">@ViewBag.Head</h3>
@@ -55,11 +69,14 @@
                             <i class="fas fa-edit"></i>
                         </a>
                         @if (acc.Active == true)
-                        {                            
-                        <span>|</span>
-                            <a style="color: red" asp-controller="Accounts" asp-action="Delete" asp-route-id="@acc.AccName">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                        {             
+                            @if(User.IsInRole(UserRole.Admin)){
+
+                                <span>|</span>
+                                    <a style="color: red" asp-controller="Accounts" asp-action="Delete" asp-route-id="@acc.AccName">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            }
                             @if (ViewBag.Type == "User")
                             {                                
                                 <span>|</span>

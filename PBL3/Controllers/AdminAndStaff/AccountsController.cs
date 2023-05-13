@@ -99,7 +99,7 @@ namespace PBL3.Controllers.Admin
         {
             return Redirect("/Account/Edit/" + id);
         }
-
+        [Authorize(Roles = UserRole.Admin)]
         public async Task<IActionResult> Delete(string id)
         {
             if (!db.ExistAccount(id,"")) return View("NotFound");

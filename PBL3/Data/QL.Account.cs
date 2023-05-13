@@ -120,9 +120,9 @@ namespace PBL3.Data
                 var delItem = _context.BookRentals.Where(p => p.AccApprove == username).ToList();
                 foreach (BookRental b in delItem)
                 {
-                    await HardDeleteBRDbyId(b.Id);
+                    b.AccApprove = null;
                 }
-                _context.BookRentals.RemoveRange(delItem);
+                _context.BookRentals.UpdateRange(delItem);
             }
             else if (role == UserRole.User)
             {
@@ -144,7 +144,7 @@ namespace PBL3.Data
 
             if (user != null)
             {
-                await HardDeleteBRbyName(username);
+                HardDeleteBRbyName(username);
                 await usermanager.DeleteAsync(user);
                 var delItem = _context.Accounts.Where(p => p.AccName == user.UserName).FirstOrDefault();
                 if (delItem != null) delItem.Active = false;
@@ -164,9 +164,6 @@ namespace PBL3.Data
             }
             return null;
         }
-
-
-
         public int AccountsCount()
         {
             return _context.Accounts.Where(p=>p.Active==true).Count();
