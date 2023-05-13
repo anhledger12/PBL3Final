@@ -67,18 +67,26 @@ namespace PBL3.Controllers.User
             {
                 //Lấy ra Id của sách chưa được mượn theo IdTitle
                 string tempBookId = db.GetTempBookId(id, false);
-                BookRentDetail bookRentDetail = new BookRentDetail
+                if (tempBookId == null)
                 {
-                    IdBookRental = tempBookRental.Id,
-                    IdBook = tempBookId,
-                    StateReturn = false,
-                    StateTake = false,
-                    ReturnDate = null
-                };
-                db.AddRecord(ref bookRentDetail);
-                //báo thêm thành công
-                ViewData["AlertType"] = "alert-success";
-                ViewData["AlertMessage"] = "Thêm sách vào đơn mượn tạm thành công.";
+                    ViewData["AlertType"] = "alert-warning";
+                    ViewData["AlertMessage"] = "Đầu sách đã được mượn hết hoặc đang không có trong thư viện, không thể mượn đầu sách này";
+                }
+                else
+                {
+                    BookRentDetail bookRentDetail = new BookRentDetail
+                    {
+                        IdBookRental = tempBookRental.Id,
+                        IdBook = tempBookId,
+                        StateReturn = false,
+                        StateTake = false,
+                        ReturnDate = null
+                    };
+                    db.AddRecord(ref bookRentDetail);
+                    //báo thêm thành công
+                    ViewData["AlertType"] = "alert-success";
+                    ViewData["AlertMessage"] = "Thêm sách vào đơn mượn tạm thành công.";
+                }
             }
             Title title = db.GetTitleById(id);
             return View("/Views/Titles/Details.cshtml", title);
