@@ -1,4 +1,5 @@
 ﻿using PBL3.Models.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace PBL3.Data.ViewModel
 {
