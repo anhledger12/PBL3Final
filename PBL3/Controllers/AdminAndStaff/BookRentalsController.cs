@@ -29,7 +29,7 @@ namespace PBL3.Controllers.AdminAndStaff
 
         // GET: BookRentals
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {           
             ViewBag.Pending = _ql.PendingApproveList();
             ViewBag.WaitingTake = _ql.WaitingTakeList();
@@ -41,7 +41,7 @@ namespace PBL3.Controllers.AdminAndStaff
         // GET: BookRentals/Details/5
 
         [Authorize(Roles = UserRole.All)]
-        public async Task<IActionResult> Details(int id, int type = 1)
+        public IActionResult Details(int id, int type = 1)
         {
             BookRental? bookRental = _ql.GetBookRentalById(id);    
             if (bookRental == null)
@@ -82,7 +82,7 @@ namespace PBL3.Controllers.AdminAndStaff
 
         //xoá đơn mượn khỏi hệ thống - kiểm tra xem stateReturn đã true hết chưa
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> Delete (int id)
+        public IActionResult Delete (int id)
         {
             if (_ql.DeleteBookRental(id))
             {
@@ -96,7 +96,7 @@ namespace PBL3.Controllers.AdminAndStaff
         }
 
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> Approve (int id, DateTime timeApprove)
+        public IActionResult Approve (int id, DateTime timeApprove)
         {
             string? result = _ql.ApproveRental(id, timeApprove, User.Identity.Name);
             //result lưu các đầu sách không thể duyệt => đề phòng cần hiển thị thông báo
@@ -104,7 +104,7 @@ namespace PBL3.Controllers.AdminAndStaff
         }
 
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> Refuse (int id)
+        public IActionResult Refuse (int id)
         {
             _ql.RefuseRental(id);
             return RedirectToAction("Index");
@@ -112,7 +112,7 @@ namespace PBL3.Controllers.AdminAndStaff
 
         //chuyển stateTake của tất cả các detail trong rental tương ứng thành true
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> ReaderTake (int id, DateTime timeTake)
+        public IActionResult ReaderTake (int id, DateTime timeTake)
         {
             _ql.ReaderTake(id, timeTake);
             return RedirectToAction("Index");
@@ -120,14 +120,14 @@ namespace PBL3.Controllers.AdminAndStaff
 
         //chuyển stateReturn của một sách cụ thể trong rental thành true
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public async Task<IActionResult> Return (int id, string idDetail)
+        public IActionResult Return (int id, string idDetail)
         {
             _ql.ReturnDetail(id, idDetail);
             //code báo thành công
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> ConfirmLost(int id, string? idDetail)
+        public IActionResult ConfirmLost(int id, string? idDetail)
         {
             _ql.ConfirmLost(idDetail);
             return RedirectToAction("Index");
