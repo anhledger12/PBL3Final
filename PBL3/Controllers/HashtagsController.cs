@@ -12,6 +12,8 @@ namespace PBL3.Controllers
 {
     public class HashtagsController : Controller
     {
+        //tính năng chưa được cài đặt
+        //---------------------------
         private readonly LibraryManagementContext _context;
 
         public HashtagsController(LibraryManagementContext context)
