@@ -8,7 +8,7 @@ namespace PBL3.Data
         {
            return _context.Accounts
                         .Select(x => x)
-                        .Where(x => (x.AccName.Contains(name) || x.Email.Contains(name)) && x.Active == stateActive).ToList();
+                        .Where(x => (x.AccName.Contains(name) || x.Email.Contains(name) || x.Phone.Contains(name)) && x.Active == stateActive).ToList();
         }
         public List<Title> GetTitlesByName(string name, bool stateActive = true)
         {
