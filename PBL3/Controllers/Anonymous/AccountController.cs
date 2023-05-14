@@ -56,7 +56,7 @@ namespace PBL3.Controllers.Anonymus
                         PasswordSignInAsync(user, details.Password, false, false);
                         if (result.Succeeded)
                         {
-                            return Redirect(ReturnUrl ?? "/");
+                            return Redirect(ReturnUrl);
                         }
                     }
                 }
@@ -219,6 +219,12 @@ namespace PBL3.Controllers.Anonymus
             }
             await db.UpdateAccount(model);
             return Redirect("/Account/Detail/"+id);
+        }
+
+        public IActionResult AccessDenied(string ReturnUrl)
+        {
+            // ok
+            return View();
         }
 
         #region Additional method
