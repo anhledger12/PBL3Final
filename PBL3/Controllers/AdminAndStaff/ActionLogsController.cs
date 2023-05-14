@@ -11,6 +11,8 @@ namespace PBL3.Controllers.AdminAndStaff
 {
     public class ActionLogsController : Controller
     {
+        //tính năng chưa được cài đặt
+        //---------------------------
         private readonly LibraryManagementContext _context;
 
         public ActionLogsController(LibraryManagementContext context)
