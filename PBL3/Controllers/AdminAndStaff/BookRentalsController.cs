@@ -126,7 +126,7 @@ namespace PBL3.Controllers.AdminAndStaff
         {
             _ql.ReturnDetail(id, idDetail);
             //code báo thành công
-            return RedirectToAction("Index");
+            return Redirect("/BookRentals/Details/"+id.ToString()+"?type=3");
         }
 
         public IActionResult ConfirmLost(int id, string? idDetail)
