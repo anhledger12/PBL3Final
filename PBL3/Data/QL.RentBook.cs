@@ -87,14 +87,20 @@ namespace PBL3.Data
                             .Count();
         }
 
-        //Lấy thông tin sách cần gia hạn, truyền vào idbook và idBookRental
-        public dynamic GetInfoForExtendRent(string accName, string id, string idBookRent)
+        //Lấy thông tin sách cần gia hạn, truyền vào idtitle và idBookRental
+        public ExtendRentModel GetInfoForExtendRent(string accName, string id, string idBookRent)
         {
             int idBookRent1 = Convert.ToInt16(idBookRent);
             return _context.BookRentDetails
                         .Join(_context.BookRentals, brd => brd.IdBookRental, br => br.Id, (brd, br) => new { brd, br })
-                        .Where(x => x.br.Id == idBookRent1 && x.br.AccSending == accName && x.brd.IdBook == id)
-                        .Select(x => new { x.brd, x.br.TimeApprove, x.br.StateApprove })
+                        .Join(_context.Books, x => x.brd.IdBook, b => b.IdBook, (x, b) => new { x.brd, x.br, b })
+                        .Where(x => x.br.Id == idBookRent1 && x.br.AccSending == accName && x.b.IdTitle == id)
+                        .Select(x => new ExtendRentModel
+                        {
+                            bookRentDetail = x.brd,
+                            timeApprove = x.br.TimeApprove,
+                            stateApprove = x.br.StateApprove
+                        })
                         .FirstOrDefault();
         }
 

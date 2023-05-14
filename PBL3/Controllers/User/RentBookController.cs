@@ -171,13 +171,12 @@ namespace PBL3.Controllers.User
         {
             string accName = User.Identity.Name;
             string message = string.Empty;
-
-            //Lấy thông tin sách cần gia hạn, truyền vào idbook và idBookRental
-            var s = db.GetInfoForExtendRent(accName, id, idBookRent);
+            //Lấy thông tin sách cần gia hạn, truyền vào idTitle và idBookRental
+            ExtendRentModel s = db.GetInfoForExtendRent(accName, id, idBookRent);
             DateTime a = DateTime.Now;
-            TimeSpan timeSpan = a.Subtract(Convert.ToDateTime(s.TimeApprove));
+            TimeSpan timeSpan = a.Subtract(Convert.ToDateTime(s.timeApprove));
 
-            if (Convert.ToBoolean(s.StateApprove) == false)
+            if (Convert.ToBoolean(s.stateApprove) == false)
             {
                 Alert("Đơn chưa được duyệt, không thể gia hạn", 2);
                 return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
@@ -188,18 +187,18 @@ namespace PBL3.Controllers.User
                 return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
             }
 
-            if (Convert.ToDateTime(s.brd.ReturnDate) < a)
+            if (Convert.ToDateTime(s.bookRentDetail.ReturnDate) < a)
             {
                 Alert("Sách quá hạn, không thể gia hạn", 2);
                 return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
             }
 
-            if (s.brd.StateTake == false)
+            if (s.bookRentDetail.StateTake == false)
             {
                 Alert("Sách chưa được lấy, không thể gia hạn", 2);
                 return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
             }
-            timeSpan = Convert.ToDateTime(s.brd.ReturnDate).Subtract(DateTime.Now);
+            timeSpan = Convert.ToDateTime(s.bookRentDetail.ReturnDate).Subtract(DateTime.Now);
             
             if (timeSpan.Days > 3)
             {
@@ -207,8 +206,8 @@ namespace PBL3.Controllers.User
                 return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
             }
 
-            s.brd.ReturnDate = Convert.ToDateTime(s.brd.ReturnDate).AddDays(14);
-            BookRentDetail bookRentDetail = s.brd;
+            s.bookRentDetail.ReturnDate = Convert.ToDateTime(s.bookRentDetail.ReturnDate).AddDays(14);
+            BookRentDetail bookRentDetail = s.bookRentDetail;
             db.UpdateDB(ref bookRentDetail);
             message = "Gia hạn thành công";
             Alert(message, 1);
