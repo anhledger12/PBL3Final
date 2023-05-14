@@ -221,6 +221,12 @@ namespace PBL3.Controllers.Anonymus
             return Redirect("/Account/Detail/"+id);
         }
 
+        public IActionResult AccessDenied(string ReturnUrl)
+        {
+            // ok
+            return View();
+        }
+
         #region Additional method
 
         bool UserOrAdmin(string id)
