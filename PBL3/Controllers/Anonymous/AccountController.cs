@@ -56,7 +56,7 @@ namespace PBL3.Controllers.Anonymus
                         PasswordSignInAsync(user, details.Password, false, false);
                         if (result.Succeeded)
                         {
-                            return Redirect(ReturnUrl ?? "/");
+                            return Redirect(ReturnUrl);
                         }
                     }
                 }
