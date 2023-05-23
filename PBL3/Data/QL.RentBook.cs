@@ -109,6 +109,12 @@ namespace PBL3.Data
             _context.Add(addObject);
             _context.SaveChanges();
         }
+
+        public void AddRangeRecord<T>(ref T addObject)
+        {
+            _context.AddRange(addObject);
+            _context.SaveChanges();
+        }
         public void DeleteRecord<T>(ref T deleteObject)
         {
             _context.Remove(deleteObject);
