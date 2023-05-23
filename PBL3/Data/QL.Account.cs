@@ -49,6 +49,10 @@ namespace PBL3.Data
             return _context.Accounts.Any(p => p.AccName == name && p.Active==true) 
                 | _context.Accounts.Any(p => p.Email == email && p.Active == true);
         }
+        public bool ExistMssv(string mssv)
+        {
+            return _context.Accounts.Any(p => p.Mssv == mssv);
+        }
         public bool ExistRole(string role)
         {
             return _context.Roles.Any(p => p.Name == role);

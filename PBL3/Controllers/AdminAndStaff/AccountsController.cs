@@ -86,8 +86,21 @@ namespace PBL3.Controllers.Admin
             }
             if (ModelState.IsValid)
             {
-                if (db.ExistAccount(model.Account.AccName,model.Account.Email)) return View("Error");
-                if (!db.ExistRole(model.Role)) return View("Error");
+                if (db.ExistAccount(model.Account.AccName, model.Account.Email))
+                {
+                    ModelState.AddModelError("", "Tên tài khoản hoặc email đã tồn tại");
+                    return View(model);
+                }
+                if (!db.ExistRole(model.Role))
+                {
+                    ModelState.AddModelError("", "Vai trò không tồn tại");
+                    return View(model);
+                }
+                if (model.Account.Mssv!=null && db.ExistMssv(model.Account.Mssv))
+                {
+                    ModelState.AddModelError("", "Mã số sinh viên đã tồn tại");
+                    return View(model);
+                }
                 await db.CreateAccount(model);
                 return RedirectToAction("Index");
             }            

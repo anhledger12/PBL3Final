@@ -4,55 +4,63 @@
     ViewData["Title"] = "Index";
 }
 
-<h4 class="text-uppercase p-2 text-center">Thư viện</h4>
+<h3 class="text-uppercase p-2 text-center">Danh mục đầu sách</h3>
 
-<div class="container p-0">
-
-    <table class="table table-bordered table-striped">
-        <thead class="thead-dark text-dark">
-            <tr>
-                <th>Id</th>
-                <th>Tên đầu sách</th>
-                <th>Tên tác giả</th>
-                <th>Kệ sách</th>
-                <th>Năm xuất bản</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var title in Model)
+<div class="row">
+    <div class="col-1"></div>
+    <div class="col-10">
+        <div class="row">
+            @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
             {
-                <tr>
-                    <td>@title.IdTitle</td>
-                    <td>
-                        <a asp-controller="Titles" asp-action="Details" asp-route-id="@title.IdTitle">@title.NameBook</a>
-                    </td>
-                    <td>@title.NameWriter</td>
-                    <td>@title.NameBookshelf</td>
-                    <td>@title.ReleaseYear</td>
-                    <td>
-                        @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
-                        {
-                            <a asp-action="Edit" asp-route-id="@title.IdTitle">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <span>|</span>
-                            <a style="color: red" asp-action="Delete" asp-route-id="@title.IdTitle">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        }
-                    </td>
-                </tr>
+                <br />
+                <a class="btn btn-success btn-icon-split ml-2" asp-action="Create">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-plus"></i>
+                    </span>
+                    <span class="text">Thêm đầu sách mới</span>
+                </a>
             }
-        </tbody>
-    </table>
-
-    <div class="text-center">
-        @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
-        {
-            <br />
-            <a class="btn btn-primary" asp-action="Create">Tạo đầu sách mới</a>
-        }
+        </div>
+        <br />
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark text-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Tên đầu sách</th>
+                    <th>Tên tác giả</th>
+                    <th>Kệ sách</th>
+                    <th>Năm xuất bản</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var title in Model)
+                {
+                    <tr>
+                        <td>@title.IdTitle</td>
+                        <td>
+                            <a asp-controller="Titles" asp-action="Details" asp-route-id="@title.IdTitle">@title.NameBook</a>
+                        </td>
+                        <td>@title.NameWriter</td>
+                        <td>@title.NameBookshelf</td>
+                        <td>@title.ReleaseYear</td>
+                        <td>
+                            @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
+                            {
+                                <a asp-action="Edit" asp-route-id="@title.IdTitle">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <span>|</span>
+                                <a style="color: red" asp-action="Delete" asp-route-id="@title.IdTitle">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @Html.Partial("Paging")
     </div>
-
+    <div class="col-1"></div>
 </div>
