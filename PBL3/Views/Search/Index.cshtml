@@ -8,142 +8,148 @@
 
 @model SearchViewModel;
 
-@if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
- {
-    <ul class="nav nav-pills"> 
-        <li class="nav-item ">
-            <a class="nav-link active rounded-0" id="Titles" data-toggle="pill" href="#home" onclick="Enable1('#Titles','#AccNames','#home','#menu1','#Title','Accounts')">Titles</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link rounded-0" id="AccNames" data-toggle="pill" href="#menu1" onclick="Enable1('#AccNames','#Titles','#menu1','#home','#Accounts', '#Title')">AccNames</a>
-        </li>     
-    </ul>  
- }
+<div class="row">
+    <div class="col-1"></div>
+            <div class="col-10"> 
+        @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
+         {
+            <ul class="nav nav-pills"> 
+                <li class="nav-item ">
+                    <a class="nav-link active rounded-0" id="Titles" data-toggle="pill" href="#home" onclick="Enable1('#Titles','#AccNames','#home','#menu1','#Title','Accounts')">Titles</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rounded-0" id="AccNames" data-toggle="pill" href="#menu1" onclick="Enable1('#AccNames','#Titles','#menu1','#home','#Accounts', '#Title')">AccNames</a>
+                </li>     
+            </ul>  
+         }
  
-<div class="tab-content">  
-    <div class="tab-pane container active p-0" id="home">  
-        <h5 class="text-uppercase p-2 text-center">List of Books</h5>
-        <form method="get" asp-action="Index">
-            <div style="width: 30%; float:right">
-                <div class="mb-3">
-                    <input type="hidden" name="name" value="@ViewBag.Name" data-bind="text: hiddnBasketRefNumber" />
-                    <select style="width:70%; display:inline" class="form-control" name="sortOrder" title="Tiêu chí">
-                        <option id="Title" class="active" value="1">Tăng dần theo tên sách</option>
-                        <option id="Title" class="active" value="2">Giảm dần theo tên sách</option>
-                        <option id="Title" class="active" value="3">Tăng dần theo năm xuất bản</option>
-                        <option id="Title" class="active" value="4">Giảm dần theo năm xuất bản</option>
-                        @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
-                        {
-                            <option id="Accounts" class="fade" value="5">Tăng dần theo năm sinh</option>
-                            <option id="Accounts" class="fade" value="6">Giảm dần theo năm sinh</option>
-                        }
-                    </select>
-                    <button type="submit" class="btn btn-outline-primary"><i class="fas fa-sort"></i></button>
-                </div>
-            </div>
-        </form>
-        <table class="table table-bordered table-striped">  
-            <thead class="thead-dark text-dark">  
-                <tr>  
-                    <th>Id</th>  
-                    <th>Tên đầu sách</th>  
-                    <th>Tên tác giả</th>  
-                    <th>Kệ sách</th>  
-                    <th>Năm xuất bản</th>
-                    <th></th>
-                </tr>  
-            </thead>  
-            <tbody>  
-                @foreach (var title in Model.Titles)
-                {  
-                        <tr>  
-                            <td>@title.IdTitle</td>  
-                            <td> 
-                                <a asp-controller="Titles" asp-action="Details" asp-route-id="@title.IdTitle">@title.NameBook</a>
-                            </td>  
-                            <td>@title.NameWriter</td>  
-                            <td>@title.NameBookshelf</td>  
-                            <td>@title.ReleaseYear</td>
-                            <td>
-                                @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
-                                {                   
-                                    <a asp-controller = "Titles" asp-action="Edit" asp-route-id="@title.IdTitle">
-                                        <i class = "fas fa-edit"></i>
-                                    </a>
-                                    <span>|</span>
-                                    <a style="color: red" asp-controller="Titles" asp-action="Delete" asp-route-id="@title.IdTitle">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
+        <div class="tab-content">  
+            <div class="tab-pane container-fluid active" id="home">  
+                <h3 class="text-uppercase p-2 text-center">Kết quả tìm kiếm đầu sách</h3>
+                <form method="get" asp-action="Index">
+                    <div style="width: 30%; float:right">
+                        <div class="mb-3">
+                            <input type="hidden" name="name" value="@ViewBag.Name" data-bind="text: hiddnBasketRefNumber" />
+                            <select style="width:70%; display:inline" class="form-control" name="sortOrder" title="Tiêu chí">
+                                <option id="Title" class="active" value="1">Tăng dần theo tên sách</option>
+                                <option id="Title" class="active" value="2">Giảm dần theo tên sách</option>
+                                <option id="Title" class="active" value="3">Tăng dần theo năm xuất bản</option>
+                                <option id="Title" class="active" value="4">Giảm dần theo năm xuất bản</option>
+                                @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
+                                {
+                                    <option id="Accounts" class="fade" value="5">Tăng dần theo năm sinh</option>
+                                    <option id="Accounts" class="fade" value="6">Giảm dần theo năm sinh</option>
                                 }
-                            </td>
-                        </tr>  
-                }  
-            </tbody>  
-        </table>  
-    </div>
-    @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
-    {
-        <div class="tab-pane container fade p-0" id="menu1">  
-            <h5 class="text-uppercase p-2 text-center">List of Accounts</h5>
-            <form method="get" asp-action="Index">
-                <div style="width: 30%; float:right">
-                    <div class="mb-3">
-                        <input type="hidden" name="name" value="@ViewBag.Name" data-bind="text: hiddnBasketRefNumber" />
-                        <select style="width:70%; display:inline" class="form-control" name="sortOrder" title="Tiêu chí">
-                            @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
-                            {
-                                <option id="Accounts" class="fade" value="5">Tăng dần theo năm sinh</option>
-                                <option id="Accounts" class="fade" value="6">Giảm dần theo năm sinh</option>
-                            }
-                        </select>
-                        <button type="submit" class="btn btn-outline-primary"><i class="fas fa-sort"></i></button>
+                            </select>
+                            <button type="submit" class="btn btn-outline-primary"><i class="fas fa-sort"></i></button>
+                        </div>
                     </div>
-                </div>
-            </form>
-            <table class="table table-bordered table-striped">  
-                <thead class="thead-dark text-dark">  
-                    <tr>  
-                        <th>Mã số sinh viên</th>  
-                        <th>Tên tài khoản</th>  
-                        <th>Số điện thoại</th>
-                        <th>Email</th> 
-                        <th>Ngày sinh</th>
-                        <th></th>
-                    </tr>  
-                </thead>  
-                <tbody>  
-                    @foreach (var Account in Model.Accounts)
-                    {
+                </form>
+                <table class="table table-bordered table-striped">  
+                    <thead class="thead-dark text-dark">  
                         <tr>  
-                            <td>@Account.Mssv</td>
-                            <td>
-                                <a asp-controller="Accounts" asp-action="Details" asp-route-id="@Account.AccName">@Account.AccName</a>
-                            </td>
-                            <td>@Account.Phone</td> 
-                            <td>@Account.Email</td>
-                            @if (Account.DateOfBirth != null)
+                            <th>Id</th>  
+                            <th>Tên đầu sách</th>  
+                            <th>Tên tác giả</th>  
+                            <th>Kệ sách</th>  
+                            <th>Năm xuất bản</th>
+                            <th></th>
+                        </tr>  
+                    </thead>  
+                    <tbody>  
+                        @foreach (var title in Model.Titles)
+                        {  
+                                <tr>  
+                                    <td>@title.IdTitle</td>  
+                                    <td> 
+                                        <a asp-controller="Titles" asp-action="Details" asp-route-id="@title.IdTitle">@title.NameBook</a>
+                                    </td>  
+                                    <td>@title.NameWriter</td>  
+                                    <td>@title.NameBookshelf</td>  
+                                    <td>@title.ReleaseYear</td>
+                                    <td>
+                                        @if (!User.IsInRole("User") && User.Identity.IsAuthenticated)
+                                        {                   
+                                            <a asp-controller = "Titles" asp-action="Edit" asp-route-id="@title.IdTitle">
+                                                <i class = "fas fa-edit"></i>
+                                            </a>
+                                            <span>|</span>
+                                            <a style="color: red" asp-controller="Titles" asp-action="Delete" asp-route-id="@title.IdTitle">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>  
+                        }  
+                    </tbody>  
+                </table>  
+            </div>
+            @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
+            {
+                <div class="tab-pane container-fluid fade" id="menu1">  
+                    <h3 class="text-uppercase p-2 text-center">Kết quả tìm kiếm tài khoản</h3>
+                    <form method="get" asp-action="Index">
+                        <div style="width: 30%; float:right">
+                            <div class="mb-3">
+                                <input type="hidden" name="name" value="@ViewBag.Name" data-bind="text: hiddnBasketRefNumber" />
+                                <select style="width:70%; display:inline" class="form-control" name="sortOrder" title="Tiêu chí">
+                                    @if (User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Staff))
+                                    {
+                                        <option id="Accounts" class="fade" value="5">Tăng dần theo năm sinh</option>
+                                        <option id="Accounts" class="fade" value="6">Giảm dần theo năm sinh</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-outline-primary"><i class="fas fa-sort"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                    <table class="table table-bordered table-striped">  
+                        <thead class="thead-dark text-dark">  
+                            <tr>  
+                                <th>Mã số sinh viên</th>  
+                                <th>Tên tài khoản</th>  
+                                <th>Số điện thoại</th>
+                                <th>Email</th> 
+                                <th>Ngày sinh</th>
+                                <th></th>
+                            </tr>  
+                        </thead>  
+                        <tbody>  
+                            @foreach (var Account in Model.Accounts)
                             {
-                                <td>@(((DateTime)Account.DateOfBirth).ToString("dd/MM/yyyy"))</td>
-                            }
-                            else
-                            {
-                                <td></td>
-                            }
-                            <td>
-                                <a asp-controller="Accounts" asp-action="Edit" asp-route-id="@Account.AccName">
-                                    <i class="fas fa-edit"></i>
-                                </a> |
-                                <a style="color: red" asp-controller="Titles" asp-action="Delete" asp-route-id="@Account.AccName">
-                                    <i class="fas fa-trash"></i>
-                                </a> |
-                                <a asp-controller="RentBook" asp-action="UserRentals" asp-route-accName="@Account.AccName">
-                                    <i class="fas fa-book"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    }  
-                </tbody>  
-            </table>  
-        </div>
-    }
-</div>  
+                                <tr>  
+                                    <td>@Account.Mssv</td>
+                                    <td>
+                                        <a asp-controller="Accounts" asp-action="Details" asp-route-id="@Account.AccName">@Account.AccName</a>
+                                    </td>
+                                    <td>@Account.Phone</td> 
+                                    <td>@Account.Email</td>
+                                    @if (Account.DateOfBirth != null)
+                                    {
+                                        <td>@(((DateTime)Account.DateOfBirth).ToString("dd/MM/yyyy"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    <td>
+                                        <a asp-controller="Accounts" asp-action="Edit" asp-route-id="@Account.AccName">
+                                            <i class="fas fa-edit"></i>
+                                        </a> |
+                                        <a style="color: red" asp-controller="Titles" asp-action="Delete" asp-route-id="@Account.AccName">
+                                            <i class="fas fa-trash"></i>
+                                        </a> |
+                                        <a asp-controller="RentBook" asp-action="UserRentals" asp-route-accName="@Account.AccName">
+                                            <i class="fas fa-book"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }  
+                        </tbody>  
+                    </table>  
+                </div>
+            }
+        </div>  
+    </div>
+    <div class="col-1"></div>
+</div>
