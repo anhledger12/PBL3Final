@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PBL3.Controllers.Anonymous;
 using PBL3.Data;
+using PBL3.Data.Services;
 using PBL3.Data.ViewModel;
 using PBL3.Models;
 using PBL3.Models.Entities;
@@ -86,6 +87,8 @@ namespace PBL3.Controllers.User
                     //báo thêm thành công
                     ViewData["AlertType"] = "alert-success";
                     ViewData["AlertMessage"] = "Thêm sách vào đơn mượn tạm thành công.";
+                    CreateNoti noti = new CreateNoti(db);
+                    noti.SendNoti(accName, "Thêm vào đơn mượn tạm thành công");
                 }
             }
             Title title = db.GetTitleById(id);

@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PBL3.Common;
 using PBL3.Data;
+using PBL3.Data.Services;
 using PBL3.Models;
 using PBL3.Models.Entities;
 using System;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +26,8 @@ builder.Services.AddIdentity<UserIdentity, IdentityRole>(opts =>
 }).AddEntityFrameworkStores<LibraryManagementContext>().
 AddTokenProvider<DataProtectorTokenProvider<UserIdentity>>(TokenOptions.DefaultProvider);
 
-
+Global.ConnectionString = builder.Configuration.GetConnectionString("Account");
+builder.Services.AddScoped<INotiService, NotiService>();
 
 var app = builder.Build();
 
@@ -50,5 +54,11 @@ app.MapControllerRoute(
 await Seed.SeedRoleAndAdmin(app);
 await Seed.SeedHashtag(app);
 
+//void ConfigureServices(IServiceCollection services)
+//{
+//    services.AddControllersWithViews();
+//    Global.ConnectionString = builder.Configuration.GetConnectionString("Account");
+//    services.AddScoped<INotiService, NotiService>();
+//}
 
 app.Run();
