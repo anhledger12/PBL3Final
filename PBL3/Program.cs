@@ -48,7 +48,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 // Seed Database
 await Seed.SeedRoleAndAdmin(app);
-await Seed.SeedHashtag(app);
+await Seed.SeedCategory(app);
 
 
 app.Run();

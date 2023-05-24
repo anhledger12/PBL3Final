@@ -64,6 +64,7 @@ namespace PBL3.Controllers.Anonymous
         [Authorize(Roles = UserRole.AdminOrStaff)]
         public IActionResult Create()
         {
+            ViewBag.Categories = _ql.GetAllCategories();
             return View();
         }
 

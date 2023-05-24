@@ -1,4 +1,5 @@
-﻿@model PBL3.Data.ViewModel.InputTitle
+﻿@using PBL3.Models.Entities;
+@model PBL3.Data.ViewModel.InputTitle
 
 @{
     ViewData["Title"] = "Create";
@@ -38,6 +39,17 @@
                         <div class="form-group">
                             <label asp-for="NameBookshelf" class="control-label">Mã kệ sách chứa:</label>
                             <input asp-for="NameBookshelf" class="form-control" />
+                            <span asp-validation-for="NameBookshelf" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="IdCategory" class="control-label">Thể loại sách:</label>
+                            <select asp-for="IdCategory" class="form-control">
+                                <option value="null">Không chọn</option>
+                                @foreach(Category t in ViewBag.Categories)
+                                {   
+                                    <option value="@t.Id">@t.NameCategory</option>                                    
+                                }
+                            </select>
                             <span asp-validation-for="NameBookshelf" class="text-danger"></span>
                         </div>
                         <div class="form-group">

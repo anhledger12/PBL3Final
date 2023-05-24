@@ -19,6 +19,7 @@ namespace PBL3.Data.ViewModel
         public string NameBookshelf { get; set; }
         public int? ReleaseYear { get; set; }
         public string? Publisher { get; set; }
+        public int? IdCategory { get; set; }
         [Required(ErrorMessage = "Nhập số lượng")]
         [Range(1,9999,ErrorMessage = "Giá trị nhập vào không hợp lệ")]
         public int Amount { get; set; }

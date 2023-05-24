@@ -22,7 +22,7 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
 
     public virtual DbSet<BookRental> BookRentals { get; set; }
 
-    public virtual DbSet<Hashtag> Hashtags { get; set; }
+    public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Notificate> Notificates { get; set; }
 
@@ -151,31 +151,11 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
                 .HasConstraintName("FK__BookRenta__AccSe__4222D4EF");
         });
 
-        modelBuilder.Entity<Hashtag>(entity =>
+        modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Hashtag__3214EC07C7662509");
+            entity.HasKey(e => e.Id).HasName("PK__Category__3214EC07C7662509");
+            entity.ToTable("Category");
 
-            entity.ToTable("Hashtag");
-
-            entity.HasMany(d => d.IdTitles).WithMany(p => p.IdHashtags)
-                .UsingEntity<Dictionary<string, object>>(
-                    "HashtagTitle",
-                    r => r.HasOne<Title>().WithMany()
-                        .HasForeignKey("IdTitle")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__Hashtag_t__IdTit__4CA06362"),
-                    l => l.HasOne<Hashtag>().WithMany()
-                        .HasForeignKey("IdHashtag")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__Hashtag_t__IdHas__4BAC3F29"),
-                    j =>
-                    {
-                        j.HasKey("IdHashtag", "IdTitle").HasName("PK_ID");
-                        j.ToTable("Hashtag_title");
-                        j.IndexerProperty<string>("IdTitle")
-                            .HasMaxLength(50)
-                            .IsUnicode(false);
-                    });
         });
 
         modelBuilder.Entity<Notificate>(entity =>
@@ -208,6 +188,11 @@ public partial class LibraryManagementContext : IdentityDbContext<UserIdentity>
             entity.Property(e => e.IdTitle)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.HasOne(d => d.Category).WithMany(p => p.IdTitles)
+                .HasForeignKey(d => d.IdCategory)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .IsRequired(false)
+                .HasConstraintName("FK__titlecate__5629CD9C");
         });
 
         OnModelCreatingPartial(modelBuilder);

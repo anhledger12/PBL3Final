@@ -16,10 +16,11 @@ public partial class Title
     public int? ReleaseYear { get; set; }
    
     public string? Publisher { get; set; }
+    public int? IdCategory { get; set; }
 
     public bool Active { get; set; } = true;
 
     public virtual ICollection<Book> Books { get; set; } = new List<Book>();
 
-    public virtual ICollection<Hashtag> IdHashtags { get; set; } = new List<Hashtag>();
+    public virtual Category? Category { get; set; }
 }

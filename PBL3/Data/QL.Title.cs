@@ -14,7 +14,7 @@ namespace PBL3.Data
         //Index()
         public List<Title> GetAllTitles()
         {
-            return _context.Titles.Where(p => p.Active == true).ToList();
+            return _context.Titles.Where(p => p.Active == true).Include(p=>p.Category).ToList();
         }
 
         //Details()
@@ -24,7 +24,7 @@ namespace PBL3.Data
             {
                 return null;
             }
-            return _context.Titles.Where(p => p.IdTitle == id && p.Active == true).Include(p => p.IdHashtags).FirstOrDefault();
+            return _context.Titles.Where(p => p.IdTitle == id && p.Active == true).Include(p => p.Category).FirstOrDefault();
         }
 
         //Create()_Post
@@ -54,7 +54,8 @@ namespace PBL3.Data
                     ReleaseYear = inputTitle.ReleaseYear,
                     Publisher = inputTitle.Publisher,
                     NameWriter = inputTitle.NameWriter,
-                    NameBookshelf = inputTitle.NameBookshelf
+                    NameBookshelf = inputTitle.NameBookshelf,
+                    IdCategory = inputTitle.IdCategory          
                 };
 
                 _context.Titles.Add(title);
