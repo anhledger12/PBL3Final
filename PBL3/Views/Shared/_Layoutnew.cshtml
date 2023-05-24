@@ -226,14 +226,10 @@
                             </div>
                         </li>*@
                        @* @await Html.PartialAsync("PartialNotiView.cshtml");*@
+                        @if (User.Identity.IsAuthenticated){
                         <div id="noti_Container"></div>
                         <!--Kết thúc khu vực thông báo, mình để tạm chưa xài tới, biết đâu lại xài-->
-                       
-
                         <div class="topbar-divider d-none d-sm-block"></div>
-
-                        @if (User.Identity.IsAuthenticated)
-                        {
                             <!-- Nav Item - User Information -->
                             <li class="nav-item dropdown no-arrow">
                                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
@@ -357,6 +353,7 @@
 <script type="text/javascript">
     $(document).ready(function()
     {
+        var clickCount = 0;
         $("#noti_Container").ikrNotificationSetup();
         $.ajax
         ({
@@ -381,6 +378,24 @@
             error: function(xhr, status, error)
             {
                 alert("lỗi")
+            }
+        })
+        $(".ikrNoti_Button").click(function(){
+            clickCount += 1;
+            if (clickCount == 1){  
+            $.ajax
+                ({
+                    type: "GET",
+                    dataType: "json",
+                    url: "/Notifications/ChangeNotificationsState",
+                    traditional: true,
+                    contentType: "application/json; charset = utf-8",
+                    success: function (data) {
+                    },
+                    error: function (xhr, status, error) {
+                        alert("khong the")
+                    }
+                })
             }
         })
     })
