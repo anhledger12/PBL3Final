@@ -15,8 +15,7 @@ namespace PBL3.Data.Services
             {
                 if (con.State == ConnectionState.Closed)
                     con.Open();
-                var oNotis = con.Query<Notificate>("Select * from Notificate where AccReceive = '" + accName + "'").ToList();
-                
+                var oNotis = con.Query<Notificate>("Select * from Notificate where AccReceive = '" + accName + "' order by StateRead ASC, TimeSending DESC").ToList();               
                 if (oNotis != null && oNotis.Count() > 0)
                 {
                     _oNotifications = oNotis;

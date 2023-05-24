@@ -355,17 +355,21 @@
 
 </html>
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function()
+    {
         $("#noti_Container").ikrNotificationSetup();
-        $.ajax({
+        $.ajax
+        ({
             type: "GET",
             dataType: "json",
             url: "/Notifications/GetNotifications",
             traditional: true,
             contentType: "application/json; charset=utf-8",
-            success: function(data){
+            success: function(data)
+            {
                 var notifications = data;
-                $("#noti_Container").ikrNotificationCount({
+                $("#noti_Container").ikrNotificationCount
+                ({
                     NotificationList: notifications,
                     NotiFromPropName: "AccReceive",
                     @*ListTitlePropName: "NotiHeader",*@
@@ -374,9 +378,10 @@
                     ActionName: "AllNotifications"
                 });
             },
-            error: function(xhr, status, error){
+            error: function(xhr, status, error)
+            {
                 alert("lỗi")
             }
         })
-    })    
+    })
 </script>
