@@ -9,25 +9,10 @@ namespace PBL3.Controllers.Authorized
     public class MyNotificates : Controller
     {
         private LibraryManagementContext _context { get; set; }
-        public MyNotificates(LibraryManagementContext context) 
+        public MyNotificates() 
         {
-            _context = context;
+            //_context = context;
         }
-        private List<string> _userNotiContent = new List<string>
-        {
-            "Bạn có đơn đã được phê duyệt",
-            "Bạn có đơn quá hạn",
-            "Đơn của bạn bị từ chối"
-        };
-        private List<string> _staffNotiContent = new List<string>
-        {
-            "Có đơn vừa được gửi đến",
-            "Có đơn chưa duyệt"
-        };
-        private List<string> _adminNotiContent = new List<string>
-        {
-
-        };
         public IActionResult Index()
         {
             var noti = from ntf in _context.Notificates
@@ -35,9 +20,11 @@ namespace PBL3.Controllers.Authorized
                        select ntf;
             return View(noti);
         }
-        public static void SendNoti()
-        {
 
+        public List<Notificate> GetNotificates()
+        {
+            List<Notificate> notifications = _context.Notificates.Where(p => p.AccReceive == User.Identity.Name).ToList();
+            return notifications;
         }
     }
 }
