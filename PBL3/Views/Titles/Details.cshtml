@@ -69,7 +69,7 @@
                         Chỉnh sửa
                     </a>
                 }
-                else
+                else if (User.IsInRole("User") && User.Identity.IsAuthenticated)
                 {
                     <a asp-controller="RentBook" asp-action="AddToRental" asp-route-id="@Model.IdTitle" class="btn btn-primary" style="width:200px">
                         <i class="text-white-50 fas fa-address-book fa-align-left"></i>
