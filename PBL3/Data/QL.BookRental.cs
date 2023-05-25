@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PBL3.Models.Entities;
 using PBL3.Data.ViewModel;
+using PBL3.Data.Services;
+
 namespace PBL3.Data
 {
     public partial class QL
@@ -179,8 +181,10 @@ namespace PBL3.Data
                 //cho phép xoá
                 _context.BookRentDetails.RemoveRange(
                     _context.BookRentDetails.Where(p => p.IdBookRental == id).ToArray());
-                _context.BookRentals.Remove(
-                    _context.BookRentals.Where(p => p.Id == id).First());
+                BookRental bookRental = _context.BookRentals.Where(p => p.Id == id).First();
+                CreateNoti cn = new CreateNoti(this);
+                cn.SendNoti(bookRental.AccSending, "Đơn số " + bookRental.Id + " của bạn đã trả hoàn tất và kết thúc đơn.");
+                _context.BookRentals.Remove(bookRental);
                 _context.SaveChanges();
                 return true;
             }
@@ -193,10 +197,13 @@ namespace PBL3.Data
 
         public string DeleteOutDue(List<BookRental> outDue)
         {
-            //trả về một string lưu các id đơn quá hạn
+            //trả về một string lưu các id đơn quá hạn không lấy
             string result = string.Empty;
+            CreateNoti cn = new CreateNoti(this);
             foreach (BookRental bookRental in outDue)
             {
+                string accName = bookRental.AccSending;
+                cn.SendNoti(accName, "Đơn số " + bookRental.Id + " của bạn đã quá thời gian chờ lấy.");
                 _context.BookRentDetails.RemoveRange(
                     _context.BookRentDetails.Where(p => p.IdBookRental == bookRental.Id).ToArray());
                 _context.BookRentals.Remove(bookRental);
@@ -244,7 +251,7 @@ namespace PBL3.Data
                 {
                     pendingApprove.Remove(detail);
                     _context.BookRentDetails.Remove(detail);
-                    result += "Mã đầu sách: " + detail.IdBook.ToString();
+                    result += "Mã đầu sách: " + detail.IdBook.ToString().Split(".")[0] + "\n";
                 }
 
                 foreach (BookRentDetail detail in pendingApprove)
@@ -257,6 +264,13 @@ namespace PBL3.Data
                 tempUpdate.AccApprove = accApprove;
                 tempUpdate.TimeApprove = timeApprove;
                 _context.BookRentals.Update(tempUpdate);
+                CreateNoti cn = new CreateNoti(this);
+                if (result != string.Empty)
+                {
+                    result = "Đơn số " + tempUpdate.Id + " của bạn đã được duyệt, một số đầu sách không mượn được:\n" + result;
+                } 
+                else { result = "Đơn số " + tempUpdate.Id + " của bạn đã được duyệt."; }
+                cn.SendNoti(tempUpdate.AccSending, result);
                 _context.SaveChanges();
                 return result;
             }
@@ -272,6 +286,9 @@ namespace PBL3.Data
                 getBook.StateRent = false;
                 _context.Update(getBook);
             }
+            CreateNoti cn = new CreateNoti(this);
+            BookRental bookRental = _context.BookRentals.Where(p => p.Id == id).First();
+            cn.SendNoti(bookRental.AccSending, "Đơn số " + bookRental.Id + " của bạn bị từ chối.");
             _context.BookRentDetails.RemoveRange(tempDelete);
             _context.BookRentals.Remove(
                 _context.BookRentals.Where(p => p.Id == id).First());

@@ -34,7 +34,6 @@ namespace PBL3.Controllers.AdminAndStaff
             ViewBag.Pending = _ql.PendingApproveList();
             ViewBag.WaitingTake = _ql.WaitingTakeList();
             ViewBag.WaitingReturn = _ql.WaitingReturnList();
-            //còn có cập nhật tự đóng đơn quá hạn, có cần thông báo?
             return View();
         }
 
@@ -84,14 +83,7 @@ namespace PBL3.Controllers.AdminAndStaff
         [Authorize(Roles = UserRole.AdminOrStaff)]
         public IActionResult Delete (int id)
         {
-            if (_ql.DeleteBookRental(id))
-            {
-                //thông báo xoá xong
-            }
-            else
-            {
-                //code báo lỗi không cho xoá
-            }
+            _ql.DeleteBookRental(id);
             return RedirectToAction("Index");
         }
 
