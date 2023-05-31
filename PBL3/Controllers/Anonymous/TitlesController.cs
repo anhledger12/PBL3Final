@@ -103,6 +103,7 @@ namespace PBL3.Controllers.Anonymous
             {
                 return NotFound();
             }
+            ViewBag.Categories = _ql.GetAllCategories();
             return View(title);
         }
 
