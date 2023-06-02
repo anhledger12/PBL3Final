@@ -50,7 +50,7 @@ namespace PBL3.Controllers.Anonymous
             IQueryable<Title> result = _ql.GetAllTitles();
             ViewBag.CurrentPage = page;
             ViewBag.PageCount = (result.Count()+9)/10;
-            return View(result.Skip(page*10-10).Take(10).ToListAsync());
+            return View(result.Skip(page*10-10).Take(10).ToList());
         }
 
         // GET: Titles/Details/5
