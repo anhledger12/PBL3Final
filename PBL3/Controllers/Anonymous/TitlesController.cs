@@ -57,6 +57,7 @@ namespace PBL3.Controllers.Anonymous
         public IActionResult Details(string id)
         {
             Title? title = _ql.GetTitleById(id);
+            ViewBag.BookList = _ql.GetBooksOfTitleId(id);
             if (title == null)
             {
                 return NotFound();
@@ -142,6 +143,19 @@ namespace PBL3.Controllers.Anonymous
                 _ql.CreateActionLog(9, User.Identity.Name, id);
             }
             return RedirectToAction("Index");
+        }
+
+        public IActionResult ConfirmLost(string idDetail)
+        {
+            _ql.ConfirmLost(idDetail);
+            _ql.CreateActionLog(10, User.Identity.Name, idDetail);
+            return Redirect("/Titles/Details/" + idDetail.Split('.')[0]+ '/');
+        }
+        public IActionResult ConfirmFound(string idDetail)
+        {
+            _ql.ConfirmFound(idDetail);
+            _ql.CreateActionLog(14, User.Identity.Name, idDetail);
+            return Redirect("/Titles/Details/" + idDetail.Split('.')[0] + '/');
         }
     }
 }

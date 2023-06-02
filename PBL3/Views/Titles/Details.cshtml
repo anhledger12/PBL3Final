@@ -1,5 +1,5 @@
 ﻿@model PBL3.Models.Entities.Title
-
+@using PBL3.Models.Entities;
 @{
     ViewData["Title"] = "Details";
 }
@@ -88,3 +88,56 @@
     </div>
     <div class="col-lg-4"></div>
 </div>
+
+@if (User.Identity.IsAuthenticated && !User.IsInRole("User"))
+{
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <h3 class="text-uppercase p-2 text-center">Danh mục sách thuộc về đầu sách này</h3>
+            <br>
+            <table class="table table-borderless">
+                <thead class="thead-light text-light">
+                    <tr>
+                        <th>Mã sách</th>
+                        <th>Trạng thái vận hành</th>
+                        <th>Trạng thái mượn</th>
+                        <th>Tác vụ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Book b in ViewBag.BookList)
+                    {
+                        <tr>
+                            <td>@b.IdBook</td>
+                            @if(b.Active == true)
+                            {
+                                <td>Hoạt động</td>
+                                @if (b.StateRent == true)
+                                {
+                                    <td style="color: lightgray">Đang mượn</td>
+                                }
+                                else
+                                {
+                                    <td>Có sẵn</td>
+                                }
+                                <td>
+                                    <a style="color: red" class="text-decoration-underline" asp-action="ConfirmLost" asp-route-idDetail=@b.IdBook>Báo mất</a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td style="color: red">Thất lạc</td>
+                                <td style="color: red">----</td>
+                                <td> 
+                                    <a style="color: dodgerblue" class="text-decoration-underline" asp-action="ConfirmFound" asp-route-idDetail=@b.IdBook>Tìm thấy</a>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-1"></div>
+    </div>
+}

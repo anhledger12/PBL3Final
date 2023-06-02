@@ -9,7 +9,7 @@ namespace PBL3.Data
         // Các hoạt động sẽ đòi hỏi lưu action log:
         // Tạo tài khoản - Sửa đổi thông tin - Đổi mật khẩu - Admin cưỡng chế đổi thông tin
         // Gửi đơn mượn - Phê duyệt đơn mượn - Đóng đơn mượn - Từ chối đơn mượn
-        // Nhập thêm sách mới - Chỉnh sửa thông tin sách - Xoá sách - Báo mất - Thêm vào đầu sách có sẵn
+        // Nhập thêm sách mới - Chỉnh sửa thông tin sách - Xoá sách - Báo mất - Thêm vào đầu sách có sẵn - Tìm thấy sách
         // có 9 loại Action Log với 9 pattern cụ thể
         public async Task CreateActionLog(int type, string accName, string contentDetail = "")
         {
@@ -93,6 +93,12 @@ namespace PBL3.Data
                     {
                         //admin cưỡng chế đổi thông tin, accName = tên tài khoản sửa đổi
                         content = "Admin đã chỉnh sửa thông tin tài khoản " + accName + ".";
+                        break;
+                    }
+                case 14:
+                    {
+                        //tìm thấy sách đã thất lạc
+                        content = "Tài khoản thủ thư " + accName + " đã tìm thấy sách thất lạc có mã " + contentDetail + ".";
                         break;
                     }
             }

@@ -353,5 +353,15 @@ namespace PBL3.Data
                 _context.SaveChanges();
             }
         }
+        public void ConfirmFound(string? idDetail)
+        {
+            Book? found = _context.Books.Find(idDetail);
+            if (found != null)
+            {
+                found.Active = true;
+                _context.Books.Update(found);
+                _context.SaveChanges();
+            }
+        }
     }
 }

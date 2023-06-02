@@ -27,6 +27,11 @@ namespace PBL3.Data
             return _context.Titles.Where(p => p.IdTitle == id && p.Active == true).Include(p => p.Category).FirstOrDefault();
         }
 
+        public List<Book> GetBooksOfTitleId(string titleId)
+        {
+            return _context.Books.Where(p => p.IdBook.Contains(titleId)).ToList();
+        }
+
         //Create()_Post
         public bool AddTitle(InputTitle inputTitle, string accName)
         {
