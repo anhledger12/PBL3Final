@@ -1,11 +1,7 @@
 ﻿(function ($) {
     // ****** Add ikr.notification.css ******
     $.fn.ikrNotificationSetup = function (options) {
-        /*
-          Declaration : $("#noti_Container").ikrNotificationSetup({
-                    List: objCollectionList
-          });
-       */
+
         var defaultSettings = $.extend({
             BeforeSeenColor: "#ffffff",
             AfterSeenColor: "#ffffff"
@@ -56,28 +52,19 @@
         }
     };
     $.fn.ikrNotificationCount = function (options) {
-        /*
-          Declaration : $("#myComboId").ikrNotificationCount({
-                    NotificationList: [],
-                    NotiFromPropName: "",
-                    ListTitlePropName: "",
-                    ListBodyPropName: "",
-                    ControllerName: "Notifications",
-                    ActionName: "AllNotifications"
-          });
-       */
+
         var defaultSettings = $.extend({
             NotificationList: [],
             NotiFromPropName: "",
             ListTitlePropName: "",
             ListBodyPropName: "",
-            ControllerName: "Notifications",
-            ActionName: "AllNotifications"
+            ControllerName: "Notificates",
+            ActionName: "Index"
         }, options);
         var parentId = $(this).attr("id");
         if ($.trim(parentId) != "" && parentId.length > 0) {
             $("#" + parentId + " .ikrNotifications .ikrSeeAll").click(function () {
-                window.open('../' + defaultSettings.ControllerName + '/' + defaultSettings.ActionName + '', '_blank');
+                window.open('../' + 'Notificates' + '/' + 'Index' + '', '_blank');
             });
 
             var totalUnReadNoti = defaultSettings.NotificationList.filter(k => k.stateRead == false).length;
