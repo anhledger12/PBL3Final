@@ -1,47 +1,48 @@
-﻿@model IEnumerable<PBL3.Models.Entities.ActionLog>
+﻿@using PBL3.Models.Entities;
+@model IEnumerable<PBL3.Models.Entities.ActionLog>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Time)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Content)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AccNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Time)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AccNavigation.AccName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+@if (ViewBag.AccName == "")
+{
+    <h3 class="text-uppercase p-2 text-center">Lịch sử hoạt động hệ thống</h3>
 }
-    </tbody>
-</table>
+else
+{
+    <h3 class="text-uppercase p-2 text-center">Lịch sử hoạt động của tài khoản @ViewBag.AccName</h3>
+}
+
+<div class="row">
+    <div class="col-1"></div>
+    <div class="col-10">
+        <table class="table table-borderless">
+            <thead class="thead-dark text-dark">
+                <tr>
+                    <th>
+                        Thời gian
+                    </th>
+                    <th>
+                        Chi tiết
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ActionLog item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.Time
+                        </td>
+                        <td>
+                            @item.Content
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @Html.Partial("Paging")
+    </div>
+    <div class="col-1"></div>
+</div>

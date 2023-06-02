@@ -87,6 +87,12 @@
                         <span>Quản lý đơn mượn</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="ActionLogs" asp-action="Index" asp-route-page=1 asp-route-accName="">
+                        <i class="bi bi-journal-plus"></i>
+                        <span>Lịch sử hoạt động</span>
+                    </a>
+                </li>
             }
             else
             {
@@ -100,6 +106,15 @@
                     <a class="nav-link" asp-controller="RentBook" asp-action="UserRentals">
                         <i class="bi bi-journal-plus"></i>
                         <span>Mượn sách</span>
+                    </a>
+                </li>
+            }
+            @if (User.IsInRole(UserRole.User))
+            {
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="ActionLogs" asp-action="Index" asp-route-page=1 asp-route-accName=@User.Identity.Name>
+                        <i class="bi bi-journal-plus"></i>
+                        <span>Lịch sử hoạt động</span>
                     </a>
                 </li>
             }

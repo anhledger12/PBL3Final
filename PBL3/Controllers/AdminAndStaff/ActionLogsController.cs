@@ -25,9 +25,10 @@ namespace PBL3.Controllers.AdminAndStaff
         {
             //enable paging
             IQueryable<ActionLog> result = _ql.GetActionLogs(accName);
+            ViewBag.AccName = accName;
             ViewBag.CurrentPage = page;
             ViewBag.PageCount = (result.Count() + 9) / 10;
-            return View(result.Skip(page*10-10).Take(10).ToListAsync());
+            return View(result.Skip(page*10-10).Take(10).ToList());
         }
 
         // GET: ActionLogs/Details/

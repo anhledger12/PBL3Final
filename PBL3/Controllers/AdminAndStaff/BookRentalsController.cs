@@ -84,6 +84,7 @@ namespace PBL3.Controllers.AdminAndStaff
         public IActionResult Delete (int id)
         {
             _ql.DeleteBookRental(id);
+            _ql.CreateActionLog(6, User.Identity.Name, Convert.ToString(id));
             return RedirectToAction("Index");
         }
 
@@ -92,6 +93,7 @@ namespace PBL3.Controllers.AdminAndStaff
         {
             timeApprove = DateTime.Now;
             string? result = _ql.ApproveRental(id, timeApprove, User.Identity.Name);
+            _ql.CreateActionLog(5, User.Identity.Name, Convert.ToString(id));
             //result lưu các đầu sách không thể duyệt => đề phòng cần hiển thị thông báo
             return RedirectToAction("Index");
         }
@@ -100,6 +102,7 @@ namespace PBL3.Controllers.AdminAndStaff
         public IActionResult Refuse (int id)
         {
             _ql.RefuseRental(id);
+            _ql.CreateActionLog(12, User.Identity.Name, Convert.ToString(id));
             return RedirectToAction("Index");
         }
 
@@ -124,6 +127,7 @@ namespace PBL3.Controllers.AdminAndStaff
         public IActionResult ConfirmLost(int id, string? idDetail)
         {
             _ql.ConfirmLost(idDetail);
+            _ql.CreateActionLog(10, User.Identity.Name, idDetail);
             return RedirectToAction("Index");
         }
     }
