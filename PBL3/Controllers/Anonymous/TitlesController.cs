@@ -44,9 +44,13 @@ namespace PBL3.Controllers.Anonymous
         }
 
         // GET: Titles
-        public IActionResult Index()
+        public IActionResult Index(int page = 1)
         {
-            return View(_ql.GetAllTitles());
+            //enable paging
+            IQueryable<Title> result = _ql.GetAllTitles();
+            ViewBag.CurrentPage = page;
+            ViewBag.PageCount = (result.Count()+9)/10;
+            return View(result.Skip(page*10-10).Take(10).ToListAsync());
         }
 
         // GET: Titles/Details/5
@@ -80,12 +84,12 @@ namespace PBL3.Controllers.Anonymous
                 {
                     case true:
                         {
-                            //code báo thêm đầu sách mới
+                            _ql.CreateActionLog(7, User.Identity.Name,_ql.GetIdTitle(inputTitle));
                             break;
                         }
                     case false:
                         {
-                            //code báo thêm vào đầu sách có sẵn
+                            _ql.CreateActionLog(11, User.Identity.Name, _ql.GetIdTitle(inputTitle));
                             break;
                         }
                 }
@@ -121,6 +125,7 @@ namespace PBL3.Controllers.Anonymous
             if (ModelState.IsValid)
             {
                 _ql.UpdateTitle(id, title);
+                _ql.CreateActionLog(8, User.Identity.Name, id);
                 return RedirectToAction(nameof(Index));
             }
             return View(title);
@@ -144,18 +149,9 @@ namespace PBL3.Controllers.Anonymous
         [Authorize(Roles = UserRole.AdminOrStaff)]
         public IActionResult DeleteConfirmed(string id)
         {
-            switch (_ql.DeleteTitle(id))
+            if (_ql.DeleteTitle(id))
             {
-                case true:
-                    {
-                        //code báo xoá thành công
-                        break;
-                    }
-                case false:
-                    {
-                        //code báo xoá thất bại
-                        break;
-                    }
+                _ql.CreateActionLog(9, User.Identity.Name, id);
             }
             return RedirectToAction("Index");
         }

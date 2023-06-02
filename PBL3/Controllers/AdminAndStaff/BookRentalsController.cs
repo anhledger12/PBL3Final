@@ -29,11 +29,11 @@ namespace PBL3.Controllers.AdminAndStaff
 
         // GET: BookRentals
         [Authorize(Roles = UserRole.AdminOrStaff)]
-        public IActionResult Index()
+        public IActionResult Index(string filter = "")
         {           
-            ViewBag.Pending = _ql.PendingApproveList();
-            ViewBag.WaitingTake = _ql.WaitingTakeList();
-            ViewBag.WaitingReturn = _ql.WaitingReturnList();
+            ViewBag.Pending = _ql.PendingApproveList(filter);
+            ViewBag.WaitingTake = _ql.WaitingTakeList(filter);
+            ViewBag.WaitingReturn = _ql.WaitingReturnList(filter);
             return View();
         }
 

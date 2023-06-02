@@ -10,17 +10,30 @@ namespace PBL3.Data
         // Quản lý đơn mượn từ phía thủ thư, Cường làm
 
         //Index()
-        public List<BookRental> PendingApproveList()
+        public List<BookRental> PendingApproveList(string filter = "")
         {
-            return _context.BookRentals.Where(p => p.StateSend == true
+            if (filter == "")
+                return _context.BookRentals.Where(p => p.StateSend == true
             && p.StateApprove == false).OrderBy(p => p.TimeCreate).ToList();
+            else return _context.BookRentals.Where(p => p.StateSend == true
+            && p.StateApprove == false && p.AccSending.Contains(filter)).OrderBy(p => p.TimeCreate).ToList();
         }
 
-        public List<BookRental> WaitingTakeList()
+        public List<BookRental> WaitingTakeList(string filter = "")
         {
             //chờ lấy: tất cả đơn có stateApprove = true & không có bất cứ detail nào có statetake = true
-            List<BookRental> waitingTakeList = _context.BookRentals.
+
+            List<BookRental> waitingTakeList;
+            if (filter == "")
+                waitingTakeList = _context.BookRentals.
                 Where(p => p.StateApprove == true &&
+                _context.BookRentDetails
+                .Where(b => b.IdBookRental == p.Id &&
+                b.StateTake == true).Any() == false)
+                .ToList();
+            else waitingTakeList = _context.BookRentals.
+                Where(p => p.StateApprove == true &&
+                p.AccSending.Contains(filter) &&
                 _context.BookRentDetails
                 .Where(b => b.IdBookRental == p.Id &&
                 b.StateTake == true).Any() == false)
@@ -45,10 +58,18 @@ namespace PBL3.Data
             return waitingTakeList;
         }
 
-        public List<BookRental> WaitingReturnList()
+        public List<BookRental> WaitingReturnList(string filter = "")
         {
-            return _context.BookRentals.
+            if (filter == "")
+                return _context.BookRentals.
                 Where(p => p.StateApprove == true &&
+                _context.BookRentDetails
+                .Where(b => b.IdBookRental == p.Id)
+                .All(b => b.StateTake == true) == true)
+                .ToList();
+            else return _context.BookRentals.
+                Where(p => p.StateApprove == true &&
+                p.AccSending.Contains(filter) &&
                 _context.BookRentDetails
                 .Where(b => b.IdBookRental == p.Id)
                 .All(b => b.StateTake == true) == true)

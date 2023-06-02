@@ -12,9 +12,9 @@ namespace PBL3.Data
         //Controller: TitlesController
 
         //Index()
-        public List<Title> GetAllTitles()
+        public IQueryable<Title> GetAllTitles()
         {
-            return _context.Titles.Where(p => p.Active == true).Include(p=>p.Category).ToList();
+            return _context.Titles.Where(p => p.Active == true).Include(p=>p.Category);
         }
 
         //Details()
@@ -89,7 +89,6 @@ namespace PBL3.Data
             }
             _context.Books.AddRange(addList);
             _context.SaveChanges();
-
             return resultType;
         }
 
@@ -168,6 +167,14 @@ namespace PBL3.Data
                 }
             }
             return false;
+        }
+
+        public string GetIdTitle(InputTitle title)
+        {
+            return _context.Titles.Where(p => p.NameBook == title.NameBook &&
+            p.NameWriter == title.NameWriter &&
+            p.Publisher == title.Publisher &&
+            p.ReleaseYear == title.ReleaseYear).Select(p => p.IdTitle).First();
         }
 
         //Hàm cần dùng

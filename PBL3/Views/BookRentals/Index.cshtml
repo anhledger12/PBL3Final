@@ -20,6 +20,19 @@
         </ul>
         <br />
 
+        <div style="width: 30%; float: right">
+            <form method="get" asp-action="Index">
+                <div class="mb-3">
+                    <label class="control-label">Lọc theo người gửi</label>
+                    <input type="text" name="filter" value="@ViewBag.Filter" data-bind="text"/>
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                
+            </form>
+        </div>
+
         <div class="tab-content">
 
             <div class="tab-pane container-fluid active" id="Pending-Table">
