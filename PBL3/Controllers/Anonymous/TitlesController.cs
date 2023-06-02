@@ -80,19 +80,7 @@ namespace PBL3.Controllers.Anonymous
         {
             if (ModelState.IsValid)
             {
-                switch (_ql.AddTitle(inputTitle))
-                {
-                    case true:
-                        {
-                            _ql.CreateActionLog(7, User.Identity.Name,_ql.GetIdTitle(inputTitle));
-                            break;
-                        }
-                    case false:
-                        {
-                            _ql.CreateActionLog(11, User.Identity.Name, _ql.GetIdTitle(inputTitle));
-                            break;
-                        }
-                }
+                _ql.AddTitle(inputTitle, User.Identity.Name);
                 return RedirectToAction("Index");
             }
             return View(inputTitle);

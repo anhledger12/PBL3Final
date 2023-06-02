@@ -28,7 +28,7 @@ namespace PBL3.Data
         }
 
         //Create()_Post
-        public bool AddTitle(InputTitle inputTitle)
+        public bool AddTitle(InputTitle inputTitle, string accName)
         {
             bool resultType = false;
             //type = false => thêm vào đầu sách đã có sẵn
@@ -89,6 +89,13 @@ namespace PBL3.Data
             }
             _context.Books.AddRange(addList);
             _context.SaveChanges();
+            if (resultType)
+            {
+                CreateActionLog(7, accName, title.IdTitle);
+            } else
+            {
+                CreateActionLog(12, accName, title.IdTitle);
+            }
             return resultType;
         }
 
