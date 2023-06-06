@@ -114,8 +114,8 @@ namespace PBL3.Data
         public IQueryable<ActionLog> GetActionLogs(string accName = "")
         {
             if (accName == "")
-                return _context.ActionLogs;
-            else return _context.ActionLogs.Where(p => p.Acc == accName);
+                return _context.ActionLogs.OrderByDescending(p => p.Time);
+            else return _context.ActionLogs.Where(p => p.Acc == accName).OrderByDescending(p=>p.Time);
         }
 
         public ActionLog? GetActionLogDetail(int? id)
