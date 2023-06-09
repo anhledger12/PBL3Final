@@ -101,6 +101,12 @@ namespace PBL3.Data
                         content = "Tài khoản thủ thư " + accName + " đã tìm thấy sách thất lạc có mã " + contentDetail + ".";
                         break;
                     }
+                case 16:
+                    {
+                        string[] tempContentDetail = contentDetail.Split(",");
+                        content = "Tài khoản " + accName + " đã gia hạn sách mã số" + tempContentDetail[0] + " trong đơn mượn mã số " + tempContentDetail[1] + ".";
+                        break;
+                    }
             }
             await _context.ActionLogs.AddAsync(new ActionLog()
             {

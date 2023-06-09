@@ -213,6 +213,7 @@ namespace PBL3.Controllers.User
             s.bookRentDetail.ReturnDate = Convert.ToDateTime(s.bookRentDetail.ReturnDate).AddDays(14);
             BookRentDetail bookRentDetail = s.bookRentDetail;
             db.UpdateDB(ref bookRentDetail);
+            db.CreateActionLog(16, accName, s.bookRentDetail.IdBook.ToString() + "," + s.bookRentDetail.IdBookRental.ToString());
             message = "Gia hạn thành công";
             Alert(message, 1);
             return Redirect("/BookRentals/Details/" + idBookRent + "?type=4");
