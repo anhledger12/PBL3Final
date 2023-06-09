@@ -386,14 +386,14 @@
                     NotiFromPropName: "AccReceive",
                     @*ListTitlePropName: "NotiHeader",*@
                     ListBodyPropName: "Content",
-                    ControllerName: "Notifications",
-                    ActionName: "AllNotifications"
+                    ControllerName: "Notificates",
+                    ActionName: "Index"
                 });
-            },
+            },@*
             error: function(xhr, status, error)
             {
                 alert("lỗi")
-            }
+            }*@
         })
         $(".ikrNoti_Button").click(function(){
             clickCount += 1;
