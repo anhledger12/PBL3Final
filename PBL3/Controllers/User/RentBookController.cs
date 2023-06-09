@@ -150,6 +150,7 @@ namespace PBL3.Controllers.User
             var check = db.GetBookRental(accName);
             check.StateSend = true;
             check.TimeCreate = DateTime.Now;
+            await db.CreateActionLog(4, accName, check.Id.ToString());
             db.UpdateDB<BookRental>(ref check);
             return RedirectToAction("UserRentals");
         }
