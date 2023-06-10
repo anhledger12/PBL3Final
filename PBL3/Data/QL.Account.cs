@@ -33,9 +33,9 @@ namespace PBL3.Data
         {
             return await _context.Accounts.Where(p=>p.Active== true).Skip(page * numperpage - numperpage).Take(numperpage).ToListAsync();
         }
-        public async Task<IQueryable<Account>> GetAccountsByRole(string role, string keyw="")
+        public IQueryable<Account> GetAccountsByRole(string role, string keyw="")
         {
-            List<Account> res = new List<Account>();
+            //List<Account> res = new List<Account>();
             IdentityRole Irole = _context.Roles.Where(p => p.Name == role).FirstOrDefault();
             var list = _context.UserRoles.Where(p => p.RoleId == Irole.Id).Select(p => p.UserId);
             var accounts = _context.Users.Where(p => list.Contains(p.Id)).Select(p=>p.UserName);

@@ -21,7 +21,7 @@ namespace PBL3.Data.Services
                 };
                 db.AddRecord<Notificate>(ref notificate);
             }
-            public async Task SendNotiToAll(string AccName, string UserMessage, string AdminStaffMessage)
+            public void SendNotiToAll(string AccName, string UserMessage, string AdminStaffMessage)
             {
                 List<Notificate> adminNoti = new List<Notificate>();
                 List<Notificate> staffNoti = new List<Notificate>();
@@ -34,31 +34,32 @@ namespace PBL3.Data.Services
                 };
                 db.AddRecord<Notificate>(ref userNoti);
 
-                IQueryable<Account> admins = await db.GetAccountsByRole(UserRole.Admin);
-                IQueryable<Account> staffs = await db.GetAccountsByRole("Staff");
-                for (int i = 0; i < admins.Count(); i++)
+                IQueryable<Account> admins = db.GetAccountsByRole(UserRole.Admin);
+                IQueryable<Account> staffs = db.GetAccountsByRole("Staff");
+                
+                foreach (Account account in admins)
                 {
-                    adminNoti[i] = new Notificate
+                    adminNoti.Add(new Notificate
                     {
-                        AccReceive = admins.ElementAt(i).AccName,
+                        AccReceive = account.AccName,
                         TimeSending = DateTime.Now,
                         Content = AdminStaffMessage,
                         StateRead = false
-                    };
+                    });
                 }
-                for (int i = 0; i < staffs.Count(); i++)
+                foreach (Account account in staffs)
                 {
-                    staffNoti[i] = new Notificate
+                    staffNoti.Add(new Notificate
                     {
+                        AccReceive = account.AccName,
+                        TimeSending = DateTime.Now,
+                        Content = AdminStaffMessage,
+                        StateRead = false
+                    });
+                }
 
-                        AccReceive = staffs.ElementAt(i).AccName,
-                        TimeSending = DateTime.Now,
-                        Content = AdminStaffMessage,
-                        StateRead = false
-                    };
-                }
-                db.AddRangeRecord(ref staffNoti);
-                db.AddRangeRecord(ref adminNoti);
+                db.AddRangeRecord(staffNoti);
+                db.AddRangeRecord(adminNoti);
             }
         }
     }

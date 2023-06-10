@@ -33,7 +33,7 @@ namespace PBL3.Controllers.Admin
             ViewBag.Type = "All";
             if (type == UserRole.Staff)
             {
-                IQueryable<Account> res = await db.GetAccountsByRole(UserRole.Staff, keyw);
+                IQueryable<Account> res = db.GetAccountsByRole(UserRole.Staff, keyw);
                 ViewBag.PageCount = (res.Count() + 9) / 10;
                 ViewBag.CurrentPage = page;
                 ViewBag.Head = "Danh sách Thủ thư";            
@@ -41,7 +41,7 @@ namespace PBL3.Controllers.Admin
             }
             else if (type == UserRole.User)
             {
-                IQueryable<Account> res = await db.GetAccountsByRole(UserRole.User, keyw);
+                IQueryable<Account> res = db.GetAccountsByRole(UserRole.User, keyw);
                 ViewBag.PageCount = (res.Count() + 9) / 10;
                 ViewBag.CurrentPage = page;
                 ViewBag.Head = "Danh sách Độc giả";
