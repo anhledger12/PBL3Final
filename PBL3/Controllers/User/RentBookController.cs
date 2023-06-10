@@ -152,6 +152,8 @@ namespace PBL3.Controllers.User
             check.TimeCreate = DateTime.Now;
             await db.CreateActionLog(4, accName, check.Id.ToString());
             db.UpdateDB<BookRental>(ref check);
+            CreateNoti noti = new CreateNoti(db);
+            noti.SendNotiToAll(accName, "Đã gửi đơn mượn mã " + check.Id.ToString(), "Người dùng " + accName + " đã gửi đơn mượn mã " + check.Id.ToString());
             return RedirectToAction("UserRentals");
         }
 
