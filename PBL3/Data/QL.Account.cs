@@ -82,6 +82,7 @@ namespace PBL3.Data
             };
             await usermanager.CreateAsync(NewUser, model.Password);
             await usermanager.AddToRoleAsync(NewUser, model.Role);
+            await CreateActionLog(1,NewUser.UserName);
         }
         // Hàm tạo account với thông tin (phía user)
         public async Task CreateAccount(Account account, UserIdentity userIdentity, string password)
@@ -91,15 +92,20 @@ namespace PBL3.Data
             await _context.SaveChangesAsync();
             await usermanager.CreateAsync(userIdentity, password);
             await usermanager.AddToRoleAsync(userIdentity, UserRole.User);
+            await CreateActionLog(1, account.AccName);
+
         }
 
         //Update 
         public async Task UpdateAccount(Account account)
         {
             _context.Accounts.Update(account);
+
             await _context.SaveChangesAsync();
+            await CreateActionLog(2, account.AccName);
+
         }
-        
+
         // Xóa cứng các chi tiết đơn mượn khi khóa tài khoản
         public async Task HardDeleteBRDbyId(int id)
         {

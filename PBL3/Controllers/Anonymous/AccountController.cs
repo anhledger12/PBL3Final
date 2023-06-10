@@ -161,6 +161,7 @@ namespace PBL3.Controllers.Anonymus
                     var res = await userManager.ChangePasswordAsync((UserIdentity)currentUser, model.OldPassword, model.NewPassword);
                     if (res.Succeeded)
                     {
+                        await db.CreateActionLog(3, User.Identity.Name);
                         return View("ChangePasswordSuccess");
                     }
                     else
